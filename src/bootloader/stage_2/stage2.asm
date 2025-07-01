@@ -190,8 +190,16 @@ msg_protected_mode: dw 'Entered 32 bit protected mode', 0
 
 init_pm:
     call init_page_table
-    cli
-    hlt
+    mov ecx, 0xC0000080
+    rdmsr
+    or eax, 1 << 8
+    wrmsr
+
+    mov eax, cr0
+    or eax, 1 << 31
+    mov cr0, eax
+
+    jmp CODE_SEG64:init_lm
 
 init_page_table:
     pushad
@@ -248,3 +256,13 @@ pputs:
 .pprint_loop_done:
     popad
     ret
+
+    ;;
+    ;; 64 bit long mode
+    ;;
+
+[bits 64]
+
+init_lm:
+    cli
+    hlt
