@@ -2,7 +2,7 @@ ENTRY(kmain)
 
 SECTIONS
 {
-  . = 0x10000;
+  . = 0x8200;
 
   .text : ALIGN(0x1000) {
     *(.text.entry)

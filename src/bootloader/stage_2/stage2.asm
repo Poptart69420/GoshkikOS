@@ -65,7 +65,7 @@ DATA_SEG32:         equ gdt32_data - gdt32_start
 CODE_SEG64:         equ gdt64_code - gdt64_start
 DATA_SEG64:         equ gdt64_data - gdt64_start
 
-KERNEL_BUFFER       equ 0x10000
+KERNEL_BUFFER       equ 0x8200
 NUMBER_OF_SECTORS   equ 10
 
 stage2_main:
@@ -199,6 +199,7 @@ init_pm:
     or eax, 1 << 31
     mov cr0, eax
 
+    lgdt [gdt64_descriptor]
     jmp CODE_SEG64:init_lm
 
 init_page_table:
@@ -263,6 +264,62 @@ pputs:
 
 [bits 64]
 
+space_char: equ ` `
+style_blue: equ 0x1F
+
+msg_long_mode: dw 'Entered 64 bit long mode. Starting shitOS...', 0
+
 init_lm:
+    mov rdi, style_blue
+    push rdi
+    push rax
+    push rcx
+
+    shl rdi, 8
+    mov rax, rdi
+    mov al, space_char
+
+    mov rdi, vga_start
+    mov rcx, vga_extent / 2
+
+    rep stosw
+
+    pop rcx
+    pop rax
+    pop rdi
+
+    mov rsi, msg_long_mode
+    call lputs
+
     cli
     hlt
+
+lputs:
+    push rax
+    push rdx
+    push rdi
+    push rsi
+
+    mov rdx, vga_start
+    shl rdi, 8
+
+.lprint_loop:
+    cmp byte[rsi], 0
+    je .lprint_loop_done
+
+    mov rax, rdi
+    mov al, byte[rsi]
+    mov word[rdx], ax
+
+    add rsi, 1
+    add rdx, 2
+
+    jmp .lprint_loop
+
+.lprint_loop_done:
+    pop rsi
+    pop rdi
+    pop rdx
+    pop rax
+
+    ret
