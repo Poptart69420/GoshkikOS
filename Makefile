@@ -2,6 +2,7 @@ ASM=nasm
 
 SRC_DIR     = src
 BUILD_DIR   = build
+X86_64_DIR  = $(BUILD_DIR)/x86_64
 
 BOOTLD_DIR  = $(SRC_DIR)/bootloader
 KERNEL_DIR  = $(SRC_DIR)/kernel
@@ -36,7 +37,7 @@ bootloader_build: | $(BUILD_DIR)
 $(STAGE1_BIN): bootloader_build
 $(STAGE2_BIN): bootloader_build
 
-kernel: | $(BUILD_DIR)
+kernel: | $(BUILD_DIR) $(X86_64_DIR)
 	$(MAKE) -C $(KERNEL_DIR) BUILD_DIR=$(abspath $(BUILD_DIR))
 
 print-sizes:
@@ -48,6 +49,9 @@ print-sizes:
 	@echo "Kernel sector count   : $$((($$(stat -c %s $(KERNEL_BIN)) + $(SECTOR_SIZE) - 1) / $(SECTOR_SIZE)))"
 
 $(BUILD_DIR):
+	mkdir -p $@
+
+$(X86_64_DIR):
 	mkdir -p $@
 
 clean:

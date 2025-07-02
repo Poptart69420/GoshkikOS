@@ -65,7 +65,7 @@ DATA_SEG32:         equ gdt32_data - gdt32_start
 CODE_SEG64:         equ gdt64_code - gdt64_start
 DATA_SEG64:         equ gdt64_data - gdt64_start
 
-KERNEL_BUFFER       equ 0x8200
+KERNEL_BUFFER       equ 0x10000
 NUMBER_OF_SECTORS   equ 10
 
 stage2_main:
@@ -290,6 +290,8 @@ init_lm:
 
     mov rsi, msg_long_mode
     call lputs
+
+    call KERNEL_BUFFER
 
     cli
     hlt
