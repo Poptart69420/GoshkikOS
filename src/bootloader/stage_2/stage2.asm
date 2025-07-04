@@ -66,7 +66,7 @@ CODE_SEG64:         equ gdt64_code - gdt64_start
 DATA_SEG64:         equ gdt64_data - gdt64_start
 
 KERNEL_BUFFER       equ 0x10000
-NUMBER_OF_SECTORS   equ 10
+NUMBER_OF_SECTORS   equ 50
 
 stage2_main:
     cli
@@ -189,6 +189,15 @@ style_wb:           equ 0x0F
 msg_protected_mode: dw 'Entered 32 bit protected mode', 0
 
 init_pm:
+    mov ax, DATA_SEG32
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+    mov ebp, 0x90000
+    mov esp, ebp
+
     call init_page_table
     mov ecx, 0xC0000080
     rdmsr
@@ -200,10 +209,12 @@ init_pm:
     mov cr0, eax
 
     lgdt [gdt64_descriptor]
-    jmp CODE_SEG64:init_lm
+    jmp 0x08:init_lm
 
 init_page_table:
-    pushad
+    mov eax, cr0
+    and eax, 01111111111111111111111111111111b
+    mov cr0, eax
 
     mov edi, 0x1000
     mov cr3, edi
@@ -220,7 +231,7 @@ init_page_table:
     mov dword[edi], 0x4003
 
     add edi, 0x1000
-    mov ebx, 0x00000003
+    mov ebx, 0x00000083
     mov ecx, 512
 
 .add_page_entry:
@@ -233,7 +244,6 @@ init_page_table:
     or eax, 1 << 5
     mov cr4, eax
 
-    popad
     ret
 
 pputs:
@@ -270,6 +280,13 @@ style_blue: equ 0x1F
 msg_long_mode: dw 'Entered 64 bit long mode. Starting shitOS...', 0
 
 init_lm:
+    mov ax, DATA_SEG64
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+
     mov rdi, style_blue
     push rdi
     push rax
