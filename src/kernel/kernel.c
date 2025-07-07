@@ -1,4 +1,6 @@
 #include "./x86_64/vga_text.h"
+#include "./x86_64/cpu/isr.h"
+#include "./x86_64/cpu/pic.h"
 
 void kmain(void)
   {
@@ -7,6 +9,13 @@ void kmain(void)
     const char *msg_kernel_enter = "ENTERED SHITOS KERNEL...";
     putstr(msg_kernel_enter, COLOR_GREEN, COLOR_BLACK);
 
+    pic_mask_irq(0xFF);
+    pic_remap(0x20, 0x28);
+
+    isr_install();
+
+    pic_mask_all();
+
     for (;;)
-      __asm__ volatile ("cli; hlt");
+      __asm__ volatile ("hlt");
   }

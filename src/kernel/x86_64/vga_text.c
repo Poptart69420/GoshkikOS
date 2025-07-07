@@ -32,7 +32,7 @@ void putchar(const char character, const uint8_t fg_color, const uint8_t bg_colo
       uint8_t current_row = (uint8_t) (pos / VGA_WIDTH);
 
       if (++current_row >= VGA_HEIGHT) {
-        scroll_line;
+        scroll_line();
       } else {
         set_cursor_pos(0, current_row);
       }
