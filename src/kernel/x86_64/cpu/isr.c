@@ -1,10 +1,11 @@
 #include "isr.h"
 #include "idt.h"
 #include "../vga_text.h"
+#include "../io.h"
 #include <stdint.h>
 #include <stddef.h>
 
-char *exception_messages[] = {
+static const char *exception_messages[] = {
   "Division by Zero",
   "Debug",
   "Non-Maskable Interrupt",
@@ -42,6 +43,26 @@ char *exception_messages[] = {
   "Reserved"
 };
 
+static const char* irq_names[] =
+  {
+    "Timer",
+    "Keyboard",
+    "Cascade",
+    "COM2",
+    "COM1",
+    "LPT2",
+    "Floppy",
+    "LPT1",
+    "RTC",
+    "ACPI",
+    "Unused",
+    "Unused",
+    "Mouse",
+    "FPU",
+    "Primary ATA",
+    "Secondary ATA"
+};
+
 void isr_install(void)
   {
     set_idt_gate(0, (uintptr_t) isr_0);
@@ -76,16 +97,54 @@ void isr_install(void)
     set_idt_gate(29, (uintptr_t) isr_29);
     set_idt_gate(30, (uintptr_t) isr_30);
     set_idt_gate(31, (uintptr_t) isr_31);
+    set_idt_gate(31, (uintptr_t) isr_31);
+
+    set_idt_gate(32, (uintptr_t) irq_0);
+    set_idt_gate(33, (uintptr_t) irq_1);
+    set_idt_gate(34, (uintptr_t) irq_2);
+    set_idt_gate(35, (uintptr_t) irq_3);
+    set_idt_gate(36, (uintptr_t) irq_4);
+    set_idt_gate(37, (uintptr_t) irq_5);
+    set_idt_gate(38, (uintptr_t) irq_6);
+    set_idt_gate(39, (uintptr_t) irq_7);
+    set_idt_gate(40, (uintptr_t) irq_8);
+    set_idt_gate(41, (uintptr_t) irq_9);
+    set_idt_gate(42, (uintptr_t) irq_10);
+    set_idt_gate(43, (uintptr_t) irq_11);
+    set_idt_gate(44, (uintptr_t) irq_12);
+    set_idt_gate(45, (uintptr_t) irq_13);
+    set_idt_gate(46, (uintptr_t) irq_14);
+    set_idt_gate(47, (uintptr_t) irq_15);
 
     set_idt();
 
     __asm__ volatile ("sti");
   }
 
-void isr_handler(uint64_t isr_number, uint64_t error_code, registers* regs)
+void irq_handler(uint64_t vector)
+  {
+    switch (vector) {
+
+      case 0:
+        break;
+      default:
+        putstr(irq_names[vector], COLOR_WHITE, COLOR_RED);
+    }
+
+    if (vector >= 8) {
+      outb(0xA0, 0x20);
+    }
+
+    outb(0x20, 0x20);
+  }
+
+void isr_handler(uint64_t vector, uint64_t error_code, registers* regs)
 {
-  if (isr_number < 32) {
-    putstr(exception_messages[isr_number], COLOR_WHITE, COLOR_RED);
+  if (vector >= 32 && vector <= 47) {
+    irq_handler(vector - 32);
+    return;
+  } else if (vector < 32) {
+    putstr(exception_messages[vector], COLOR_WHITE, COLOR_RED);
   } else {
     putstr("Unknown Exception", COLOR_WHITE, COLOR_RED);
   }

@@ -82,6 +82,26 @@ isr_%1:
     iretq
 %endmacro
 
+%macro irq_stub 1
+global irq_%1
+irq_%1:
+    cli
+
+    push qword 0
+    push qword (32 + %1)
+
+    call_handler isr_handler
+
+    add rsp, 0x10
+    mov al, 0x20
+    out 0xA0, al
+    out 0x20, al
+
+    sti
+    iretq
+%endmacro
+
+
 isr_noerror 0
 isr_noerror 1
 isr_noerror 2
@@ -114,3 +134,20 @@ isr_noerror 28
 isr_noerror 29
 isr_noerror 30
 isr_noerror 31
+
+irq_stub 0
+irq_stub 1
+irq_stub 2
+irq_stub 3
+irq_stub 4
+irq_stub 5
+irq_stub 6
+irq_stub 7
+irq_stub 8
+irq_stub 9
+irq_stub 10
+irq_stub 11
+irq_stub 12
+irq_stub 13
+irq_stub 14
+irq_stub 15

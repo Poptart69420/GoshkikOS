@@ -14,8 +14,6 @@ void kmain(void)
 
     isr_install();
 
-    pic_mask_all();
-
     for (;;)
       __asm__ volatile ("hlt");
   }
