@@ -121,34 +121,121 @@ void isr_install(void)
     __asm__ volatile ("sti");
   }
 
+void pit_init(uint32_t hz)  {
+    uint16_t divisor = PIT_FREQUENCY / hz;
+    outb(PIT_COMMAND, 0x36);
+    outb(PIT_CHANNEL0, divisor & 0xFF);
+    outb(PIT_CHANNEL0, (divisor >> 8) & 0xFF);
+  }
+
+static void ps2_flush_output(uint16_t timeout)
+  {
+    while (inb(PS2_COMMAND) & 1 && timeout > 0) {
+      timeout--;
+      inb(PS2_DATA);
+    }
+  }
+
+static int ps2_wait_input(void)
+  {
+    uint64_t timeout = 1000;
+    while (--timeout) {
+      if (!(inb(PS2_COMMAND) & (1 << 1))) return 0;
+    }
+    return 1;
+  }
+
+static int ps2_wait_output(void)
+  {
+    uint64_t timeout = 1000;
+    while (--timeout) {
+      if (inb(PS2_COMMAND) & (1 << 0)) return 0;
+    }
+    return 1;
+  }
+
+static void set_kboard_scancode(void)
+{
+  ps2_wait_input();
+  outb(PS2_DATA, 0xF0);
+  ps2_wait_output();
+  if (inb(PS2_DATA) != 0xFA) {
+    putstr("Failed to send 0xF0\n", COLOR_RED, COLOR_BLACK);
+    return;
+  }
+
+  ps2_wait_input();
+  outb(PS2_DATA, 0x02);
+  ps2_wait_output();
+  if (inb(PS2_DATA) != 0xFA) {
+    putstr("Failed to send scancode set\n", COLOR_RED, COLOR_BLACK);
+  }
+}
+
+void ps2_setup(void)
+  {
+    outb(PS2_COMMAND, PS2_DISABLE_P1);
+    outb(PS2_COMMAND, PS2_DISABLE_P2);
+
+    ps2_flush_output(PACKETS_IN_PIPE);
+
+    uint8_t status;
+
+    ps2_wait_input();
+
+    status = inb(PS2_DATA);
+
+    status &= ~0x30;
+    status |= 0x01;
+
+    ps2_wait_input();
+    outb(PS2_COMMAND, PS2_DATA);
+    ps2_wait_input();
+    outb(PS2_DATA, status);
+
+    outb(PS2_COMMAND, PS2_ENABLE_P1);
+    outb(PS2_COMMAND, PS2_ENABLE_P2);
+  }
+
+static void ps2_keyboard_handler() {
+  uint8_t scancode = inb(PS2_DATA);
+  putstr("Keyboard", COLOR_YELLOW, COLOR_BLACK);
+
+}
+
 void irq_handler(uint64_t vector)
   {
     switch (vector) {
 
       case 0:
         break;
+      case 1:
+        ps2_keyboard_handler();
+        break;
       default:
-        putstr(irq_names[vector], COLOR_WHITE, COLOR_RED);
+        putstr(irq_names[vector], COLOR_YELLOW, COLOR_BLACK);
+        break;
     }
 
     if (vector >= 8) {
-      outb(0xA0, 0x20);
+      outb(PIC_2, END_OF_INT);
     }
 
-    outb(0x20, 0x20);
+    outb(PIC_1, END_OF_INT);
+    return;
   }
 
 void isr_handler(uint64_t vector, uint64_t error_code, registers* regs)
 {
-  if (vector >= 32 && vector <= 47) {
-    irq_handler(vector - 32);
+  if (vector >= IRQ_VECTR_OFFST && vector <= ISR_COUNT) {
+    irq_handler(vector - IRQ_VECTR_OFFST);
     return;
-  } else if (vector < 32) {
+
+  } else if (vector < IRQ_VECTR_OFFST) {
     putstr(exception_messages[vector], COLOR_WHITE, COLOR_RED);
   } else {
     putstr("Unknown Exception", COLOR_WHITE, COLOR_RED);
   }
 
-  __asm__ volatile ("cli; hlt");
-
+  return;
 }

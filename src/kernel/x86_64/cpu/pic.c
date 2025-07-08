@@ -2,22 +2,22 @@
 #include "../io.h"
 
 void pic_remap(int offset1, int offset2) {
-  outb(0x20, 0x11);
-  outb(0xA0, 0x11);
-  outb(0x21, offset1);
-  outb(0xA1, offset2);
-  outb(0x21, 0x04);
-  outb(0xA1, 0x02);
-  outb(0x21, 0x01);
-  outb(0xA1, 0x01);
-  outb(0x21, 0x0);
-  outb(0xA1, 0x0);
+  outb(PIC1_COMMAND, 0x11);
+  outb(PIC2_COMMAND, 0x11);
+  outb(PIC1_DATA, offset1);
+  outb(PIC2_DATA, offset2);
+  outb(PIC1_DATA, 0x04);
+  outb(PIC2_DATA, 0x02);
+  outb(PIC1_DATA, 0x01);
+  outb(PIC2_DATA, 0x01);
+  outb(PIC1_DATA, 0x0);
+  outb(PIC2_DATA, 0x0);
 }
 
 void pic_mask_all(void)
   {
-    outb(0x21, 0xFF);
-    outb(0xA1, 0xFF);
+    outb(PIC1_DATA, 0xFF);
+    outb(PIC2_DATA, 0xFF);
   }
 
 void pic_mask_irq(uint8_t irq) {
@@ -25,10 +25,10 @@ void pic_mask_irq(uint8_t irq) {
     uint8_t masks;
 
     if (irq < 8) {
-        port = 0x21;
+        port = PIC1_DATA;
     }
     else {
-        port = 0xA1;
+        port = PIC2_DATA;
         irq -= 8;
     }
 
@@ -42,10 +42,10 @@ void pic_unmask_irq(uint8_t irq) {
     uint8_t masks;
 
     if (irq < 8) {
-        port = 0x21;
+        port = PIC1_DATA;
     }
     else {
-        port = 0xA1;
+        port = PIC2_DATA;
         irq -= 8;
     }
 
