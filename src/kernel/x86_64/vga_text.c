@@ -139,31 +139,39 @@ void show_cursor(void)
   }
 
 void scroll_line(void)
-  {
-    for (uint16_t i = 1; i < VGA_HEIGHT; ++i) {
-      for (uint16_t j = 0; j < VGA_WIDTH; ++j) {
-        uint16_t to_pos = j + ((i - 1) * VGA_WIDTH);
-        uint16_t from_pos = j + (i * VGA_WIDTH);
-
-        TEXT_AREA[to_pos] = TEXT_AREA[from_pos];
-
-      }
-    }
-
-    uint16_t i = VGA_HEIGHT - 1;
+{
+  for (uint16_t i = 1; i < VGA_HEIGHT; ++i) {
     for (uint16_t j = 0; j < VGA_WIDTH; ++j) {
-      uint16_t pos = j + (i * VGA_WIDTH);
+      uint16_t to_pos = j + ((i - 1) * VGA_WIDTH);
+      uint16_t from_pos = j + (i * VGA_WIDTH);
 
-      vga_char current = TEXT_AREA[pos];
-      vga_char clear = {
-        .character = ' ',
-        .style = current.style
-      };
-
-      TEXT_AREA[pos] = clear;
+      TEXT_AREA[to_pos] = TEXT_AREA[from_pos];
 
     }
-
-    set_cursor_pos(0, VGA_HEIGHT - 1);
-
   }
+
+  uint16_t i = VGA_HEIGHT - 1;
+  for (uint16_t j = 0; j < VGA_WIDTH; ++j) {
+    uint16_t pos = j + (i * VGA_WIDTH);
+
+    vga_char current = TEXT_AREA[pos];
+    vga_char clear = {
+      .character = ' ',
+      .style = current.style
+    };
+
+    TEXT_AREA[pos] = clear;
+  }
+
+  set_cursor_pos(0, VGA_HEIGHT - 1);
+}
+
+void puthex(uint8_t value, const uint8_t fg_color, const uint8_t bg_color)
+{
+  const char *hex_digits = "0123456789ABCDEF";
+
+  putchar('0', fg_color, bg_color);
+  putchar('x', fg_color, bg_color);
+  putchar(hex_digits[(value >> 4) & 0xF], fg_color, bg_color);
+  putchar(hex_digits[value & 0xF], fg_color, bg_color);
+}

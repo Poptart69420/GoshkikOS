@@ -44,3 +44,4 @@ void show_cursor(void);
 void scroll_line(void);
 void putchar(const char character, const uint8_t fg_color, const uint8_t bg_color);
 void putstr(const char *string, const uint8_t fg_color, const uint8_t bg_color);
+void puthex(uint8_t value, const uint8_t fg_color, const uint8_t bg_color);

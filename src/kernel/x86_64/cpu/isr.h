@@ -62,26 +62,13 @@ typedef struct __attribute__((packed)) {
 #define PIT_CHANNEL0    0x40
 #define PIT_COMMAND     0x43
 
-#define PACKETS_IN_PIPE 1024
-#define PS2_DATA        0x60
-#define PS2_COMMAND     0x64
-
 #define PIC_1           0x20
 #define PIC_2           0xA0
 
 #define END_OF_INT      0x20
-
-#define PS2_SCANCODE    0xF0
-#define PS2_ENABLE_P1   0xAE
-#define PS2_ENABLE_P2   0xA8
-#define PS2_DISABLE_P1  0xAD
-#define PS2_DISABLE_P2  0xA7
-
 #define IRQ_VECTR_OFFST 32
-
 #define ISR_COUNT       47
 
 void isr_handler(uint64_t isr_number, uint64_t error_code, registers* regs);
 void isr_install(void);
-void ps2_setup(void);
 void pit_init(uint32_t hz);
