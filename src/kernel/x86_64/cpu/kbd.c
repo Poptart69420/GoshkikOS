@@ -7,10 +7,11 @@ static uint8_t ps2_translate_keycode(uint64_t scancode)
 {
   switch(scancode)
     {
-    case 0x01:
-      return KEY_ESC;
-    default:
-      return KEY_NULL;
+    case 0x76: return KEY_ESC;
+    case 0x16: return KEY_1;
+    case 0x1E: return KEY_2;
+    case 0x26: return KEY_3;
+    default: return KEY_NULL;
     }
 }
 
@@ -71,7 +72,7 @@ void ps2_setup(void)
 
     status = inb(PS2_DATA);
 
-    status &= ~0x30;
+    status &= ~0x47;
     status |= 0x01;
 
     ps2_wait_input();
