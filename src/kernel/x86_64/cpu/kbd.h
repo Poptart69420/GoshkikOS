@@ -75,6 +75,7 @@
 #define PACKETS_IN_PIPE 1024
 #define PS2_DATA        0x60
 #define PS2_COMMAND     0x64
+#define PS2_TIMEOUT     1000
 
 
 #define PS2_SCANCODE    0xF0
