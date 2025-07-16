@@ -2,8 +2,12 @@
 #include "../vga_text.h"
 #include "../io.h"
 #include <stdint.h>
+#include <stdbool.h>
+#include <memory.h>
 
-static int expecting_break = 0;
+static uint8_t kbd_scancode[PS2_BUFFER_MAX];
+static uint8_t kbd_scancode_pos = 0;
+static bool ignore_input = false;
 
 static uint8_t ps2_translate_keycode(uint64_t scancode)
 {
@@ -47,8 +51,108 @@ static uint8_t ps2_translate_keycode(uint64_t scancode)
     case 0x3B: return KEY_J;
     case 0x42: return KEY_K;
     case 0x4B: return KEY_L;
+    case 0x4C: return KEY_SEMICOLON;
+    case 0x52: return KEY_APOSTROPHE;
+    case 0x0E: return KEY_GRAVE;
+    case 0x12: return KEY_LSHIFT;
+    case 0x5D: return KEY_BACKSLASH;
+    case 0x1A: return KEY_Z;
+    case 0x22: return KEY_X;
+    case 0x21: return KEY_C;
+    case 0x2A: return KEY_V;
+    case 0x32: return KEY_B;
+    case 0x31: return KEY_N;
+    case 0x3A: return KEY_M;
+    case 0x41: return KEY_COMMA;
+    case 0x49: return KEY_PERIOD;
+    case 0x4A: return KEY_SLASH;
+    case 0x59: return KEY_RSHIFT;
+    case 0x7C: return KEY_NUM_ASTERISK;
+    case 0x11: return KEY_LALT;
+    case 0x29: return KEY_SPACE;
+    case 0x58: return KEY_CAPSLOCK;
+    case 0x05: return KEY_F1;
+    case 0x06: return KEY_F2;
+    case 0x04: return KEY_F3;
+    case 0x0C: return KEY_F4;
+    case 0x03: return KEY_F5;
+    case 0x0B: return KEY_F6;
+    case 0x83: return KEY_F7;
+    case 0x0A: return KEY_F8;
+    case 0x01: return KEY_F9;
+    case 0x09: return KEY_F10;
+    case 0x77: return KEY_NUMLOCK;
+    case 0x7E: return KEY_SCROLLLOCK;
+    case 0x6C: return KEY_NUM_7;
+    case 0x75: return KEY_NUM_8;
+    case 0x7D: return KEY_NUM_9;
+    case 0x7B: return KEY_NUM_MINUS;
+    case 0x6B: return KEY_NUM_4;
+    case 0x73: return KEY_NUM_5;
+    case 0x74: return KEY_NUM_6;
+    case 0x79: return KEY_NUM_PLUS;
+    case 0x69: return KEY_NUM_1;
+    case 0x72: return KEY_NUM_2;
+    case 0x7A: return KEY_NUM_3;
+    case 0x70: return KEY_NUM_0;
+    case 0x71: return KEY_NUM_PERIOD;
+    case 0x78: return KEY_F11;
+    case 0x07: return KEY_F12;
+
+    case 0xE05A: return KEY_NUM_ENTER;
+    case 0xE014: return KEY_RCTRL;
+    case 0xE04A: return KEY_NUM_SLASH;
+
+    case 0xE012E07C: return KEY_SYSRQ;
+    case 0xE011: return KEY_RALT;
+    case 0xE06C: return KEY_HOME;
+
+
     default: return KEY_NULL;
     }
+}
+
+static void ps2_clear_scancode(void)
+  {
+    memset(&kbd_scancode[0], 0x00, 8);
+    kbd_scancode_pos = 0;
+  }
+
+static bool ps2_next_byte(const uint8_t* scancode, size_t bytes)
+{
+  switch(bytes) {
+  case 1:
+    if (scancode[0] == 0xE0) return true;
+    if (scancode[0] == 0xF0) return true;
+    if (scancode[0] == 0xE1) return true; // pause
+    break;
+  case 2:
+    if (scancode[1] == 0xF0) return true;
+    if (scancode[0] == 0xE0 && scancode[1] == 0x12) return true; // sysrq/print screen
+    if (scancode[0] == 0xE1 && scancode[1] == 0x14) return true; // pause
+    break;
+  case 3:
+    if (scancode[2] == 0x77) return true; // pause
+    if (scancode[2] == 0x7C) return true; // sysrq/print screen
+    if (scancode[2] == 0xE0) return true; // sysrq/print screen
+    break;
+  case 4:
+    if (scancode[3] == 0xE0) return true; // sysrq/print screen
+    if (scancode[3] == 0xE1) return true; // pause
+    break;
+  case 5:
+    if (scancode[4] == 0xF0) return true; // sysrq/print screen || pause
+    break;
+  case 6:
+    if (scancode[5] == 0x14) return true; // pause
+    break;
+  case 7:
+    if (scancode[6] == 0xF0) return true; // pause
+    break;
+  default:
+    break; // shouldn't be needed
+  }
+  return false;
 }
 
 static void ps2_flush_output(uint16_t timeout)
@@ -99,6 +203,8 @@ static void set_kboard_scancode(void)
 
 void ps2_setup(void)
 {
+  ignore_input = true;
+
   outb(PS2_COMMAND, PS2_DISABLE_P1);
   outb(PS2_COMMAND, PS2_DISABLE_P2);
 
@@ -121,10 +227,19 @@ void ps2_setup(void)
   outb(PS2_COMMAND, PS2_ENABLE_P1);
   outb(PS2_COMMAND, PS2_ENABLE_P2);
   set_kboard_scancode();
+
+  ignore_input = false;
+  ps2_flush_output(PS2_TIMEOUT);
+  inb(PS2_DATA);
 }
 
 void ps2_keyboard_handler(void)
 {
+  if (ignore_input) {
+    ps2_flush_output(PS2_DATA);
+    return;
+  }
+
   uint8_t code = inb(PS2_DATA);
 
   if (code == 0xFA || code == 0xFE) {
@@ -132,20 +247,28 @@ void ps2_keyboard_handler(void)
     return;
   }
 
-  if (code == 0xF0) {
-    expecting_break = 1;
+  if (kbd_scancode_pos < PS2_BUFFER_MAX) {
+    kbd_scancode[kbd_scancode_pos++] = code;
+  } else {
+    kbd_scancode_pos = 0;
     return;
   }
 
-  if (expecting_break) {
-    putstr("\nKey released: ", COLOR_YELLOW, COLOR_BLACK);
-    expecting_break = 0;
-  } else {
-    putstr("\nKey pressed: ", COLOR_GREEN, COLOR_BLACK);
+  if (ps2_next_byte(kbd_scancode, kbd_scancode_pos)) {
+    return;
   }
 
-  puthex(code, COLOR_BLUE, COLOR_BLACK);
-  uint8_t translated = ps2_translate_keycode(code);
+  uint64_t full_scancode = 0;
+  for (uint8_t i = 0; i < kbd_scancode_pos; ++i) {
+    full_scancode <<= 8;
+    full_scancode |= kbd_scancode[i];
+  }
+
+  putstr("\nKey pressed: ", COLOR_GREEN, COLOR_BLACK);
+
+  puthex(full_scancode, COLOR_BLUE, COLOR_BLACK);
+  uint8_t translated = ps2_translate_keycode(full_scancode);
   putstr(" => ", COLOR_CYAN, COLOR_BLACK);
   puthex(translated, COLOR_RED, COLOR_BLACK);
+  ps2_clear_scancode();
 }

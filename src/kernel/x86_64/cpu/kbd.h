@@ -70,7 +70,38 @@
 #define KEY_F8           66
 #define KEY_F9           67
 #define KEY_F10          68
-
+#define KEY_NUMLOCK      69
+#define KEY_SCROLLLOCK   70
+#define KEY_NUM_7        71
+#define KEY_NUM_8        72
+#define KEY_NUM_9        73
+#define KEY_NUM_MINUS    74
+#define KEY_NUM_4        75
+#define KEY_NUM_5        76
+#define KEY_NUM_6        77
+#define KEY_NUM_PLUS     78
+#define KEY_NUM_1        79
+#define KEY_NUM_2        80
+#define KEY_NUM_3        81
+#define KEY_NUM_0        82
+#define KEY_NUM_PERIOD   83
+#define KEY_F11          84
+#define KEY_F12          85
+#define KEY_NUM_ENTER    86
+#define KEY_RCTRL        87
+#define KEY_NUM_SLASH    88
+#define KEY_SYSRQ        89
+#define KEY_RALT         90
+#define KEY_HOME         91
+#define KEY_UP           92
+#define KEY_PAGEUP       93
+#define KEY_LEFT         94
+#define KEY_RIGHT        95
+#define KEY_END          96
+#define KEY_DOWN         97
+#define KEY_PAGEDOWN     98
+#define KEY_INSERT       99
+#define KEY_DELETE       100
 
 #define PACKETS_IN_PIPE 1024
 #define PS2_DATA        0x60
@@ -84,6 +115,7 @@
 #define PS2_DISABLE_P1  0xAD
 #define PS2_DISABLE_P2  0xA7
 
+#define PS2_BUFFER_MAX 8
 
 void ps2_setup(void);
 void ps2_keyboard_handler(void);
