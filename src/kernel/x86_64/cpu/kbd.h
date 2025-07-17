@@ -102,6 +102,12 @@
 #define KEY_PAGEDOWN     98
 #define KEY_INSERT       99
 #define KEY_DELETE       100
+#define KEY_MUTE         101
+#define KEY_VOL_DOWN     102
+#define KEY_VOL_UP       103
+#define KEY_POWER        104
+#define KEY_PAUSE        105
+
 
 #define PACKETS_IN_PIPE 1024
 #define PS2_DATA        0x60

@@ -106,7 +106,22 @@ static uint8_t ps2_translate_keycode(uint64_t scancode)
     case 0xE012E07C: return KEY_SYSRQ;
     case 0xE011: return KEY_RALT;
     case 0xE06C: return KEY_HOME;
+    case 0xE075: return KEY_UP;
+    case 0xE07D: return KEY_PAGEUP;
+    case 0xE06B: return KEY_LEFT;
+    case 0xE074: return KEY_RIGHT;
+    case 0xE069: return KEY_END;
+    case 0xE072: return KEY_DOWN;
+    case 0xE07A: return KEY_PAGEDOWN;
+    case 0xE070: return KEY_INSERT;
+    case 0xE071: return KEY_DELETE;
+    case 0xE023: return KEY_MUTE;
+    case 0xE021: return KEY_VOL_DOWN;
+    case 0xE032: return KEY_VOL_UP;
+    case 0xE037: return KEY_POWER;
+    case 0xE11477E1F014F077: return KEY_PAUSE;
 
+    case 0xF076: return 0x80 | KEY_ESC;
 
     default: return KEY_NULL;
     }
