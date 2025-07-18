@@ -385,11 +385,14 @@ void ps2_keyboard_handler(void)
     full_scancode |= kbd_scancode[i];
   }
 
+  /*
   putstr("\nKey pressed: ", COLOR_GREEN, COLOR_BLACK);
 
   puthex(full_scancode, COLOR_BLUE, COLOR_BLACK);
   uint8_t translated = ps2_translate_keycode(full_scancode);
   putstr(" => ", COLOR_CYAN, COLOR_BLACK);
   puthex(translated, COLOR_RED, COLOR_BLACK);
+  */
+
   ps2_clear_scancode();
 }
