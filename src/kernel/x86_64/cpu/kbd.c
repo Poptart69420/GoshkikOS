@@ -102,7 +102,7 @@ static uint8_t ps2_translate_keycode(uint64_t scancode)
     case 0xE05A: return KEY_NUM_ENTER;
     case 0xE014: return KEY_RCTRL;
     case 0xE04A: return KEY_NUM_SLASH;
-
+    case 0xE07B: return KEY_NUM_DASH;
     case 0xE012E07C: return KEY_SYSRQ;
     case 0xE011: return KEY_RALT;
     case 0xE06C: return KEY_HOME;
@@ -120,6 +120,7 @@ static uint8_t ps2_translate_keycode(uint64_t scancode)
     case 0xE032: return KEY_VOL_UP;
     case 0xE037: return KEY_POWER;
     case 0xE11477E1F014F077: return KEY_PAUSE;
+    case 0xE027: return KEY_SUPER;
 
     case 0xF076: return 0x80 | KEY_ESC;
     case 0xF016: return 0x80 | KEY_1;
@@ -173,6 +174,60 @@ static uint8_t ps2_translate_keycode(uint64_t scancode)
     case 0xF03A: return 0x80 | KEY_M;
     case 0xF041: return 0x80 | KEY_COMMA;
     case 0xF049: return 0x80 | KEY_PERIOD;
+    case 0xF04A: return 0x80 | KEY_SLASH;
+    case 0xF059: return 0x80 | KEY_RSHIFT;
+    case 0xF07C: return 0x80 | KEY_NUM_ASTERISK;
+    case 0xF011: return 0x80 | KEY_LALT;
+    case 0xF029: return 0x80 | KEY_SPACE;
+    case 0xF058: return 0x80 | KEY_CAPSLOCK;
+    case 0xF005: return 0x80 | KEY_F1;
+    case 0xF006: return 0x80 | KEY_F2;
+    case 0xF004: return 0x80 | KEY_F3;
+    case 0xF00C: return 0x80 | KEY_F4;
+    case 0xF003: return 0x80 | KEY_F5;
+    case 0xF00B: return 0x80 | KEY_F6;
+    case 0xF083: return 0x80 | KEY_F7;
+    case 0xF00A: return 0x80 | KEY_F8;
+    case 0xF001: return 0x80 | KEY_F9;
+    case 0xF009: return 0x80 | KEY_F10;
+    case 0xF077: return 0x80 | KEY_NUMLOCK;
+    case 0xF07E: return 0x80 | KEY_SCROLLLOCK;
+    case 0xF06C: return 0x80 | KEY_NUM_7;
+    case 0xF075: return 0x80 | KEY_NUM_8;
+    case 0xF07D: return 0x80 | KEY_NUM_MINUS;
+    case 0xF06B: return 0x80 | KEY_NUM_4;
+    case 0xF073: return 0x80 | KEY_NUM_5;
+    case 0xF074: return 0x80 | KEY_NUM_6;
+    case 0xF079: return 0x80 | KEY_NUM_PLUS;
+    case 0xF069: return 0x80 | KEY_NUM_1;
+    case 0xF072: return 0x80 | KEY_NUM_2;
+    case 0xF07A: return 0x80 | KEY_NUM_3;
+    case 0xF070: return 0x80 | KEY_NUM_0;
+    case 0xF071: return 0x80 | KEY_NUM_PERIOD;
+    case 0xF078: return 0x80 | KEY_F11;
+    case 0xF007: return 0x80 | KEY_F12;
+
+    case 0xE0F05A: return 0x80 | KEY_NUM_ENTER;
+    case 0xE0F014: return 0x80 | KEY_RCTRL;
+    case 0xE0F04A: return 0x80 | KEY_NUM_SLASH;
+    case 0xF07B: return 0x80 | KEY_NUM_DASH;
+    case 0xE0F07CE0F012: return 0x80 | KEY_SYSRQ;
+    case 0xE0F011: return 0x80 | KEY_RALT;
+    case 0xE0F06C: return 0x80 | KEY_HOME;
+    case 0xE0F075: return 0x80 | KEY_UP;
+    case 0xE0F07D: return 0x80 | KEY_PAGEUP;
+    case 0xE0F06B: return 0x80 | KEY_LEFT;
+    case 0xE0F074: return 0x80 | KEY_RIGHT;
+    case 0xE0F069: return 0x80 | KEY_END;
+    case 0xE0F072: return 0x80 | KEY_DOWN;
+    case 0xE0F07A: return 0x80 | KEY_PAGEDOWN;
+    case 0xE0F070: return 0x80 | KEY_INSERT;
+    case 0xE0F071: return 0x80 | KEY_DELETE;
+    case 0xE0F023: return 0x80 | KEY_MUTE;
+    case 0xE0F021: return 0x80 | KEY_VOL_DOWN;
+    case 0xE0F032: return 0x80 | KEY_VOL_UP;
+    case 0xE0F037: return 0x80 | KEY_POWER;
+    case 0xE0F027: return 0x80 | KEY_SUPER;
 
     default: return KEY_NULL;
     }
