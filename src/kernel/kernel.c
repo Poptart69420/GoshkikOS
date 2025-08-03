@@ -2,6 +2,7 @@
 #include "./x86_64/cpu/isr.h"
 #include "./x86_64/cpu/pic.h"
 #include "./x86_64/cpu/kbd.h"
+#include <stdint.h>
 
 #define TIMER_HZ 100
 

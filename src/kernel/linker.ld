@@ -19,6 +19,6 @@ SECTIONS
 
   .bss : {
     *(.bss*)
-    *(COMMON)
+    _end = .;
   }
 }

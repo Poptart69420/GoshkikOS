@@ -5,11 +5,11 @@
 #include <stdbool.h>
 #include <memory.h>
 
-static uint8_t kbd_scancode[PS2_BUFFER_MAX];
-static uint8_t kbd_scancode_pos = 0;
+static uint64_t kbd_scancode[PS2_BUFFER_MAX];
+static uint64_t kbd_scancode_pos = 0;
 static bool ignore_input = false;
 
-static uint8_t ps2_translate_keycode(uint64_t scancode)
+static uint64_t ps2_translate_keycode(uint64_t scancode)
 {
   switch(scancode)
     {
@@ -239,7 +239,7 @@ static void ps2_clear_scancode(void)
     kbd_scancode_pos = 0;
   }
 
-static bool ps2_next_byte(const uint8_t* scancode, size_t bytes)
+static bool ps2_next_byte(const uint64_t* scancode, size_t bytes)
 {
   switch(bytes) {
   case 1:
@@ -361,7 +361,7 @@ void ps2_keyboard_handler(void)
     return;
   }
 
-  uint8_t code = inb(PS2_DATA);
+  uint64_t code = inb(PS2_DATA);
 
   if (code == 0xFA || code == 0xFE) {
     ps2_flush_output(PS2_TIMEOUT);
@@ -385,14 +385,7 @@ void ps2_keyboard_handler(void)
     full_scancode |= kbd_scancode[i];
   }
 
-  /*
-  putstr("\nKey pressed: ", COLOR_GREEN, COLOR_BLACK);
-
-  puthex(full_scancode, COLOR_BLUE, COLOR_BLACK);
-  uint8_t translated = ps2_translate_keycode(full_scancode);
-  putstr(" => ", COLOR_CYAN, COLOR_BLACK);
-  puthex(translated, COLOR_RED, COLOR_BLACK);
-  */
+  ps2_translate_keycode(full_scancode);
 
   ps2_clear_scancode();
 }

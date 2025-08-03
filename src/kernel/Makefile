@@ -6,7 +6,7 @@ LD        ?= ld
 OBJCOPY   ?= objcopy
 
 BUILD_DIR := $(abspath build)
-LIBH_DIR  := ../standard_library
+LIBH_DIR  := ../standard_library/headers
 INC_DIR   := ./x86_64
 LIBC_DIR  := ./library
 
@@ -35,6 +35,8 @@ ASM_INT_OBJS  := $(patsubst $(INT_DIR)/%.asm,$(OBJ_DIR)/%.o,$(ASM_INT_SRCS))
 C_LIB_SRCS    := $(wildcard $(LIBC_DIR)/*.c)
 
 C_LIB_OBJS    := $(patsubst $(LIBC_DIR)/%.c,$(LOBJ_DIR)/%.o,$(C_LIB_SRCS))
+
+INITRAMFS_OBJ := $(BUILD_DIR)/initramfs.o
 
 CFLAGS        := -nostdlib -nostdinc -I $(LIBH_DIR) -m64 -ffreestanding -Wall -Wextra -g -O0
 LDFLAGS       := -m elf_x86_64 -T $(LINKER) -g -O0
@@ -74,7 +76,7 @@ $(LOBJ_DIR)/%.o: $(LIBC_DIR)/%.c | $(LOBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Link everything into ELF
-$(KERNEL_ELF): $(KERNEL_OBJ) $(C_OBJS) $(ASM_OBJS) $(C_INT_OBJS) $(ASM_INT_OBJS) $(C_LIB_OBJS)
+$(KERNEL_ELF): $(KERNEL_OBJ) $(C_OBJS) $(ASM_OBJS) $(C_INT_OBJS) $(ASM_INT_OBJS) $(C_LIB_OBJS) #$(INITRAMFS_OBJ)
 	$(LD) $(LDFLAGS) $^ -o $@
 
 # Convert ELF to flat binary
