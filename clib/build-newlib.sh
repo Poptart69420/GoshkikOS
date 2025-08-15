@@ -1,14 +1,19 @@
 mkdir -p newlib/build-newlib
 cd newlib/build-newlib
 
-CFLAGS="-g -O2" CXXFLAGS="-g -O2" ../configure \
-  --target=x86_64-shitos \
-  --prefix=$HOME/cross-tools/ \
-  --disable-newlib-supplied-syscalls \
-  --enable-dependency-tracking
+../configure \
+    --target=x86_64-shitos \
+    --prefix=$SHITOS_PATH/cross-tools \
+    --disable-multilib
 
-make -j$(nproc)
-make install
+make all
+make DESTDIR=${SYSROOT} install
+
+mkdir -p x86_64-shitos/newlib/libc/sys/shitos/.deps
+
+make all
+make DESTDIR=${SYSROOT} install
+
 cd ..
 mv build-newlib ../../newlib
 cd ..

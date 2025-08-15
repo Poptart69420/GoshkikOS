@@ -3,7 +3,7 @@ cd gcc/build-gcc
 
 ../configure \
     --target=x86_64-shitos \
-    --prefix=$HOME/cross-tools \
+    --prefix=$SHITOS_PATH/cross-tools \
     --disable-nls \
     --enable-languages=c \
     --without-headers \
@@ -14,6 +14,7 @@ cd gcc/build-gcc
     --disable-libgomp \
     --disable-libatomic \
     --disable-libstdcxx-pch \
+    --with-newlib
 
 make all-gcc -j$(nproc)
 make all-target-libgcc -j$(nproc)
