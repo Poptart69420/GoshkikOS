@@ -139,7 +139,7 @@ void irq_handler(uint64_t vector)
         ps2_keyboard_handler();
         break;
       default:
-        putstr(irq_names[vector], COLOR_YELLOW, COLOR_BLACK);
+        vga_putstr(irq_names[vector], COLOR_YELLOW, COLOR_BLACK);
         break;
     }
 
@@ -158,9 +158,9 @@ void isr_handler(uint64_t vector, uint64_t error_code, registers* regs)
     return;
 
   } else if (vector < IRQ_VECTR_OFFST) {
-    putstr(exception_messages[vector], COLOR_WHITE, COLOR_RED);
+    vga_putstr(exception_messages[vector], COLOR_WHITE, COLOR_RED);
   } else {
-    putstr("Unknown Exception", COLOR_WHITE, COLOR_RED);
+    vga_putstr("Unknown Exception", COLOR_WHITE, COLOR_RED);
   }
 
   return;

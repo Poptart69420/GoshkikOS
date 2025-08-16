@@ -24,7 +24,7 @@ void clear_win(uint8_t fg_color, uint8_t bg_color)
     }
   }
 
-void putchar(const char character, const uint8_t fg_color, const uint8_t bg_color)
+void vga_putchar(const char character, const uint8_t fg_color, const uint8_t bg_color)
   {
     uint16_t pos = get_cursor_pos();
 
@@ -38,14 +38,14 @@ void putchar(const char character, const uint8_t fg_color, const uint8_t bg_colo
       }
     } else if (character == '\b') {
       reverse_cursor();
-      putchar(' ', fg_color, bg_color);
+      vga_putchar(' ', fg_color, bg_color);
       reverse_cursor();
     } else if (character == '\r') {
       uint8_t row = (uint8_t) (pos / VGA_WIDTH);
       set_cursor_pos(0, row);
     } else if (character == '\t') {
       for (uint8_t i = 0; i < 4; ++i) {
-        putchar(' ', fg_color, bg_color);
+        vga_putchar(' ', fg_color, bg_color);
       }
       advance_cursor();
     } else {
@@ -60,10 +60,10 @@ void putchar(const char character, const uint8_t fg_color, const uint8_t bg_colo
     }
   }
 
-void putstr(const char *string, const uint8_t fg_color, const uint8_t bg_color)
+void vga_putstr(const char *string, const uint8_t fg_color, const uint8_t bg_color)
   {
     while (*string != '\0') {
-      putchar(*string++, fg_color, bg_color);
+      vga_putchar(*string++, fg_color, bg_color);
     }
   }
 
@@ -166,12 +166,12 @@ void scroll_line(void)
   set_cursor_pos(0, VGA_HEIGHT - 1);
 }
 
-void puthex(uint8_t value, const uint8_t fg_color, const uint8_t bg_color)
+void vga_puthex(uint8_t value, const uint8_t fg_color, const uint8_t bg_color)
 {
   const char *hex_digits = "0123456789ABCDEF";
 
-  putchar('0', fg_color, bg_color);
-  putchar('x', fg_color, bg_color);
-  putchar(hex_digits[(value >> 4) & 0xF], fg_color, bg_color);
-  putchar(hex_digits[value & 0xF], fg_color, bg_color);
+  vga_putchar('0', fg_color, bg_color);
+  vga_putchar('x', fg_color, bg_color);
+  vga_putchar(hex_digits[(value >> 4) & 0xF], fg_color, bg_color);
+  vga_putchar(hex_digits[value & 0xF], fg_color, bg_color);
 }

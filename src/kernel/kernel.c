@@ -12,9 +12,7 @@ void kmain(void)
     set_cursor_pos(0, 0);
     clear_win(COLOR_GREEN, COLOR_BLACK);
     const char *msg_kernel_enter = "ENTERED SHITOS KERNEL...\n";
-    printf("Hi");
-    for (;;);
-    putstr(msg_kernel_enter, COLOR_GREEN, COLOR_BLACK);
+    vga_putstr(msg_kernel_enter, COLOR_GREEN, COLOR_BLACK);
 
     pic_mask_irq(0xFF);
     pic_remap(PIC1_COMMAND, 0x28);
@@ -22,6 +20,8 @@ void kmain(void)
     ps2_setup();
 
     isr_install();
+
+    printf("Hi\n");
 
     for (;;)
       __asm__ volatile ("hlt");

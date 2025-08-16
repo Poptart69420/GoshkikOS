@@ -308,7 +308,7 @@ static void set_kboard_scancode(void)
   outb(PS2_DATA, 0xF0);
   ps2_wait_output();
   if (inb(PS2_DATA) != 0xFA) {
-    putstr("Failed to send 0xF0\n", COLOR_RED, COLOR_BLACK);
+    vga_putstr("Failed to send 0xF0\n", COLOR_RED, COLOR_BLACK);
     return;
   }
 
@@ -316,7 +316,7 @@ static void set_kboard_scancode(void)
   outb(PS2_DATA, 0x02);
   ps2_wait_output();
   if (inb(PS2_DATA) != 0xFA) {
-    putstr("Failed to send scancode set\n", COLOR_RED, COLOR_BLACK);
+    vga_putstr("Failed to send scancode set\n", COLOR_RED, COLOR_BLACK);
   }
   ps2_flush_output(PS2_TIMEOUT);
 
