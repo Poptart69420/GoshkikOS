@@ -3,7 +3,7 @@ cd gcc/build-gcc
 
 ../configure \
     --target=x86_64-shitos \
-    --prefix=$SHITOS_PATH/cross-tools \
+    --prefix=$HOME/cross-tools \
     --disable-nls \
     --enable-languages=c \
     --without-headers \

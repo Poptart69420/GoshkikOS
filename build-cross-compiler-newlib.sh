@@ -1,6 +1,7 @@
-echo SHITOS_PATH=$(pwd)
 
 cd clib
+./build-newlib.sh
+
 ./build-newlib.sh
 
 cd ..

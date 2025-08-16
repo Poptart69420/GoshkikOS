@@ -3,7 +3,7 @@ cd binutils-gdb/build-binutils
 
 ../configure \
     --target=x86_64-shitos \
-    --prefix=$SHITOS_PATH/cross-tools \
+    --prefix=$HOME/cross-tools \
     --with-sysroot \
     --disable-nls \
     --disable-werror

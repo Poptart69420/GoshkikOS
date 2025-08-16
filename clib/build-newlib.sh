@@ -3,7 +3,7 @@ cd newlib/build-newlib
 
 ../configure \
     --target=x86_64-shitos \
-    --prefix=$SHITOS_PATH/cross-tools \
+    --prefix=$HOME/cross-tools \
     --disable-multilib
 
 make all
@@ -15,5 +15,4 @@ make all
 make DESTDIR=${SYSROOT} install
 
 cd ..
-mv build-newlib ../../newlib
 cd ..
