@@ -11,5 +11,4 @@ cd binutils-gdb/build-binutils
 make -j$(nproc)
 make install
 cd ..
-mv build-binutils ../../binutils
 cd ..

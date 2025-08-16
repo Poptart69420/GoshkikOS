@@ -3,6 +3,7 @@
 #include "./x86_64/cpu/pic.h"
 #include "./x86_64/cpu/kbd.h"
 #include <stdint.h>
+#include <stdio.h>
 
 #define TIMER_HZ 100
 
@@ -11,6 +12,8 @@ void kmain(void)
     set_cursor_pos(0, 0);
     clear_win(COLOR_GREEN, COLOR_BLACK);
     const char *msg_kernel_enter = "ENTERED SHITOS KERNEL...\n";
+    printf("Hi");
+    for (;;);
     putstr(msg_kernel_enter, COLOR_GREEN, COLOR_BLACK);
 
     pic_mask_irq(0xFF);

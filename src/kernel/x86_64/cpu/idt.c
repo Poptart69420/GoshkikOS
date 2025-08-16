@@ -1,6 +1,6 @@
 #include "idt.h"
 #include <stdint.h>
-#include <stddef.h>
+#include <stdlib.h>
 
 idt_gate main_idt[IDT_ENTRIES];
 idt_register main_idt_reg;

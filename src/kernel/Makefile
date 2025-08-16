@@ -1,8 +1,11 @@
 .PHONY: all clean
 
+TARGET = x86_64-shitos
+PREFIX = $(HOME)/cross-tools
+
 ASM       ?= nasm
-CC        ?= gcc
-LD        ?= ld
+CC        ?= $(TARGET)gcc
+LD        ?= $(TARGET)ld
 OBJCOPY   ?= objcopy
 
 BUILD_DIR := $(abspath build)
@@ -29,11 +32,7 @@ ASM_INT_SRCS  := $(wildcard $(INT_DIR)/*.asm)
 C_INT_OBJS    := $(patsubst $(INT_DIR)/%.c,$(OBJ_DIR)/%.o,$(C_INT_SRCS))
 ASM_INT_OBJS  := $(patsubst $(INT_DIR)/%.asm,$(OBJ_DIR)/%.o,$(ASM_INT_SRCS))
 
-C_LIB_SRCS    := $(wildcard $(LIBC_DIR)/*.c)
-
-C_LIB_OBJS    := $(patsubst $(LIBC_DIR)/%.c,$(LOBJ_DIR)/%.o,$(C_LIB_SRCS))
-
-CFLAGS        := -nostdlib -nostdinc -I $(LIBH_DIR) -m64 -ffreestanding -Wall -Wextra -g -O0
+CFLAGS        := -nostdlib -nostdinc -m64 -ffreestanding -Wall -Wextra -g -O0 -I$(PREFIX)/$(TARGET)/include
 LDFLAGS       := -m elf_x86_64 -T $(LINKER) -g -O0
 
 all: $(KERNEL_BIN)
@@ -63,13 +62,9 @@ $(OBJ_DIR)/%.o: $(INT_DIR)/%.c | $(OBJ_DIR)
 $(OBJ_DIR)/%.o: $(INT_DIR)/%.asm | $(OBJ_DIR)
 	$(ASM) -f elf64 $< -o $@
 
-# Compile C library C files
-$(LOBJ_DIR)/%.o: $(LIBC_DIR)/%.c | $(LOBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
 # Link everything into ELF
 $(KERNEL_ELF): $(KERNEL_OBJ) $(C_OBJS) $(ASM_OBJS) $(C_INT_OBJS) $(ASM_INT_OBJS)
-	$(LD) $(LDFLAGS) $^ -o $@
+	$(LD) $(LDFLAGS) $^ -o $@ -L$(PREFIX)/$(TARGET)/lib -lc
 
 # Convert ELF to flat binary
 $(KERNEL_BIN): $(KERNEL_ELF)

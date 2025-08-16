@@ -3,7 +3,7 @@
 #include "../io.h"
 #include <stdint.h>
 #include <stdbool.h>
-#include <memory.h>
+#include <string.h>
 
 static uint64_t kbd_scancode[PS2_BUFFER_MAX];
 static uint64_t kbd_scancode_pos = 0;
