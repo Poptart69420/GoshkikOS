@@ -384,6 +384,11 @@ i[3-7]86-*-linux-*)	targ_emul=elf_i386
 i[3-7]86-*-redox*)	targ_emul=elf_i386
 			targ_extra_emuls=elf_x86_64
 			;;
+i[3-7]86-*-shitos*)
+            targ_emul=elf_i386_shitos
+            targ_extra_emuls="elf_i386"
+            targ64_extra_emuls="elf_x86_64_shitos elf_x86_64"
+            ;;
 i[3-7]86-*-solaris2*)	targ_emul=elf_i386_sol2
 			targ_extra_emuls="elf_i386_ldso elf_i386 elf_iamcu elf_x86_64_sol2 elf_x86_64"
 			targ_extra_libpath=$targ_extra_emuls
@@ -1019,6 +1024,10 @@ x86_64-*-linux-*)	targ_emul=elf_x86_64
 x86_64-*-redox*)	targ_emul=elf_x86_64
 			targ_extra_emuls=elf_i386
 			;;
+x86_64-*-shitos*)
+            targ_emul=elf_x86_64_shitos
+            targ_extra_emuls="elf_i386_shitos elf_x86_64 elf_i386"
+            ;;
 x86_64-*-solaris2*)	targ_emul=elf_x86_64_sol2
 			targ_extra_emuls="elf_x86_64 elf_i386_sol2 elf_i386_ldso elf_i386 elf_iamcu"
 			targ_extra_libpath=$targ_extra_emuls

@@ -2104,6 +2104,7 @@ case $os in
 	| secbsd* \
 	| sei* \
 	| serenity* \
+	| shitos* \
 	| sim* \
 	| skyos* \
 	| solaris* \

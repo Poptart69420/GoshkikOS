@@ -244,6 +244,7 @@ case ${generic_target} in
   i386-*-lynxos*)			fmt=elf em=lynx ;;
   i386-*-redox*)			fmt=elf ;;
   i386-*-solaris*)			fmt=elf em=solaris ;;
+  i386-*-shitos*)       fmt=elf ;;
   i386-*-freebsd* \
   | i386-*-kfreebsd*-gnu)		fmt=elf em=freebsd ;;
   i386-*-msdosdjgpp* \
