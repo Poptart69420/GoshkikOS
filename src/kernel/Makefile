@@ -1,12 +1,14 @@
 .PHONY: all clean
 
 TARGET = x86_64-shitos
-PREFIX = $(HOME)/cross-tools
+PREFIX = ../../cross_compiler/build/
+
+SYS_ROOT = ../../sysroot
 
 ASM       ?= nasm
-CC        ?= $(TARGET)gcc
-LD        ?= $(TARGET)ld
-OBJCOPY   ?= objcopy
+CC        ?= $(PREFIX)/bin/$(TARGET)-gcc
+LD        ?= $(PREFIX)/bin/$(TARGET)-ld
+OBJCOPY   ?= $(PREFIX)/bin/$(TARGET)-objcopy
 
 BUILD_DIR := $(abspath build)
 INC_DIR   := ./x86_64
@@ -32,8 +34,8 @@ ASM_INT_SRCS  := $(wildcard $(INT_DIR)/*.asm)
 C_INT_OBJS    := $(patsubst $(INT_DIR)/%.c,$(OBJ_DIR)/%.o,$(C_INT_SRCS))
 ASM_INT_OBJS  := $(patsubst $(INT_DIR)/%.asm,$(OBJ_DIR)/%.o,$(ASM_INT_SRCS))
 
-CFLAGS        := -nostdlib -nostdinc -m64 -ffreestanding -Wall -Wextra -g -O0 -I$(PREFIX)/$(TARGET)/include
-LDFLAGS       := -m elf_x86_64 -T $(LINKER) -g -O0
+CFLAGS        := -nostdlib -nostdinc -m64 -ffreestanding -Wall -Wextra -g -O0 -isysroot $(SYS_ROOT) -I$(INC_DIR) -I$(SYS_ROOT)/usr/x86_64-shitos/include
+LDFLAGS       := -m elf_x86_64 -T $(LINKER) -g -O0 -L$(SYS_ROOT)/usr/x86_64-shitos/lib -L$(SYS_ROOT)/usr/include -lc
 
 all: $(KERNEL_BIN)
 
