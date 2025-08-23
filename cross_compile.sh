@@ -15,7 +15,6 @@ export PATH="$PREFIX/bin:$PATH"
 BINUTILS_SRC="$PROJECT_ROOT/cross_compiler/binutils-with-gold-2.44"
 GCC_SRC="$PROJECT_ROOT/cross_compiler/gcc"
 
-echo "--- Preparing newlib source ---"
 cd "$PROJECT_ROOT/cross_compiler"
 
 echo "--- Building Binutils ---"
@@ -32,7 +31,7 @@ make -j$(nproc)
 make install
 cd ../../
 
-echo "--- Building GCC (Stage 1) ---"
+echo "--- Building GCC ---"
 rm -rf build/build-gcc
 mkdir -p build/build-gcc
 cd build/build-gcc
