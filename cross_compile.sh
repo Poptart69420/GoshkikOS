@@ -40,8 +40,7 @@ cd build/build-gcc
     --prefix="$PREFIX" \
     --with-sysroot="$SYS_ROOT" \
     --disable-nls \
-    --enable-languages=c \
-    --without-headers
+    --enable-languages=c
 make -j$(nproc) all-gcc
 make install-gcc
 cd "$PROJECT_ROOT"
