@@ -12,7 +12,7 @@ export TARGET=x86_64-shitos
 
 export PATH="$PREFIX/bin:$PATH"
 
-BINUTILS_SRC="$PROJECT_ROOT/cross_compiler/binutils-with-gold-2.44"
+BINUTILS_SRC="$PROJECT_ROOT/cross_compiler/binutils-gdb"
 GCC_SRC="$PROJECT_ROOT/cross_compiler/gcc"
 
 cd "$PROJECT_ROOT/cross_compiler"

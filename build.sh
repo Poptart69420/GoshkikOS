@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 
+mkdir build
 export PATH="$PWD/cross_compiler/build/bin:$PATH"
 x86_64-shitos-gcc -c src/crt0.s -o build/crt0.o -g
 x86_64-shitos-gcc -c src/crti.s -o build/crti.o -g
