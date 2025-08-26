@@ -1,4 +1,4 @@
-extern gdt_pts
+extern gdt_ptr
 
 global gdt_reload
 gdt_reload:

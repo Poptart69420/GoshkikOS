@@ -7,7 +7,7 @@ MAKEFLAGS += -rR
 override OUTPUT := build/bin/shitos
 
 # User controllable toolchain and toolchain prefix.
-TOOLCHAIN :=
+TOOLCHAIN := x86_64-shitos
 TOOLCHAIN_PREFIX :=
 ifneq ($(TOOLCHAIN),)
     ifeq ($(TOOLCHAIN_PREFIX),)
@@ -112,7 +112,7 @@ all: $(OUTPUT)
 # Link rules for the final executable.
 $(OUTPUT): GNUmakefile linker.lds $(OBJ)
 	mkdir -p "$$(dirname $@)"
-	$(LD) $(LDFLAGS) build/crt0.o build/crti.o $(OBJ) build/crtn.o -o $@
+	$(LD) $(LDFLAGS) $(filter build/obj/src/crt%, $(OBJ)) $(filter-out build/obj/src/crt%, $(OBJ)) -o $@
 
 # Compilation rules for *.c files.
 build/obj/%.c.o: %.c GNUmakefile
