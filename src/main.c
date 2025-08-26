@@ -4,6 +4,7 @@
 #include <limine.h>
 
 #include "klibc/mem.h"
+#include "klibc/gdt/gdt.h"
 
 __attribute__((used, section(".limine_requests")))
 static volatile LIMINE_BASE_REVISION(3);
@@ -29,6 +30,9 @@ static void hcf(void)
 
 void kmain(void)
 {
+
+  gdt_init();
+
   if (LIMINE_BASE_REVISION_SUPPORTED == false) {
     hcf();
   }
