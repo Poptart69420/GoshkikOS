@@ -6,8 +6,6 @@
 
 #include "../include/selectors.h"
 
-#include "../include/selectors.h"
-
 #define IDT_ENTRIES 256
 
 struct idt_entry
@@ -26,5 +24,8 @@ struct idtr
   uint16_t limit;
   uint64_t base;
 } __attribute__((packed));
+
+void idt_set_gate(size_t vector, void *handler, uint8_t ist);
+void idt_reload(void);
 
 #endif // IDT_H_

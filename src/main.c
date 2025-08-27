@@ -5,6 +5,7 @@
 
 #include "klibc/mem.h"
 #include "klibc/gdt/gdt.h"
+#include "klibc/isr/isr.h"
 
 __attribute__((used, section(".limine_requests")))
 static volatile LIMINE_BASE_REVISION(3);
@@ -32,6 +33,7 @@ void kmain(void)
 {
 
   gdt_init();
+  isr_install();
 
   if (LIMINE_BASE_REVISION_SUPPORTED == false) {
     hcf();

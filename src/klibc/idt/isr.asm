@@ -44,7 +44,7 @@ isr_common:
     pushall
     cld
     mov rdi, rsp
-    xor rbp, tbp
+    xor rbp, rbp
     call isr_handler
     popall
     add rsp, 24
@@ -72,7 +72,7 @@ isr%1:
 
 %endmacro
 
-#define is_error(i) (i == 8) || (i >= 10 && i <= 14) || (i == 17) || (i == 21) || (i == 29) || (i == 30)
+%define is_error(i) (i == 8 || (i >= 10 && i <= 14) || i == 17 || i == 21 || i == 29 || i == 30)
 
 %assign i 0
 %rep 256
