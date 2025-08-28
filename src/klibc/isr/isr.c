@@ -1,6 +1,45 @@
 #include "isr.h"
 #include "../drivers/vga/vga_text.h"
 
+static const char *isr_exception_messages[] =
+{
+  "Divide by zero",
+  "Debug",
+  "NMI",
+  "Breakpoint",
+  "Overflow",
+  "Bound Range Exceeded",
+  "Invalid Opcode",
+  "Device Not Available",
+  "Double fault",
+  "Co-processor Segment Overrun",
+  "Invalid TSS",
+  "Segment not present",
+  "Stack-Segment Fault",
+  "GPF",
+  "Page Fault",
+  "Reserved",
+  "x87 Floating Point Exception",
+  "alignment check",
+  "Machine check",
+  "SIMD floating-point exception",
+  "Virtualization Exception",
+  "Deadlock",
+  "Reserved",
+  "Reserved",
+  "Reserved",
+  "Reserved",
+  "Reserved",
+  "Reserved",
+  "Reserved",
+  "Reserved",
+  "Reserved",
+  "Security Exception",
+  "Reserved",
+  "Triple Fault",
+  "FPU error"
+};
+
 void isr_install(void)
 {
   idt_set_gate(0, isr0, 0);

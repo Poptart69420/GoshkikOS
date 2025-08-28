@@ -2,6 +2,7 @@
 #define VGA_TEXT_H_
 
 #include <stdint.h>
+#include "../../include/io.h"
 
 #define VGA_START 0xB8000
 #define VGA_WIDTH 80

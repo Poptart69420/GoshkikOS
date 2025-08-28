@@ -1,9 +1,5 @@
 #include "vga_text.h"
 
-#include "vga_text.h"
-#include "io.h"
-#include <stdint.h>
-
 volatile vga_char *TEXT_AREA = (vga_char*) VGA_START;
 
 uint8_t vga_color(const uint8_t fg_color, const uint8_t bg_color)

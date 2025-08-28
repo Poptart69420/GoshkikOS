@@ -6,6 +6,7 @@
 #include "klibc/mem.h"
 #include "klibc/gdt/gdt.h"
 #include "klibc/isr/isr.h"
+#include "klibc/pic/pic.h"
 
 __attribute__((used, section(".limine_requests")))
 static volatile LIMINE_BASE_REVISION(3);
@@ -33,7 +34,11 @@ void kmain(void)
 {
 
   gdt_init();
+  pic_mask_irq(0xFF);
+  pic_remap(PIC1_COMMAND, 0x28);
   isr_install();
+
+  __asm__ volatile ("sti; hlt");
 
   if (LIMINE_BASE_REVISION_SUPPORTED == false) {
     hcf();

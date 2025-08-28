@@ -264,45 +264,6 @@ extern void isr253();
 extern void isr254();
 extern void isr255();
 
-const char *isr_exception_messages[] =
-{
-  "Divide by zero",
-  "Debug",
-  "NMI",
-  "Breakpoint",
-  "Overflow",
-  "Bound Range Exceeded",
-  "Invalid Opcode",
-  "Device Not Available",
-  "Double fault",
-  "Co-processor Segment Overrun",
-  "Invalid TSS",
-  "Segment not present",
-  "Stack-Segment Fault",
-  "GPF",
-  "Page Fault",
-  "Reserved",
-  "x87 Floating Point Exception",
-  "alignment check",
-  "Machine check",
-  "SIMD floating-point exception",
-  "Virtualization Exception",
-  "Deadlock",
-  "Reserved",
-  "Reserved",
-  "Reserved",
-  "Reserved",
-  "Reserved",
-  "Reserved",
-  "Reserved",
-  "Reserved",
-  "Reserved",
-  "Security Exception",
-  "Reserved",
-  "Triple Fault",
-  "FPU error"
-};
-
 typedef void (*handlers_t)(registers_t *);
 
 void isr_install(void);
