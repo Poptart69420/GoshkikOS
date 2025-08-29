@@ -1,5 +1,4 @@
 #include "isr.h"
-#include "../drivers/vga/vga_text.h"
 
 static const char *isr_exception_messages[] =
 {
@@ -39,6 +38,11 @@ static const char *isr_exception_messages[] =
   "Triple Fault",
   "FPU error"
 };
+
+void divide_by_zero(registers_t *reg)
+{
+  vterm_print("Divide by zero");
+}
 
 void isr_install(void)
 {
@@ -90,7 +94,7 @@ void isr_install(void)
   idt_set_gate(45, isr45, 0);
   idt_set_gate(46, isr46, 0);
   idt_set_gate(47, isr47, 0);
-  idt_set_gate(48, isr48, 1);
+  idt_set_gate(48, isr48, 0);
   idt_set_gate(49, isr49, 0);
   idt_set_gate(50, isr50, 0);
   idt_set_gate(51, isr51, 0);
@@ -320,9 +324,14 @@ void isr_handler(registers_t *reg)
 
   if (reg->isr < 32) {
     if (reg->cs & 0x3) {
-      vga_putstr(isr_exception_messages[reg->isr], COLOR_WHITE, COLOR_BLACK); // same for now
+      vterm_print("\n");
+      vterm_print("-----EXCEPTION-----");
+      vterm_print(isr_exception_messages[reg->isr]);
+      // do something
     } else {
-      vga_putstr(isr_exception_messages[reg->isr], COLOR_WHITE, COLOR_BLACK); // same for now
+      vterm_print("\n");
+      vterm_print("Oh shit, we don't handle this");
+      // do something
     }
   }
 

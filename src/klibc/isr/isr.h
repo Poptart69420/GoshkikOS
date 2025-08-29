@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include "../include/registers.h"
 #include "../idt/idt.h"
+#include "../drivers/vterm/vterm.h"
 
 #define IDT_ENTRIES 256
 
