@@ -83,7 +83,8 @@ override CPPFLAGS := \
 override NASMFLAGS := \
     -f elf64 \
     $(NASMFLAGS) \
-    -Wall
+    -Wall \
+    -Wno-reloc
 
 # Internal linker flags that should not be changed by the user.
 override LDFLAGS += \

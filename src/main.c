@@ -59,7 +59,6 @@ void kmain(void)
   int b = 0;
   int c = a / b;
 
-
   for (;;)
   __asm__ volatile ("hlt");
 
