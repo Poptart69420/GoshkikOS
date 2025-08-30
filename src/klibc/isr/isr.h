@@ -5,6 +5,9 @@
 #include "../include/registers.h"
 #include "../idt/idt.h"
 #include "../drivers/vterm/vterm.h"
+#include "../pic/pic.h"
+
+#define IDT_ENTRIES 256
 
 typedef void (*handlers_t)(registers_t *);
 

@@ -1,6 +1,12 @@
 #include "isr.h"
 
-extern void* isr_stub_table[];
+
+static handlers_t handlers[IDT_ENTRIES] = {NULL};
+
+void isr_register(int isr, handlers_t handler)
+{
+  handlers[isr] = handler;
+}
 
 static const char *isr_exception_messages[] =
 {
@@ -41,6 +47,15 @@ static const char *isr_exception_messages[] =
   "FPU error"
 };
 
+extern void* isr_stub_table[];
+
+void timer_callback(registers_t *reg) {
+    static int ticks = 0;
+    ticks++;
+    if (ticks % 100 == 0) vterm_print(".");
+    pic_send_eoi(0);
+}
+
 void isr_install(void)
 {
 
@@ -60,14 +75,9 @@ void isr_install(void)
 
   }
 
+  isr_register(0x20, timer_callback);
+
   idt_reload();
-}
-
-static handlers_t handlers[IDT_ENTRIES] = {NULL};
-
-void isr_register(int isr, handlers_t handler)
-{
-  handlers[isr] = handler;
 }
 
 void isr_handler(registers_t *reg)
@@ -76,19 +86,29 @@ void isr_handler(registers_t *reg)
     __asm__ volatile ("swapgs" ::: "memory");
   }
 
+  if (reg->isr >= 0x20 && reg->isr <= 0x2F) {
+    pic_send_eoi(reg->isr - 0x20);
+  }
+
   if (reg->isr < IDT_ENTRIES && handlers[reg->isr] != NULL) {
-    return handlers[reg->isr](reg);
+    handlers[reg->isr](reg);
+    return;
   }
 
   if (reg->isr < 32) {
     if (reg->cs & 0x3) {
       vterm_print("\n");
-      vterm_print("-----EXCEPTION-----");
+      vterm_print("-----EXCEPTION-----\n");
       vterm_print(isr_exception_messages[reg->isr]);
       // do something
     } else {
       vterm_print("\n");
-      vterm_print("Oh shit, we don't handle this");
+      vterm_print("-----KERNEL EXCEPTION-----\n");
+      vterm_print(isr_exception_messages[reg->isr]);
+
+      for (;;)
+      __asm__ volatile ("hlt");
+
       // do something
     }
   }

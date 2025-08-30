@@ -8,6 +8,7 @@
 #include "klibc/isr/isr.h"
 #include "klibc/pic/pic.h"
 #include "klibc/drivers/vterm/vterm.h"
+#include "klibc/pit/pit.h"
 
 __attribute__((used, section(".limine_requests")))
 static volatile LIMINE_BASE_REVISION(3);
@@ -45,19 +46,16 @@ void kmain(void)
   struct limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[0];
 
   gdt_init();
-  pic_mask_irq(0xFF);
-  pic_remap(PIC1_COMMAND, 0x28);
   isr_install();
-
+  pic_remap(0x20, 0x28);
+  pit_init();
   vterm_init(framebuffer);
 
-  vterm_print("ShitOS Started...");
+  pic_unmask_irq(0);
+
+  vterm_print("ShitOS Started");
 
   __asm__ volatile ("sti");
-
-  int a = 1;
-  int b = 0;
-  int c = a / b;
 
   for (;;)
   __asm__ volatile ("hlt");

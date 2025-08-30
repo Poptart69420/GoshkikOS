@@ -1,10 +1,10 @@
 #ifndef REGISTERS_H_
 #define REGISTERS_H_
 
+
 #include <stdint.h>
 
-typedef struct
-{
+typedef struct {
   uint64_t r15;
   uint64_t r14;
   uint64_t r13;

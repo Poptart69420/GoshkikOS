@@ -47,7 +47,7 @@ isr_common:
     xor rbp, rbp
     call isr_handler
     popall
-    add rsp, 16
+    add rsp, 24
     iretq
 
 %macro isr 1
@@ -56,6 +56,7 @@ global isr%1
 isr%1:
     push 0
     push %1
+    push fs
     jmp isr_common
 
 %endmacro
@@ -65,6 +66,7 @@ isr%1:
 global isr%1
 isr%1:
     push %1
+    push fs
     jmp isr_common
 
 %endmacro
