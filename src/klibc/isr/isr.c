@@ -1,6 +1,5 @@
 #include "isr.h"
 
-
 static handlers_t handlers[IDT_ENTRIES] = {NULL};
 
 void isr_register(int isr, handlers_t handler)
@@ -49,13 +48,6 @@ static const char *isr_exception_messages[] =
 
 extern void* isr_stub_table[];
 
-void timer_callback(registers_t *reg) {
-    static int ticks = 0;
-    ticks++;
-    if (ticks % 100 == 0) vterm_print(".");
-    pic_send_eoi(0);
-}
-
 void isr_install(void)
 {
 
@@ -75,8 +67,6 @@ void isr_install(void)
 
   }
 
-  isr_register(0x20, timer_callback);
-
   idt_reload();
 }
 
@@ -86,13 +76,8 @@ void isr_handler(registers_t *reg)
     __asm__ volatile ("swapgs" ::: "memory");
   }
 
-  if (reg->isr >= 0x20 && reg->isr <= 0x2F) {
-    pic_send_eoi(reg->isr - 0x20);
-  }
-
   if (reg->isr < IDT_ENTRIES && handlers[reg->isr] != NULL) {
     handlers[reg->isr](reg);
-    return;
   }
 
   if (reg->isr < 32) {

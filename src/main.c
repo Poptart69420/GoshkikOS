@@ -9,6 +9,9 @@
 #include "klibc/pic/pic.h"
 #include "klibc/drivers/vterm/vterm.h"
 #include "klibc/pit/pit.h"
+#include "klibc/drivers/ps2/ps2.h"
+#include "klibc/drivers/ps2/kbd.h"
+#include "klibc/timer/timer.h"
 
 __attribute__((used, section(".limine_requests")))
 static volatile LIMINE_BASE_REVISION(3);
@@ -49,11 +52,16 @@ void kmain(void)
   isr_install();
   pic_remap(0x20, 0x28);
   pit_init();
+  ps2_entry();
+  init_keyboard();
+  init_timer();
+
   vterm_init(framebuffer);
 
   pic_unmask_irq(0);
+  pic_unmask_irq(1);
 
-  vterm_print("ShitOS Started");
+  vterm_print("ShitOS Started\n");
 
   __asm__ volatile ("sti");
 
