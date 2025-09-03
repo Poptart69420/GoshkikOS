@@ -66,6 +66,10 @@ SECTIONS
         *(COMMON)
     } :data
 
+    end = .;
+    _end = .;
+    __end = .;
+
     /* Discard .note.* and .eh_frame* since they may cause issues on some hosts. */
     /DISCARD/ : {
         *(.eh_frame*)
