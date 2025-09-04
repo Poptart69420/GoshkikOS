@@ -21,7 +21,7 @@ SECTIONS
     /* and because that is what the Limine spec mandates. */
     /* Any address in this region will do, but often 0xffffffff80000000 is chosen as */
     /* that is the beginning of the region. */
-    . = 0xffffffff80000000;
+    . = 0x00100000;
 
     /* Define a section to contain the Limine requests and assign it to its own PHDR */
     .limine_requests : {
@@ -65,10 +65,6 @@ SECTIONS
         *(.bss .bss.*)
         *(COMMON)
     } :data
-
-    end = .;
-    _end = .;
-    __end = .;
 
     /* Discard .note.* and .eh_frame* since they may cause issues on some hosts. */
     /DISCARD/ : {

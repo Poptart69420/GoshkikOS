@@ -2,8 +2,8 @@ cd build
 rm -rf bin
 rm -rf obj
 
-mkdir bin
-mkdir obj
+mkdir -p bin
+mkdir -p obj
 
 cd ..
 
