@@ -2,6 +2,7 @@
 #define PAGING_H_
 
 #include <stdint.h>
+#include <stddef.h>
 
 #define PAGE_SIZE 4096ULL
 #define ENTRIES_PER_TABLE 512ULL
