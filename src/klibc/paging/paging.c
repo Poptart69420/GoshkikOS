@@ -85,10 +85,29 @@ static pd_table_t *get_pd(pdpt_table_t *pdpt, size_t pdpt_index)
     return (pd_table_t *)(uintptr_t)(pdpt->entries[pdpt_index].physical_address << 12);
   }
 
-  page_table_t *pd = alloc_page_table();
+  pd_table_t *pd = alloc_page_table();
   pdpt->entries[pdpt_index].present = 1;
   pdpt->entries[pdpt_index].writable = 1;
   pdpt->entries[pdpt_index].physical_address = ((uint64_t)(uintptr_t)pd) >> 12;
 
   return pd;
+}
+
+static page_table_t *get_pt(pd_table_t *pd, size_t pd_index)
+{
+  if (pd->entries[pd_index].present) {
+    return (page_table_t *)(uintptr_t)(pd->entries[pd_index].physical_address << 12);
+  }
+
+  page_table_t *pt = alloc_page_table();
+  pd->entries[pd_index].present = 1;
+  pd->entries[pd_index].writable = 1;
+  pd->entries[pd_index].physical_address = ((uint64_t)(uintptr_t)pd) >> 12;
+
+  return pt;
+}
+
+static void map_page(uint64_t address)
+{
+
 }
