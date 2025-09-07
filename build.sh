@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 
+rm -rf build
 mkdir -p build
 export PATH="$PWD/cross_compiler/build/bin:$PATH"
 

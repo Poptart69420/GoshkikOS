@@ -4,8 +4,6 @@ set -e
 
 export PROJECT_ROOT="$PWD"
 
-mkdir -p "$PROJECT_ROOT/cross_compiler"
-
 export PREFIX="$PROJECT_ROOT/cross_compiler/build"
 
 export SYS_ROOT="$PROJECT_ROOT/sysroot"

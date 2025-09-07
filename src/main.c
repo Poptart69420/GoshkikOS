@@ -12,16 +12,12 @@
 #include "klibc/drivers/ps2/ps2.h"
 #include "klibc/drivers/ps2/kbd.h"
 #include "klibc/timer/timer.h"
-#include "klibc/paging/paging.h"
-
-extern char _kernel_start, _kernel_end;
 
 __attribute__((used, section(".limine_requests")))
 static volatile LIMINE_BASE_REVISION(3);
 
 __attribute__((used, section(".limine_requests")))
-static volatile struct limine_framebuffer_request framebuffer_request =
-{
+static volatile struct limine_framebuffer_request framebuffer_request = {
     .id = LIMINE_FRAMEBUFFER_REQUEST,
     .revision = 0
 };
