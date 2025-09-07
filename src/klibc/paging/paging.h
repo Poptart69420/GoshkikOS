@@ -34,4 +34,6 @@ typedef page_table_t pml4_table_t;
 typedef page_table_t pdpt_table_t;
 typedef page_table_t pd_table_t;
 
+void paging_map_kernel(uint64_t k_physical_base, uint64_t k_virtual_base, uint64_t k_physical_size, uint64_t identity_map_bytes);
+
 #endif // PAGING_H_

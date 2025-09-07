@@ -1,6 +1,6 @@
 #include "paging.h"
 
-static uint8_t page_table_pool[16 * 1024 * 1024] __attribute((aligned(PAGE_SIZE)));
+static uint8_t page_table_pool[16 * 1024 * 1024] __attribute__((aligned(PAGE_SIZE)));
 static size_t page_table_pool_offset = 0;
 
 static pml4_table_t *pml4_table __attribute__((aligned(PAGE_SIZE)));
@@ -21,7 +21,16 @@ static page_table_t *alloc_page_table(void)
     page->entries[i].present = 0;
     page->entries[i].writable = 0;
     page->entries[i].user_accessible = 0;
+    page->entries[i].write_through = 0;
+    page->entries[i].cache_disable = 0;
+    page->entries[i].accessed = 0;
+    page->entries[i].dirty = 0;
+    page->entries[i].page_size = 0;
+    page->entries[i].global = 0;
+    page->entries[i].ignored = 0;
     page->entries[i].physical_address = 0;
+    page->entries[i].available = 0;
+    page->entries[i].nx = 0;
   }
   return page;
 }
@@ -107,12 +116,12 @@ static page_table_t *get_pt(pd_table_t *pd, size_t pd_index)
   return pt;
 }
 
-static void map_page(uint64_t address)
+static void map_page(uint64_t virtual_address, uint64_t physical_address)
 {
-  size_t i_pml4 = pml4_index(address);
-  size_t i_pdpt = pdpt_index(address);
-  size_t i_pd = pd_index(address);
-  size_t i_pt = pt_index(address);
+  size_t i_pml4 = pml4_index(virtual_address);
+  size_t i_pdpt = pdpt_index(virtual_address);
+  size_t i_pd = pd_index(virtual_address);
+  size_t i_pt = pt_index(virtual_address);
 
   pdpt_table_t *pdpt = get_pdpt(pml4_table, i_pml4);
   pd_table_t *pd = get_pd(pdpt, i_pdpt);
@@ -120,22 +129,29 @@ static void map_page(uint64_t address)
 
   pt->entries[i_pt].present = 1;
   pt->entries[i_pt].writable = 1;
-  pt->entries[i_pt].physical_address = address >> 12;
+  pt->entries[i_pt].physical_address = physical_address >> 12;
 }
 
-static page_table_t *create_identity_page_table(uint64_t map_bytes)
+static void map_range(uint64_t virtual_start, uint64_t physical_start, uint64_t size)
+{
+  uint64_t end = virtual_start + size;
+  uint64_t virtual_address = virtual_start;
+  uint64_t physical_address = physical_start;
+
+  for (; virtual_address < end; virtual_address += PAGE_SIZE, physical_address += PAGE_SIZE) {
+    map_page(virtual_address, physical_address);
+  }
+}
+
+void paging_map_kernel(uint64_t k_physical_base, uint64_t k_virtual_base, uint64_t k_physical_size, uint64_t identity_map_bytes)
 {
   pml4_table = (pml4_table_t *)alloc_page_table();
+  map_range(k_virtual_base, k_physical_base, k_physical_size);
 
-  for (uint64_t address = 0; address < map_bytes; address += PAGE_SIZE) {
-    map_page(address);
+  if (identity_map_bytes > 0) {
+    map_range(0, 0, identity_map_bytes);
   }
-  return (page_table_t *)pml4_table;
-}
 
-void enable_indentity_paging(void)
-{
-  page_table_t *pml4_physical = create_identity_page_table(PAGE_SIZE);
-  write_cr3((uint64_t)(uintptr_t) pml4_physical);
+  write_cr3((uint64_t)(uintptr_t)pml4_table);
   enable_paging();
 }

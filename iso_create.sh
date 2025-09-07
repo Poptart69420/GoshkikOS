@@ -11,11 +11,13 @@ make
 
 cd bootloader
 
+rm -rf Limine
+
 # Download the latest Limine binary release for the 9.x branch.
-git clone https://github.com/limine-bootloader/limine.git --branch=v9.x-binary --depth=1
+git clone https://codeberg.org/Limine/Limine.git --branch=v9.x-binary --depth=1
 
 # Build "limine" utility.
-make -C limine
+make -C Limine
 
 cd ..
 
@@ -26,13 +28,13 @@ mkdir -p iso_root
 mkdir -p iso_root/boot
 cp -v build/bin/shitos iso_root/boot/
 mkdir -p iso_root/boot/limine
-cp -v bootloader/limine.conf bootloader/limine/limine-bios.sys bootloader/limine/limine-bios-cd.bin \
-      bootloader/limine/limine-uefi-cd.bin iso_root/boot/limine/
+cp -v bootloader/limine.conf bootloader/Limine/limine-bios.sys bootloader/Limine/limine-bios-cd.bin \
+      bootloader/Limine/limine-uefi-cd.bin iso_root/boot/limine/
 
 # Create the EFI boot tree and copy Limine's EFI executables over.
 mkdir -p iso_root/EFI/BOOT
-cp -v bootloader/limine/BOOTX64.EFI iso_root/EFI/BOOT/
-cp -v bootloader/limine/BOOTIA32.EFI iso_root/EFI/BOOT/
+cp -v bootloader/Limine/BOOTX64.EFI iso_root/EFI/BOOT/
+cp -v bootloader/Limine/BOOTIA32.EFI iso_root/EFI/BOOT/
 
 # Create the bootable ISO.
 xorriso -as mkisofs -R -r -J -b boot/limine/limine-bios-cd.bin \
@@ -42,4 +44,4 @@ xorriso -as mkisofs -R -r -J -b boot/limine/limine-bios-cd.bin \
         iso_root -o shitos.iso
 
 # Install Limine stage 1 and 2 for legacy BIOS boot.
-bootloader/limine/limine bios-install shitos.iso
+bootloader/Limine/limine bios-install shitos.iso
