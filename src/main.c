@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <limine.h>
 
-#include "klibc/mem.h"
+#include "klibc/mem/mem.h"
 #include "klibc/gdt/gdt.h"
 #include "klibc/isr/isr.h"
 #include "klibc/pic/pic.h"
@@ -12,7 +12,6 @@
 #include "klibc/drivers/ps2/ps2.h"
 #include "klibc/drivers/ps2/kbd.h"
 #include "klibc/timer/timer.h"
-#include "klibc/paging/paging.h"
 
 __attribute__((used, section(".limine_requests")))
 static volatile LIMINE_BASE_REVISION(3);
@@ -37,13 +36,6 @@ static void hcf(void)
   }
 }
 
-__attribute__((used, section(".limine_requests")))
-static volatile struct limine_executable_address_request kaddr_req =
-{
-  .id = LIMINE_EXECUTABLE_ADDRESS_REQUEST,
-  .revision = 0
-};
-
 extern char _kernel_start, _kernel_end;
 
 void kmain(void)
@@ -56,18 +48,6 @@ void kmain(void)
       || framebuffer_request.response->framebuffer_count < 1) {
     hcf();
   }
-
-  if (kaddr_req.response == NULL) {
-    hcf();
-  }
-
-  uint64_t k_physical_base = kaddr_req.response->physical_base;
-  uint64_t k_virtual_base  = kaddr_req.response->virtual_base;
-
-  uint64_t k_physical_size = (uintptr_t)&_kernel_end - (uintptr_t)&_kernel_start;
-
-  paging_map_kernel(k_physical_base, k_virtual_base, k_physical_size, MAP_SIZE);
-
   struct limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[0];
 
   vterm_init(framebuffer);

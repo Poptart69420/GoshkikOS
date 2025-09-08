@@ -41,7 +41,7 @@ CPPFLAGS :=
 NASMFLAGS := -F dwarf -g
 
 # User controllable linker flags. We set none by default.
-LDFLAGS := --gc-sections
+LDFLAGS := -gc-sections
 
 # Check if CC is Clang.
 override CC_IS_CLANG := $(shell ! $(CC) --version 2>/dev/null | grep -q '^Target: '; echo $$?)

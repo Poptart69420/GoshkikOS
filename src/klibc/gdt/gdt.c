@@ -1,6 +1,4 @@
 #include "gdt.h"
-#include "../lock/spinlock.h"
-#include "../mem.h"
 
 struct gdtr gdt = {0};
 struct gdt_ptr gdt_ptr = {0};

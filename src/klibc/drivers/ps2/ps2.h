@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "../../mem.h"
+#include "../../mem/mem.h"
 #include "../../include/io.h"
 #include "../vterm/vterm.h"
 #include "../../include/registers.h"

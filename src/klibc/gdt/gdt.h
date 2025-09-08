@@ -5,6 +5,8 @@
 #include <stdint.h>
 
 #include "../include/selectors.h"
+#include "../lock/spinlock.h"
+#include "../mem/mem.h"
 
 struct tss_desc
 {
