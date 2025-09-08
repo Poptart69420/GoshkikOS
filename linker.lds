@@ -33,6 +33,8 @@ SECTIONS
     /* Move to the next memory page for .text */
     . = ALIGN(CONSTANT(MAXPAGESIZE));
 
+    PROVIDE(_kernel_start = .);
+
     .text : {
         *(.text .text.*)
     } :text
@@ -65,6 +67,8 @@ SECTIONS
         *(.bss .bss.*)
         *(COMMON)
     } :data
+
+    PROVIDE(_kernel_end = .);
 
     /* Discard .note.* and .eh_frame* since they may cause issues on some hosts. */
     /DISCARD/ : {

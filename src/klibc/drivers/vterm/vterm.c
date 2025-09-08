@@ -38,9 +38,15 @@ void vterm_putc(const char c)
     cursor_y += 8;
   }
 
-  if (cursor_x > width) {
+  if (cursor_x + 8 > width) {
     cursor_x = 0;
     cursor_y += 8;
+  }
+
+  if (cursor_y + 8 > height) {
+    vterm_clear(term_color);
+    cursor_x = 0;
+    cursor_y = 0;
   }
 
   const unsigned char *glyph = font8x8_basic[(int)c];

@@ -32,7 +32,7 @@ ifeq ($(TOOLCHAIN),llvm)
 endif
 
 # User controllable C flags.
-CFLAGS := -g -O2 -pipe
+CFLAGS := -g -O2 -pipe 
 
 # User controllable C preprocessor flags. We set none by default.
 CPPFLAGS :=
@@ -41,7 +41,7 @@ CPPFLAGS :=
 NASMFLAGS := -F dwarf -g
 
 # User controllable linker flags. We set none by default.
-LDFLAGS :=
+LDFLAGS := --gc-sections
 
 # Check if CC is Clang.
 override CC_IS_CLANG := $(shell ! $(CC) --version 2>/dev/null | grep -q '^Target: '; echo $$?)
