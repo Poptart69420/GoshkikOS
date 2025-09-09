@@ -40,4 +40,26 @@ void load_pages(void)
   pdpt[0]   = (uint64_t)pd   | PTE_PRESENT | PTE_WRITABLE;
   pd[0]     = (uint64_t)pt   | PTE_PRESENT | PTE_WRITABLE;
 
+  uint64_t hhdm_base = hhdm_request.response->offset;
+  size_t pml4_h = pml4_index(hhdm_base);
+  size_t pdpt_h = pdpt_index(hhdm_base);
+  size_t pd_h   = pd_index(hhdm_base);
+
+  pml4[pml4_h]       = (uint64_t)pdpt_hhdm   | PTE_PRESENT | PTE_WRITABLE;
+  pdpt_hhdm[pdpt_h]  = (uint64_t)pd_hhdm     | PTE_PRESENT | PTE_WRITABLE;
+  pd_hhdm[pd_h]      = (uint64_t)pt_hhdm     | PTE_PRESENT | PTE_WRITABLE;
+
+  uint8_t *kernel_physical_base = (uint8_t *)executable_file_request.response->executable_file->address;
+
+  for (uint64_t page = 0; page < MAX_PAGES; ++page) {
+    uint64_t physical_address = (uint64_t)page * PAGE_SIZE;
+    uint64_t flags = PTE_PRESENT | PTE_WRITABLE;
+
+    size_t pti = pt_index(physical_address);
+    pt[pti] = physical_address | flags;
+
+    uint64_t virtual_address = physical_address + hhdm_base;
+    size_t pti_h = pt_index(virtual_address);
+    pt_hhdm[pti_h] = physical_address | flags;
+  }
 }
