@@ -2,6 +2,9 @@
 #define MEM_H_
 
 #include <stddef.h>
+#include "../../limine.h"
+
+#define PAGE_SIZE 4096
 
 void *memcpy(void *restrict dest, const void *restrict src, size_t n);
 void *memset(void *s, int c, size_t n);

@@ -12,22 +12,10 @@
 #include "klibc/drivers/ps2/ps2.h"
 #include "klibc/drivers/ps2/kbd.h"
 #include "klibc/timer/timer.h"
-
-__attribute__((used, section(".limine_requests")))
-static volatile LIMINE_BASE_REVISION(3);
-
-__attribute__((used, section(".limine_requests")))
-static volatile struct limine_framebuffer_request framebuffer_request =
-{
-  .id = LIMINE_FRAMEBUFFER_REQUEST,
-  .revision = 0
-};
-
-__attribute__((used, section(".limine_requests_start")))
-static volatile LIMINE_REQUESTS_START_MARKER;
-
-__attribute__((used, section(".limine_requests_end")))
-static volatile LIMINE_REQUESTS_END_MARKER;
+#include "klibc/include/global.h"
+#include "klibc/mem/memmap.h"
+#include "klibc/mem/pmm.h"
+#include "klibc/limine_requests/limine_requests.h"
 
 static void hcf(void)
 {
@@ -35,8 +23,6 @@ static void hcf(void)
     __asm__ volatile ("hlt");
   }
 }
-
-extern char _kernel_start, _kernel_end;
 
 void kmain(void)
 {
@@ -51,6 +37,13 @@ void kmain(void)
   struct limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[0];
 
   vterm_init(framebuffer);
+
+  vterm_print("\n");
+
+  g_hhdm_offset = hhdm_request.response->offset;
+  init_memmap(memmap_request.response);
+
+  init_pmm();
 
   gdt_init();
   isr_install();
