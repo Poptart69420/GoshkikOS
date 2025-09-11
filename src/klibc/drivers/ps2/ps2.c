@@ -45,7 +45,5 @@ uint64_t ps2_entry(void)
 
   ps2_write(PS2_COMMAND, PS2_ENABLE_P1);
 
-  uint8_t flush = ps2_read();
-
   return 0;
 }

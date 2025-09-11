@@ -40,8 +40,12 @@ void kmain(void)
 
   vterm_print("\n");
 
-  g_hhdm_offset = hhdm_request.response->offset;
+  vterm_print("|----------------|\n");
+  vterm_print("| ShitOS Started |\n");
+  vterm_print("|----------------|\n");
 
+  g_hhdm_offset = hhdm_request.response->offset;
+  
   init_memmap(memmap_request.response);
   init_pmm();
 
@@ -52,8 +56,6 @@ void kmain(void)
   ps2_entry();
   init_keyboard();
   init_timer();
-
-  vterm_print("ShitOS Started\n");
 
   pic_unmask_irq(0);
   pic_unmask_irq(1);
