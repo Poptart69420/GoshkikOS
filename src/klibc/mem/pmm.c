@@ -34,5 +34,39 @@ void init_pmm(void)
   }
 
   vterm_print("PMM initalized\n");
+}
 
+uintptr_t pmm_alloc_page(void)
+{
+  for (size_t i = 0; i < total_pages; ++i) {
+    if (!BIT_TEST(pmm_bitmap, i)) {
+      BIT_SET(pmm_bitmap, i);
+      return managed_base + i * PAGE_SIZE;
+    }
+  }
+
+  return 0;
+}
+
+void pmm_free_page(uintptr_t physical_address)
+{
+  if (physical_address < managed_base) {
+    return;
+  }
+
+  size_t i = (physical_address - managed_base) / PAGE_SIZE;
+  if (i < total_pages) {
+    BIT_CLEAR(pmm_bitmap, i);
+  }
+}
+
+void *pmm_alloc_page_hhdm(void)
+{
+  uintptr_t physical = pmm_alloc_page();
+
+  if (!physical) {
+    return NULL;
+  }
+
+  return (void *)(g_hhdm_offset + physical);
 }

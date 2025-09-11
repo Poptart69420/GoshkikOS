@@ -41,8 +41,8 @@ void kmain(void)
   vterm_print("\n");
 
   g_hhdm_offset = hhdm_request.response->offset;
-  init_memmap(memmap_request.response);
 
+  init_memmap(memmap_request.response);
   init_pmm();
 
   gdt_init();
