@@ -39,7 +39,7 @@ To clone/build this project, follow these instructions:
   ./build.sh
 ```
 
-Then you can run it with one of my premade qemu scrips with:
+Then you can run it with one of my premade qemu scripts with:
 
 ```
 
@@ -62,12 +62,12 @@ To run it with the debugging output.
 
 - Added a proper readme (still being updated over time)
 
-- Added an instilation/build guide
+- Added an installation/build guide
 
 - Added a license that reflects the FLOSS (Free Libre Open Source Software) ideals of this project
 
 
-# To-do (Git Repo)
+# To-Do (Git Repo)
 
 - Add a list of dependencies (trying to keep the list minimal)
 
@@ -76,7 +76,7 @@ To run it with the debugging output.
 
 # Completed (Actual Project)
 
-- Cross Compiler setup
+- Cross compiler setup
 
 - Build scripts
 
@@ -93,7 +93,7 @@ To run it with the debugging output.
 - PS2 keyboard handling (minimal)
 
 
-# To-do (Actual Project)
+# To-Do (Actual Project)
 
 - Finish paging
 
@@ -111,5 +111,5 @@ To run it with the debugging output.
 
 ## Images
 
-![WTFPL logo] (readme_images/wtfpl.svg)
-![WTFPL comic strip] (readme_images/wtfpl-stip.jpg)
+![WTFPL logo](readme_images/wtfpl.svg)
+![WTFPL comic strip](readme_images/wtfpl-stip.jpg)
