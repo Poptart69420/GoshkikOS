@@ -112,4 +112,4 @@ To run it with the debugging output.
 ## Images
 
 ![WTFPL logo](readme_images/wtfpl.svg)
-![WTFPL comic strip](readme_images/wtfpl-stip.jpg)
+![WTFPL comic strip](readme_images/wtfpl-strip.jpg)
