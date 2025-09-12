@@ -8,6 +8,7 @@
 #include "../../limine.h"
 #include "memmap.h"
 #include "../include/global.h"
+#include "../include/hcf.h"
 
 void init_pmm(void);
 uintptr_t pmm_alloc_page(void);

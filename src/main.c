@@ -16,13 +16,7 @@
 #include "klibc/mem/memmap.h"
 #include "klibc/mem/pmm.h"
 #include "klibc/limine_requests/limine_requests.h"
-
-static void hcf(void)
-{
-  for (;;) {
-    __asm__ volatile ("hlt");
-  }
-}
+#include "klibc/include/hcf.h"
 
 void kmain(void)
 {

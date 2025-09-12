@@ -14,8 +14,8 @@ void init_pmm(void)
   struct limine_memmap_entry *biggest = memmap_find_biggest_region();
 
   if (!biggest) {
-    vterm_print("PMM: No usable region found\n");
-    for (;;) __asm__ volatile ("hlt");
+    vterm_print("PMM: No Usable Region Found\n");
+    hcf();
   }
 
   managed_base    = biggest->base;
