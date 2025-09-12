@@ -7,7 +7,7 @@ This project serves as a learning project for me, I hope to stick with it.
 
 The project is licensed under WTFPL (DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE)
 
-## WTFPL License
+## - WTFPL License
 
 ```
             DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
@@ -67,7 +67,7 @@ To run it with the debugging output.
 - Added a license that reflects the FLOSS (Free Libre Open Source Software) ideals of this project
 
 
-# To-Do (Git Repo)
+# - To-Do (Git Repo)
 
 - Add a list of dependencies (trying to keep the list minimal)
 
@@ -93,7 +93,7 @@ To run it with the debugging output.
 - PS2 keyboard handling (minimal)
 
 
-# To-Do (Actual Project)
+# - To-Do (Actual Project)
 
 - Finish paging
 
@@ -109,7 +109,7 @@ To run it with the debugging output.
 
 - And a fucking wholeeee lot more
 
-## Images
+# - Images
 
 ![WTFPL logo](readme_images/wtfpl.png)
 ![WTFPL comic strip](readme_images/wtfpl-strip.jpg)
