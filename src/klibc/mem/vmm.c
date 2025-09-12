@@ -32,3 +32,24 @@ static uintptr_t alloc_table(void)
   memset(physical_to_virtual(physical), 0, PAGE_SIZE);
   return physical;
 }
+
+static uint64_t *walk(uintptr_t virtual_address, int create)
+{
+  uint64_t *pml4 = (uint64_t *)physical_to_virtual(current_pml4);
+  uint64_t *pml4e = &pml4[PML4_INDEX(virtual_address)];
+
+  if (!(*pml4e & VMM_PRESENT)) {
+    if (!create) {
+      return NULL;
+    } else {
+      uintptr_t new = alloc_table();
+      *pml4e = (new * PAGE_MASK | VMM_PRESENT | VMM_WRITE);
+    }
+  }
+
+  uint64_t *pdpt = (uint64_t *)physical_to_virtual(virtual_address);
+
+  uint64_t *pdpte = &pdpt[PDPT_INDEX(virtual_address)];
+
+  return NULL;
+}
