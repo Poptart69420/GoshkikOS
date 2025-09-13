@@ -82,3 +82,28 @@ void vmm_map(uintptr_t virtual, uintptr_t physical, uint64_t flags)
   *pte = (physical & PAGE_MASK) | flags | VMM_PRESENT;
   invlpg(virtual);
 }
+
+void vmm_unmap(uintptr_t virtual)
+{
+  uint64_t *pte = walk(virtual, 0);
+  if (pte && (*pte & VMM_PRESENT)) {
+    *pte = 0;
+    invlpg(virtual);
+  }
+}
+
+uintptr_t vmm_resolve(uintptr_t virtual)
+{
+  const uint64_t *pte = walk(virtual, 0);
+  if (!pte || !(*pte & VMM_PRESENT)) {
+    return 0;
+  }
+
+  return ((*pte) & PAGE_MASK) | (virtual & (PAGE_SIZE - 1));
+}
+
+void vmm_load_cr3(uintptr_t physical_address)
+{
+  current_pml4 = physical_address & PAGE_MASK;
+  __asm__ volatile ("mov %0, %%cr3" :: "r"(current_pml4) : "memory");
+}
