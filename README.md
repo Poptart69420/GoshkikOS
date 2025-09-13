@@ -109,7 +109,10 @@ To run it with the debugging output.
 
 - And a fucking wholeeee lot more
 
-## 
+## WTFPL Logo
 
 ![WTFPL logo](readme_images/wtfpl.png)
+
+## WTFPL Comic Strip
+
 ![WTFPL comic strip](readme_images/wtfpl-strip.jpg)
