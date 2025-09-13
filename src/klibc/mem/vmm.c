@@ -43,13 +43,42 @@ static uint64_t *walk(uintptr_t virtual_address, int create)
       return NULL;
     } else {
       uintptr_t new = alloc_table();
-      *pml4e = (new * PAGE_MASK | VMM_PRESENT | VMM_WRITE);
+      *pml4e = (new & PAGE_MASK) | VMM_PRESENT | VMM_WRITE;
     }
   }
 
   uint64_t *pdpt = (uint64_t *)physical_to_virtual(virtual_address);
 
   uint64_t *pdpte = &pdpt[PDPT_INDEX(virtual_address)];
+  if (!(*pdpte & VMM_PRESENT)) {
+    if (!create) {
+      return NULL;
+    } else {
+      uintptr_t new = alloc_table();
+      *pdpte = (new & PAGE_MASK) | VMM_PRESENT | VMM_WRITE;
+    }
+  }
 
-  return NULL;
+  uint64_t *pd = (uint64_t *)physical_to_virtual((*pdpt) & PAGE_MASK);
+
+  uint64_t *pde = &pd[PD_INDEX(virtual_address)];
+  if (!(*pde & VMM_PRESENT)) {
+    if (!create) {
+      return NULL;
+    } else {
+      uintptr_t new = alloc_table();
+      *pde = (new & PAGE_MASK) | VMM_PRESENT | VMM_WRITE;
+    }
+  }
+
+  uint64_t *pt = (uint64_t *)physical_to_virtual((*pde) & PAGE_MASK);
+
+  return &pt[PT_INDEX(virtual_address)];
+}
+
+void vmm_map(uintptr_t virtual, uintptr_t physical, uint64_t flags)
+{
+  uint64_t *pte = walk(virtual, 1);
+  *pte = (physical & PAGE_MASK) | flags | VMM_PRESENT;
+  invlpg(virtual);
 }
