@@ -91,11 +91,10 @@ To run it with the debugging output.
 - Virtual terminal (minimal)
 
 - PS2 keyboard handling (minimal)
-
+ 
+- Finished paging (memmap, pmm, vmm)
 
 ## - To-Do (Actual Project)
-
-- Finish paging
 
 - Expanded memory management
 
