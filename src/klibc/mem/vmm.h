@@ -31,4 +31,6 @@
 #define PD_INDEX(x)   (((x) >> 21) & 0x1FF)
 #define PT_INDEX(x)   (((x) >> 12) & 0x1FF)
 
+void init_vmm(void);
+
 #endif // VMM_H_

@@ -33,7 +33,7 @@ void init_pmm(void)
     BIT_CLEAR(pmm_bitmap, i);
   }
 
-  vterm_print("PMM initalized\n");
+  vterm_print("PMM Initalized\n");
 }
 
 uintptr_t pmm_alloc_page(void)

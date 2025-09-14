@@ -15,6 +15,7 @@
 #include "klibc/include/global.h"
 #include "klibc/mem/memmap.h"
 #include "klibc/mem/pmm.h"
+#include "klibc/mem/vmm.h"
 #include "klibc/limine_requests/limine_requests.h"
 #include "klibc/include/hcf.h"
 
@@ -42,6 +43,7 @@ void kmain(void)
   
   init_memmap(memmap_request.response);
   init_pmm();
+  init_vmm();
 
   gdt_init();
   isr_install();
@@ -53,6 +55,8 @@ void kmain(void)
 
   pic_unmask_irq(0);
   pic_unmask_irq(1);
+
+  vterm_print("\n");
 
   __asm__ volatile ("sti");
 

@@ -7,6 +7,11 @@ static inline void *physical_to_virtual(uintptr_t physical)
   return (void *)(g_hhdm_offset + physical);
 }
 
+static inline uintptr_t virtual_to_physical(void *virtual)
+{
+  return (uintptr_t)virtual - g_hhdm_offset;
+}
+
 static inline uintptr_t read_cr3(void)
 {
   uintptr_t cr3;
@@ -39,40 +44,28 @@ static uint64_t *walk(uintptr_t virtual_address, int create)
   uint64_t *pml4e = &pml4[PML4_INDEX(virtual_address)];
 
   if (!(*pml4e & VMM_PRESENT)) {
-    if (!create) {
-      return NULL;
-    } else {
-      uintptr_t new = alloc_table();
-      *pml4e = (new & PAGE_MASK) | VMM_PRESENT | VMM_WRITE;
-    }
+    if (!create) return NULL;
+    uintptr_t new = alloc_table();
+    *pml4e = (new & PAGE_MASK) | VMM_PRESENT | VMM_WRITE;
   }
 
-  uint64_t *pdpt = (uint64_t *)physical_to_virtual(virtual_address);
-
+  uint64_t *pdpt = (uint64_t *)physical_to_virtual((*pml4e) & PAGE_MASK);
   uint64_t *pdpte = &pdpt[PDPT_INDEX(virtual_address)];
   if (!(*pdpte & VMM_PRESENT)) {
-    if (!create) {
-      return NULL;
-    } else {
-      uintptr_t new = alloc_table();
-      *pdpte = (new & PAGE_MASK) | VMM_PRESENT | VMM_WRITE;
-    }
+    if (!create) return NULL;
+    uintptr_t new = alloc_table();
+    *pdpte = (new & PAGE_MASK) | VMM_PRESENT | VMM_WRITE;
   }
 
-  uint64_t *pd = (uint64_t *)physical_to_virtual((*pdpt) & PAGE_MASK);
-
+  uint64_t *pd = (uint64_t *)physical_to_virtual((*pdpte) & PAGE_MASK);
   uint64_t *pde = &pd[PD_INDEX(virtual_address)];
   if (!(*pde & VMM_PRESENT)) {
-    if (!create) {
-      return NULL;
-    } else {
-      uintptr_t new = alloc_table();
-      *pde = (new & PAGE_MASK) | VMM_PRESENT | VMM_WRITE;
-    }
+    if (!create) return NULL;
+    uintptr_t new = alloc_table();
+    *pde = (new & PAGE_MASK) | VMM_PRESENT | VMM_WRITE;
   }
 
   uint64_t *pt = (uint64_t *)physical_to_virtual((*pde) & PAGE_MASK);
-
   return &pt[PT_INDEX(virtual_address)];
 }
 
@@ -106,4 +99,43 @@ void vmm_load_cr3(uintptr_t physical_address)
 {
   current_pml4 = physical_address & PAGE_MASK;
   __asm__ volatile ("mov %0, %%cr3" :: "r"(current_pml4) : "memory");
+}
+
+void init_vmm(void)
+{
+  const uintptr_t old_cr3_physical = read_cr3() & PAGE_MASK;
+  uint64_t *old_pml4 = (uint64_t *)physical_to_virtual(old_cr3_physical);
+
+  current_pml4 = alloc_table();
+  uint64_t *new_pml4 = (uint64_t *)physical_to_virtual(current_pml4);
+
+  for (size_t i = 256; i < ENTRIES_PER_TABLE; ++i) {
+    new_pml4[i] = old_pml4[i];
+  }
+
+  for (uint64_t i = 0; i < g_memmap->entry_count; ++i) {
+    struct limine_memmap_entry *e = g_memmap->entries[i];
+
+    if (e->type == LIMINE_MEMMAP_USABLE) {
+      uintptr_t end = e->base + e->length;
+      for (uintptr_t address = e->base; address < end; address += PAGE_SIZE) {
+        vmm_map(address, address, VMM_WRITE);
+      }
+    }
+  }
+
+  extern uint8_t *pmm_bitmap;
+  extern size_t pmm_bitmap_size;
+
+  if (pmm_bitmap && pmm_bitmap_size) {
+    uintptr_t bitmap_physical = virtual_to_physical(pmm_bitmap);
+
+    for (size_t i = 0; i < pmm_bitmap_size; i += PAGE_SIZE) {
+      vmm_map(bitmap_physical + i, bitmap_physical + i, VMM_WRITE);
+    }
+  }
+
+  vmm_load_cr3(current_pml4);
+
+  vterm_print("VMM Initialized\n");
 }
