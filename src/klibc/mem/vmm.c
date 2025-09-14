@@ -34,7 +34,7 @@ static uintptr_t alloc_table(void)
     hcf();
   }
 
-  memset(physical_to_virtual(physical), 0, PAGE_SIZE);
+  memset(physical_to_virtual(physical), 0, PAGE_SIZE_VMM);
   return physical;
 }
 
@@ -92,7 +92,7 @@ uintptr_t vmm_resolve(uintptr_t virtual)
     return 0;
   }
 
-  return ((*pte) & PAGE_MASK) | (virtual & (PAGE_SIZE - 1));
+  return ((*pte) & PAGE_MASK) | (virtual & (PAGE_SIZE_VMM - 1));
 }
 
 void vmm_load_cr3(uintptr_t physical_address)
@@ -118,7 +118,7 @@ void init_vmm(void)
 
     if (e->type == LIMINE_MEMMAP_USABLE) {
       uintptr_t end = e->base + e->length;
-      for (uintptr_t address = e->base; address < end; address += PAGE_SIZE) {
+      for (uintptr_t address = e->base; address < end; address += PAGE_SIZE_VMM) {
         vmm_map(address, address, VMM_WRITE);
       }
     }
@@ -130,7 +130,7 @@ void init_vmm(void)
   if (pmm_bitmap && pmm_bitmap_size) {
     uintptr_t bitmap_physical = virtual_to_physical(pmm_bitmap);
 
-    for (size_t i = 0; i < pmm_bitmap_size; i += PAGE_SIZE) {
+    for (size_t i = 0; i < pmm_bitmap_size; i += PAGE_SIZE_VMM) {
       vmm_map(bitmap_physical + i, bitmap_physical + i, VMM_WRITE);
     }
   }
