@@ -18,6 +18,7 @@
 #include "klibc/mem/vmm.h"
 #include "klibc/limine_requests/limine_requests.h"
 #include "klibc/include/hcf.h"
+#include "klibc/mem/kheap.h"
 
 void kmain(void)
 {
@@ -44,6 +45,7 @@ void kmain(void)
   init_memmap(memmap_request.response);
   init_pmm();
   init_vmm();
+  init_kheap();
 
   gdt_init();
   isr_install();

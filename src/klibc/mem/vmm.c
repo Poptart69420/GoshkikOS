@@ -131,7 +131,7 @@ void init_vmm(void)
     uintptr_t bitmap_physical = virtual_to_physical(pmm_bitmap);
 
     for (size_t i = 0; i < pmm_bitmap_size; i += PAGE_SIZE_VMM) {
-      vmm_map(bitmap_physical + i, bitmap_physical + i, VMM_WRITE);
+      vmm_map(bitmap_physical + g_hhdm_offset + i, bitmap_physical + i, VMM_WRITE);
     }
   }
 

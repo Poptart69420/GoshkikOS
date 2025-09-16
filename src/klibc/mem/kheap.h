@@ -10,7 +10,6 @@
 #include "vmm.h"
 
 #define HEAP_START      0xFFFF800010000000
-#define HEAP_MAX        0xFFFF800020000000
 
 typedef struct block_header
 {
@@ -18,5 +17,11 @@ typedef struct block_header
   int free;
   struct block_header *next;
 } block_header_t;
+
+size_t init_kheap(void);
+void *kmalloc(size_t size);
+void *kzalloc(size_t size);
+void *kcalloc(size_t n, size_t size);
+void kfree(void *ptr);
 
 #endif // KHEAP_H_
