@@ -49,7 +49,7 @@ void vterm_putc(const char c)
     cursor_y = 0;
   }
 
-  const unsigned char *glyph = font8x8_basic[(int)c];
+  const char *glyph = font8x8_basic[(int)c];
 
   for (int y = 0; y < 8; ++y) {
     for (int x = 0; x < 8; ++x) {
