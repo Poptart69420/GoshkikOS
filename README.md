@@ -32,7 +32,7 @@ To clone/build this project, follow these instructions:
 
 ```
   git clone https://github.com/Poptart69420/GoshkikOS.git
-  cd shit-os
+  cd GoshkikOS
   git clone https://github.com/Poptart69420/gcc.git cross_compiler/gcc
   git clone https://github.com/Poptart69420/binutils-gdb.git cross_compiler/binutils-gdb
   ./cross_compile.sh
