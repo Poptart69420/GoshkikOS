@@ -108,6 +108,18 @@ To run it with the debugging output.
 
 - And a fucking wholeeee lot more
 
+## Drawing Of Goshkik
+
+![Goshkik purrito drawing](readme_images/goshkik-purrito.png)
+
+## Goshkik Sleepy
+
+![Goshkik Sleepy](readme_images/goshkik-sleepy.png)
+
+## Goshkik WHAT
+
+![Goshkik WHAT](readme_images/goshkik-what.png)
+
 ## WTFPL Logo
 
 ![WTFPL logo](readme_images/wtfpl.png)
