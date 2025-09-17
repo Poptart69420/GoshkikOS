@@ -2,7 +2,7 @@
 # GoshkikOS
 
 The GoshkikOS project (formerly ShitOS) is an operating system targeting x86_64. 
-ShitOS is my first real attempt at doing OSDev, so it's bad.
+GoshkikOS is my first real attempt at doing OSDev, so it's bad.
 This project serves as a learning project for me, I hope to stick with it.
 
 The project is licensed under WTFPL (DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE)
