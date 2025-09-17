@@ -1,7 +1,7 @@
 
-# ShitOS
+# GoshkikOS
 
-The ShitOS project is an operating system targeting x86_64. 
+The GoshkikOS project (formerly ShitOS) is an operating system targeting x86_64. 
 ShitOS is my first real attempt at doing OSDev, so it's bad.
 This project serves as a learning project for me, I hope to stick with it.
 
@@ -31,7 +31,7 @@ The project is licensed under WTFPL (DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
 To clone/build this project, follow these instructions:
 
 ```
-  git clone https://github.com/Poptart69420/shit-os.git
+  git clone https://github.com/Poptart69420/GoshkikOS.git
   cd shit-os
   git clone https://github.com/Poptart69420/gcc.git cross_compiler/gcc
   git clone https://github.com/Poptart69420/binutils-gdb.git cross_compiler/binutils-gdb
