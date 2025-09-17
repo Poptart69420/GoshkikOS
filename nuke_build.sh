@@ -2,4 +2,4 @@
 
 rm -rf build
 rm -rf cross_compiler/build
-rm shitos.iso
+rm goshkikOS.iso

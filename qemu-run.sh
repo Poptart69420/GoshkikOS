@@ -1,1 +1,1 @@
-qemu-system-x86_64 -cdrom shitos.iso
+qemu-system-x86_64 -cdrom goshkikOS.iso

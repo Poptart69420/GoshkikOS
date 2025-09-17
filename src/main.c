@@ -36,9 +36,9 @@ void kmain(void)
 
   vterm_print("\n");
 
-  vterm_print("|----------------|\n");
-  vterm_print("| ShitOS Started |\n");
-  vterm_print("|----------------|\n");
+  vterm_print("|-------------------|\n");
+  vterm_print("| GoshkikOS Started |\n");
+  vterm_print("|-------------------|\n");
 
   g_hhdm_offset = hhdm_request.response->offset;
   

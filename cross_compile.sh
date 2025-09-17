@@ -10,7 +10,7 @@ export PREFIX="$PROJECT_ROOT/cross_compiler/build"
 
 export SYS_ROOT="$PROJECT_ROOT/sysroot"
 
-export TARGET=x86_64-shitos
+export TARGET=x86_64-elf
 
 export PATH="$PREFIX/bin:$PATH"
 

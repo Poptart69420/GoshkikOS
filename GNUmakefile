@@ -4,10 +4,10 @@ MAKEFLAGS += -rR
 
 # This is the name that our final executable will have.
 # Change as needed.
-override OUTPUT := build/bin/shitos
+override OUTPUT := build/bin/goshkikOS
 
 # User controllable toolchain and toolchain prefix.
-TOOLCHAIN := x86_64-shitos
+TOOLCHAIN := x86_64-elf
 TOOLCHAIN_PREFIX :=
 ifneq ($(TOOLCHAIN),)
     ifeq ($(TOOLCHAIN_PREFIX),)
