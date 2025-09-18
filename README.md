@@ -89,26 +89,6 @@ To run it with the debugging output.
 
 - And a fucking wholeeee lot more
 
-## Goshkik Sleepy
-
-![Goshkik Sleepy](readme_images/goshkik-sleepy.png)
-
-## Goshkik WHAT
-
-![Goshkik WHAT](readme_images/goshkik-what.png)
-
-## Drawing Of Goshkik
-
-![Goshkik purrito drawing](readme_images/goshkik-purrito.png)
-
-## WTFPL Logo
-
-![WTFPL logo](readme_images/wtfpl.png)
-
-## WTFPL Comic Strip
-
-![WTFPL comic strip](readme_images/wtfpl-strip.jpg)
-
 ## - WTFPL License
 
 ```
@@ -128,3 +108,22 @@ To run it with the debugging output.
 
 ```
 
+## Goshkik Sleepy
+
+![Goshkik Sleepy](readme_images/goshkik-sleepy.png)
+
+## Goshkik WHAT
+
+![Goshkik WHAT](readme_images/goshkik-what.png)
+
+## Drawing Of Goshkik
+
+![Goshkik purrito drawing](readme_images/goshkik-purrito.png)
+
+## WTFPL Logo
+
+![WTFPL logo](readme_images/wtfpl.png)
+
+## WTFPL Comic Strip
+
+![WTFPL comic strip](readme_images/wtfpl-strip.jpg)
