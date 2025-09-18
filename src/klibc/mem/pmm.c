@@ -14,7 +14,7 @@ void init_pmm(void)
   struct limine_memmap_entry *biggest = memmap_find_biggest_region();
 
   if (!biggest) {
-    vterm_print("PMM: No Usable Region Found\n");
+    vterm_print("PMM:   No Usable Region Found\n");
     hcf();
   }
 
@@ -33,7 +33,7 @@ void init_pmm(void)
     BIT_CLEAR(pmm_bitmap, i);
   }
 
-  vterm_print("PMM Initalized\n");
+  vterm_print("PMM:   Initalized\n");
 }
 
 uintptr_t pmm_alloc_page(void)

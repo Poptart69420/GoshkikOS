@@ -29,7 +29,7 @@ static uintptr_t alloc_table(void)
   uintptr_t physical = pmm_alloc_page();
 
   if (!physical) {
-    vterm_print("VMM: Out Of Memory\n");
+    vterm_print("VMM:   Out Of Memory\n");
 
     hcf();
   }
@@ -137,5 +137,5 @@ void init_vmm(void)
 
   vmm_load_cr3(current_pml4);
 
-  vterm_print("VMM Initialized\n");
+  vterm_print("VMM:   Initialized\n");
 }

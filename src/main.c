@@ -19,6 +19,7 @@
 #include "klibc/limine_requests/limine_requests.h"
 #include "klibc/include/hcf.h"
 #include "klibc/mem/kheap.h"
+#include "klibc/drivers/fs/vfs.h"
 
 void kmain(void)
 {
@@ -54,11 +55,12 @@ void kmain(void)
   ps2_entry();
   init_keyboard();
   init_timer();
+  init_vfs();
 
   pic_unmask_irq(0);
   pic_unmask_irq(1);
 
-  vterm_print("\n");
+  vterm_print("\n\n");
 
   __asm__ volatile ("sti");
 
