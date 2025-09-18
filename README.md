@@ -116,6 +116,10 @@ To run it with the debugging output.
 
 ![Goshkik WHAT](readme_images/goshkik-what.png)
 
+## Drawing Of Goshkik
+
+![Goshkik purrito drawing](readme_images/goshkik-purrito.png)
+
 ## WTFPL Logo
 
 ![WTFPL logo](readme_images/wtfpl.png)
@@ -123,8 +127,4 @@ To run it with the debugging output.
 ## WTFPL Comic Strip
 
 ![WTFPL comic strip](readme_images/wtfpl-strip.jpg)
-
-## Drawing Of Goshkik
-
-![Goshkik purrito drawing](readme_images/goshkik-purrito.png)
 
