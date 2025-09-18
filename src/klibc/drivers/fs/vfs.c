@@ -21,7 +21,7 @@ int vfs_register_filesystem(filesystem_t *fs)
 {
   vterm_print("VFS: Loading ");
   vterm_print(fs->name);
-  vterm_print(" File System\n");
+  vterm_print("\n");
 
   for (int i = 0; i < MAX_FILESYSTEMS; ++i) {
     if (!registered_filesystems[i]) {
