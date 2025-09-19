@@ -75,7 +75,11 @@ To run it with the debugging output.
  
 - Finished paging (memmap, pmm, vmm)
 
+- VFS (FS loader)
+
 ## - To-Do (Actual Project)
+
+- Ramfs
 
 - Expanded memory management
 
@@ -84,8 +88,6 @@ To run it with the debugging output.
 - PS2 mouse handling
 
 - Expanded PS2 keyboard handling
-
-- VFS
 
 - And a fucking wholeeee lot more
 
