@@ -14,12 +14,12 @@ void init_vfs(void)
     mounts[i].path[0] = '\0';
   }
 
-  vterm_print("VFS:   Initialized");
+  vterm_print("VFS:   Initialized\n");
 }
 
 int vfs_register_filesystem(filesystem_t *fs)
 {
-  vterm_print("VFS: Loading ");
+  vterm_print("VFS:   Loading ");
   vterm_print(fs->name);
   vterm_print("\n");
 
@@ -30,12 +30,12 @@ int vfs_register_filesystem(filesystem_t *fs)
     }
   }
 
-  return 1;
+  return -1;
 }
 
 int vfs_mount(const char *fs_name, void *mount_data, const char *mount_path)
 {
-  vterm_print("VFS: Mount ");
+  vterm_print("VFS:   Mount ");
   vterm_print(fs_name);
   vterm_print(" at ");
   vterm_print(mount_path);
@@ -59,7 +59,7 @@ int vfs_mount(const char *fs_name, void *mount_data, const char *mount_path)
     }
   }
 
-  return 1;
+  return -1;
 }
 
 static vfs_node_t *vfs_resolve(const char *path)
@@ -108,14 +108,14 @@ vfs_node_t *vfs_lookup(const char *path)
 
 size_t vfs_read(vfs_node_t *node, size_t offset, size_t size, void *buffer)
 {
-  if (!node || !node->ops || !node->ops->read) return 1;
+  if (!node || !node->ops || !node->ops->read) return -1;
 
   return node->ops->read(node, offset, size, buffer);
 }
 
 size_t vfs_write(vfs_node_t *node, size_t offset, size_t size, const void *buffer)
 {
-  if (!node || !node->ops || !node->ops->write) return 1;
+  if (!node || !node->ops || !node->ops->write) return -1;
 
   return node->ops->write(node, offset, size, buffer);
 
@@ -123,21 +123,21 @@ size_t vfs_write(vfs_node_t *node, size_t offset, size_t size, const void *buffe
 
 int vfs_open(vfs_node_t *node)
 {
-  if (!node || !node->ops || !node->ops->open) return 1;
+  if (!node || !node->ops || !node->ops->open) return -1;
 
   return node->ops->open(node);
 }
 
 int vfs_close(vfs_node_t *node)
 {
-  if (!node || !node->ops || !node->ops->close) return 1;
+  if (!node || !node->ops || !node->ops->close) return -1;
 
   return node->ops->close(node);
 }
 
 int vfs_readdir(vfs_node_t *node, size_t index, vfs_dirent_t *dirent)
 {
-  if (!node || !node->ops || !node->ops->readdir) return 1;
+  if (!node || !node->ops || !node->ops->readdir) return -1;
 
   return node->ops->readdir(node, index, dirent);
 }

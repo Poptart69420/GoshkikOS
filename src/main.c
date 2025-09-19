@@ -20,6 +20,7 @@
 #include "klibc/include/hcf.h"
 #include "klibc/mem/kheap.h"
 #include "klibc/drivers/fs/vfs.h"
+#include "klibc/drivers/fs/ramfs/ramfs.h"
 
 void kmain(void)
 {
@@ -56,6 +57,8 @@ void kmain(void)
   init_keyboard();
   init_timer();
   init_vfs();
+  vfs_register_filesystem(&fs_ramfs);
+  vfs_mount("ramfs", NULL, "/");
 
   pic_unmask_irq(0);
   pic_unmask_irq(1);
