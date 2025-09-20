@@ -35,33 +35,32 @@ void vterm_putc(const char c)
 {
   if (c == '\n') {
     cursor_x = 0;
-    cursor_y += 8;
+    cursor_y += 16;
+    return;
   }
 
   if (cursor_x + 8 > width) {
     cursor_x = 0;
-    cursor_y += 8;
+    cursor_y += 16;
   }
 
   if (cursor_y + 8 > height) {
     vterm_clear(term_color);
-    cursor_x = 0;
-    cursor_y = 0;
   }
 
-  const char *glyph = font8x8_basic[(int)c];
+  const uint8_t *glyph = &default_font[(uint8_t)c * 16];
 
-  for (int y = 0; y < 8; ++y) {
+  for (int y = 0; y < 16; ++y) {
     for (int x = 0; x < 8; ++x) {
-      if ((glyph[y] >> x) & 1) {
+      if ((glyph[y] >> (7 - x)) & 1) {
         size_t fb_x = cursor_x + x;
         size_t fb_y = cursor_y + y;
         framebuffer[fb_y * (pitch / 4) + fb_x] = fg_color;
       }
     }
   }
-  cursor_x += 8;
 
+  cursor_x += 8;
 }
 
 void vterm_print(const char *str)

@@ -38,9 +38,12 @@ void kmain(void)
 
   vterm_print("\n");
 
-  vterm_print("|-------------------|\n");
+  vterm_print("=|||||||||||||||||||=\n");
+  vterm_print("|                   |\n");
   vterm_print("| GoshkikOS Started |\n");
-  vterm_print("|-------------------|\n");
+  vterm_print("|                   |\n");
+  vterm_print("=|||||||||||||||||||=\n");
+  vterm_print("\n");
 
   g_hhdm_offset = hhdm_request.response->offset;
   
@@ -59,6 +62,15 @@ void kmain(void)
   init_vfs();
   vfs_register_filesystem(&fs_ramfs);
   vfs_mount("ramfs", NULL, "/");
+
+  vterm_print("\n\n");
+
+  vterm_print("Creating directory \"/test\"\n");
+  vterm_print("Creating directory \"/test2\"\n\n");
+  vfs_create_dir("/test");
+  vfs_create_dir("/test2");
+  vterm_print("ls: ");
+  vfs_ls("/");
 
   pic_unmask_irq(0);
   pic_unmask_irq(1);

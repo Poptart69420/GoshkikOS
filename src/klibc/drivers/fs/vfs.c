@@ -184,3 +184,21 @@ vfs_node_t *vfs_create_dir(const char *path)
 
   return parent->ops->create(parent, name, true, NULL, 0);
 }
+
+void vfs_ls(const char *path)
+{
+  vfs_node_t *dir = vfs_lookup(path);
+  if (!dir || !(dir->permissions & VFS_NODE_DIR)) {
+    vterm_print("Not a directory\n");
+    return;
+  }
+
+  vfs_dirent_t entry;
+  size_t index = 0;
+
+  while (vfs_readdir(dir, index, &entry) == 0) {
+    vterm_print(entry.name);
+    vterm_print(" ");
+    index++;
+  }
+}

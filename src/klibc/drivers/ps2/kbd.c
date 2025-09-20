@@ -8,8 +8,6 @@ static void keyboard_handler(registers_t *regs)
 
   (void) regs;
 
-  vterm_print("Key Press\n");
-
   pic_send_eoi(1);
 }
 
