@@ -63,36 +63,36 @@ void kmain(void)
   vfs_register_filesystem(&fs_ramfs);
   vfs_mount("ramfs", NULL, "/");
 
-  vterm_print("\n\n");
+  vterm_print("\n");
 
   vterm_print("Creating directory \"/test\"\n");
-  vterm_print("Creating directory \"/test/test2\"\n\n");
+  vterm_print("Creating directory \"/test/test2\"\n");
   vfs_create_dir("/test");
   vfs_create_dir("/test/test2");
   vterm_print("ls /: ");
   vfs_ls("/");
-  vterm_print("\n\n");
+  vterm_print("\n");
 
   vterm_print("ls /test: ");
   vfs_ls("/test");
 
-  vterm_print("\n\n");
+  vterm_print("\n");
 
-  vterm_print("Removing directory \"/test\"\n\n");
+  vterm_print("Removing directory \"/test\"\n");
   vfs_remove("/test");
   vterm_print("ls /: ");
   vfs_ls("/");
 
-  vterm_print("\n\n");
+  vterm_print("\n");
 
-  vterm_print("Removing directory \"/test/test2\"\n\n");
+  vterm_print("Removing directory \"/test/test2\"\n");
   vfs_remove("/test/test2");
   vterm_print("ls /test: ");
   vfs_ls("/test");
 
-  vterm_print("\n\n");
+  vterm_print("\n");
 
-  vterm_print("Removing directory \"/test\"\n\n");
+  vterm_print("Removing directory \"/test\"\n");
   vfs_remove("/test");
   vterm_print("ls /: ");
   vfs_ls("/");
