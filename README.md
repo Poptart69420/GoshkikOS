@@ -77,9 +77,13 @@ To run it with the debugging output.
 
 - VFS (FS loader)
 
+- Ramfs
+
 ## - To-Do (Actual Project)
 
-- Ramfs
+- Modular driver loader
+
+- Persistant file systems
 
 - Expanded memory management
 
