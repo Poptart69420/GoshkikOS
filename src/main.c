@@ -66,11 +66,39 @@ void kmain(void)
   vterm_print("\n\n");
 
   vterm_print("Creating directory \"/test\"\n");
-  vterm_print("Creating directory \"/test2\"\n\n");
+  vterm_print("Creating directory \"/test/test2\"\n\n");
   vfs_create_dir("/test");
-  vfs_create_dir("/test2");
-  vterm_print("ls: ");
+  vfs_create_dir("/test/test2");
+  vterm_print("ls /: ");
   vfs_ls("/");
+  vterm_print("\n\n");
+
+  vterm_print("ls /test: ");
+  vfs_ls("/test");
+
+  vterm_print("\n\n");
+
+  vterm_print("Removing directory \"/test\"\n\n");
+  vfs_remove("/test");
+  vterm_print("ls /: ");
+  vfs_ls("/");
+
+  vterm_print("\n\n");
+
+  vterm_print("Removing directory \"/test/test2\"\n\n");
+  vfs_remove("/test/test2");
+  vterm_print("ls /test: ");
+  vfs_ls("/test");
+
+  vterm_print("\n\n");
+
+  vterm_print("Removing directory \"/test\"\n\n");
+  vfs_remove("/test");
+  vterm_print("ls /: ");
+  vfs_ls("/");
+
+  vterm_print("\n\n");
+
 
   pic_unmask_irq(0);
   pic_unmask_irq(1);

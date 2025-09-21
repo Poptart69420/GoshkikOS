@@ -35,6 +35,9 @@ int vfs_register_filesystem(filesystem_t *fs)
 
 int vfs_mount(const char *fs_name, void *mount_data, const char *mount_path)
 {
+  char tmp[256];
+  strncpy(tmp, mount_path, sizeof(tmp));
+
   vterm_print("VFS:   Mount ");
   vterm_print(fs_name);
   vterm_print(" at ");
@@ -50,7 +53,7 @@ int vfs_mount(const char *fs_name, void *mount_data, const char *mount_path)
 
       for (int j = 0; j < MAX_MOUNTS; ++j) {
         if (!mounts[j].root_node) {
-          strncpy(mounts[j].path, mount_path, 255);
+          strncpy(mounts[j].path, tmp, 255);
           mounts[j].path[255] = '\0';
           mounts[j].root_node = root;
           return 0;
@@ -64,6 +67,9 @@ int vfs_mount(const char *fs_name, void *mount_data, const char *mount_path)
 
 static vfs_node_t *vfs_resolve(const char *path)
 {
+  char tmp[256];
+  strncpy(tmp, path, sizeof(tmp));
+
   const mount_t *best = NULL;
   size_t best_length = 0;
 
@@ -80,7 +86,7 @@ static vfs_node_t *vfs_resolve(const char *path)
   if (!best) return NULL;
 
   path_t parsed;
-  path_parse(path + best_length, &parsed);
+  path_parse(tmp + best_length, &parsed);
 
   vfs_node_t *node = best->root_node;
 
@@ -155,7 +161,7 @@ vfs_node_t *vfs_create_file(const char *path, const void *content, size_t size)
   strncpy(tmp, path, sizeof(tmp));
   tmp[sizeof(tmp) - 1] = '\0';
 
-  char *last = strchr(tmp, '/');
+  char *last = strrchr(tmp, '/');
   if (!last) return NULL;
 
   *last = '\0';
@@ -169,15 +175,19 @@ vfs_node_t *vfs_create_file(const char *path, const void *content, size_t size)
 
 vfs_node_t *vfs_create_dir(const char *path)
 {
+  if (!path || !*path) return NULL;
+
   char tmp[256];
   strncpy(tmp, path, sizeof(tmp));
   tmp[sizeof(tmp) - 1] = '\0';
 
-  char *last = strchr(tmp, '/');
+  if (strcmp(tmp, "/") == 0) return NULL;
+
+  char *last = strrchr(tmp, '/');
   if (!last) return NULL;
 
-  *last = '\0';
   const char *name = last + 1;
+  *last = '\0';
 
   vfs_node_t *parent = vfs_lookup(tmp[0] ? tmp : "/");
   if (!parent || !parent->ops || !parent->ops->create) return NULL;
@@ -185,9 +195,82 @@ vfs_node_t *vfs_create_dir(const char *path)
   return parent->ops->create(parent, name, true, NULL, 0);
 }
 
+int vfs_rmf(const char *path)
+{
+  char tmp[256];
+  strncpy(tmp, path, sizeof(tmp));
+  tmp[sizeof(tmp) - 1] = '\0';
+
+  char *last = strrchr(tmp, '/');
+  if (!last) return -1;
+
+  const char *name = last + 1;
+  *last = '\0';
+
+  vfs_node_t *parent = vfs_lookup(tmp[0] ? tmp : "/");
+  if (!parent || !parent->ops || !parent->ops->rmf) return -1;
+
+  return parent->ops->rmf(parent, name);
+}
+
+int vfs_rmdir(const char *path)
+{
+  char tmp[256];
+  strncpy(tmp, path, sizeof(tmp));
+  tmp[sizeof(tmp) - 1] = '\0';
+
+  char *last = strrchr(tmp, '/');
+  if (!last) return -1;
+
+  const char *name = last + 1;
+  *last = '\0';
+
+  vfs_node_t *parent = vfs_lookup(tmp[0] ? tmp : "/");
+  if (!parent || !parent->ops || !parent->ops->rmdir) return -1;
+
+  return parent->ops->rmdir(parent, name);
+}
+
+int vfs_remove(const char *path)
+{
+  if (!path || !*path) return -1;
+
+  char tmp[256];
+  strncpy(tmp, path, sizeof(tmp));
+  tmp[sizeof(tmp) - 1] = '\0';
+
+  const vfs_node_t *node = vfs_lookup(tmp);
+  if (!node) return -1;
+
+  char *last = strrchr(tmp, '/');
+  if (!last) return -1;
+
+  const char *name = last + 1;
+  *last = '\0';
+
+  vfs_node_t *parent = vfs_lookup(tmp[0] ? tmp : "/");
+  if (!parent || !parent->ops) return -1;
+
+  switch (node->type) {
+    case VFS_NODE_DIR:
+      if (parent->ops->rmdir) return parent->ops->rmdir(parent, name);
+      break;
+    case VFS_NODE_FILE:
+      if (parent->ops->rmf) return parent->ops->rmf(parent, name);
+      break;
+    default:
+      return -1;
+      break;
+  }
+
+  return -1;
+}
+
 void vfs_ls(const char *path)
 {
-  vfs_node_t *dir = vfs_lookup(path);
+  char tmp[256];
+  strncpy(tmp, path, sizeof(tmp));
+  vfs_node_t *dir = vfs_lookup(tmp);
   if (!dir || !(dir->permissions & VFS_NODE_DIR)) {
     vterm_print("Not a directory\n");
     return;

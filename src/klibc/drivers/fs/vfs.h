@@ -22,6 +22,9 @@ int vfs_readdir(vfs_node_t *node, size_t index, vfs_dirent_t *dirent);
 vfs_node_t *vfs_finddir(vfs_node_t *node, const char *name);
 vfs_node_t *vfs_create_file(const char *path, const void *content, size_t size);
 vfs_node_t *vfs_create_dir(const char *path);
+int vfs_rmf(const char *path);
+int vfs_rmdir(const char *path);
+int vfs_remove(const char *path);
 void vfs_ls(const char *path);
 
 #endif // VFS_H_

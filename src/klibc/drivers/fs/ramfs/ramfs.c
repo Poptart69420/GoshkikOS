@@ -3,108 +3,122 @@
 // Forward declaration
 
 static vfs_node_t *ramfs_mount(void *data);
-static vfs_node_t* ramfs_finddir(vfs_node_t *node, const char *name);
-static int ramfs_readdir(vfs_node_t *node, size_t index, vfs_dirent_t *dirent);
-static size_t ramfs_read(vfs_node_t *node, size_t offset, size_t size, void *buffer);
-static size_t ramfs_write(vfs_node_t *node, size_t offset, size_t size, const void *buffer);
-static vfs_node_t* ramfs_create_node(vfs_node_t *parent_node, const char* name, bool is_dir, const void *content, size_t size);
-static vfs_ops_t ramfs_ops;
+static vfs_node_t *ramfs_finddir(vfs_node_t *node, const char *name);
+static int        ramfs_readdir(vfs_node_t *node, size_t index, vfs_dirent_t *dirent);
+static size_t     ramfs_read(vfs_node_t *node, size_t offset, size_t size, void *buffer);
+static size_t     ramfs_write(vfs_node_t *node, size_t offset, size_t size, const void *buffer);
+static vfs_node_t *ramfs_create_node(vfs_node_t *parent_node, const char *name, bool is_dir, const void *content, size_t size);
+static int        ramfs_rmf(vfs_node_t *parent_node, const char *name);
+static int        ramfs_rmdir(vfs_node_t *parent_node, const char *name);
+static vfs_ops_t  ramfs_ops;
 
 // Structs
 
 static ramfs_file_t ramfs_root_file =
 {
-  .name = "",
-  .is_dir = true,
-  .data = NULL,
-  .size = 0,
-  .parent = NULL,
+  .name     = "",
+  .is_dir   = true,
+  .data     = NULL,
+  .size     = 0,
+  .parent   = NULL,
   .children = NULL,
-  .next = NULL
-};
-
-static vfs_node_t ramfs_root_node =
-{
-  .name = "/",
-  .type = VFS_NODE_DIR,
-  .permissions = VFS_READ | VFS_EXEC,
-  .size = 0,
-  .private_data = &ramfs_root_file,
-  .ops = &ramfs_ops,
-  .parent = NULL
+  .next     = NULL,
+  .node     = {}
 };
 
 filesystem_t fs_ramfs =
 {
-  .name = "ramfs",
-  .init = NULL,
+  .name  = "ramfs",
+  .init  = NULL,
   .mount = ramfs_mount
 };
 
 static vfs_ops_t ramfs_ops =
 {
   .read = ramfs_read,
-  .write = ramfs_write,
-  .open = NULL,
-  .close = NULL,
+  .write   = ramfs_write,
+  .open    = NULL,
+  .close   = NULL,
   .readdir = ramfs_readdir,
   .finddir = ramfs_finddir,
-  .create = ramfs_create_node
+  .create  = ramfs_create_node,
+  .rmf     = ramfs_rmf,
+  .rmdir   = ramfs_rmdir
 };
 
 // Functions
+
+static void ramfs_init_node_file(ramfs_file_t *file)
+{
+  if (!file) return;
+
+  memset(&file->node, 0, sizeof(vfs_node_t));
+  strncpy(file->node.name, file->name[0] ? file->name : "/", sizeof(file->node.name));
+  file->node.name[sizeof(file->node.name) - 1] = '\0';
+
+  file->node.type = file->is_dir ? VFS_NODE_DIR : VFS_NODE_FILE;
+  file->node.permissions = (file->is_dir ? (VFS_READ | VFS_EXEC) : (VFS_READ | VFS_WRITE));
+  file->node.size = file->size;
+  file->node.private_data = file;
+  file->node.ops = &ramfs_ops;
+  file->node.parent = NULL;
+}
 
 static vfs_node_t *ramfs_mount(void *data)
 {
   (void) data;
 
-  return &ramfs_root_node;
+  strncpy(ramfs_root_file.name, "/", sizeof(ramfs_root_file.name));
+  ramfs_root_file.name[sizeof(ramfs_root_file.name) - 1] = '\0';
+  ramfs_root_file.is_dir = true;
+  ramfs_root_file.parent = NULL;
+  ramfs_root_file.children = NULL;
+  ramfs_root_file.next = NULL;
+  ramfs_init_node_file(&ramfs_root_file);
+
+  ramfs_root_file.node.parent = NULL;
+
+  return &ramfs_root_file.node;
 }
 
 // Ops functions
 
 static size_t ramfs_read(vfs_node_t *node, size_t offset, size_t size, void *buffer)
 {
-  ramfs_file_t *file = (ramfs_file_t *)node->private_data;
+  if (!node || !buffer) return -1;
+  const ramfs_file_t *file = (ramfs_file_t *)node->private_data;
 
-  if (!file || file->is_dir || !buffer) return 1;
+  if(!file) return -1;
+  if (file->is_dir) return -2;
+  if (!file->data || offset >=file->size) return -1;
 
-  size_t end = offset + size;
+  size_t avail = file->size - offset;
+  size_t to_read = (size < avail) ? size : avail;
 
-  if (end > file->size) {
-    uint8_t *new_data = kmalloc(end);
-
-    if (file->data) {
-      memcpy(new_data, file->data, file->size);
-      kfree(file->data);
-    }
-
-    if (offset > file->size) {
-      memset(new_data + file->size, 0, offset - file->size);
-    }
-
-    file->data = new_data;
-    file->size = end;
-  }
-
-  memcpy(file->data + offset, buffer, size);
-  return size;
+  memcpy(buffer, file->data + offset, to_read);
+  return to_read;
 }
 
 static size_t ramfs_write(vfs_node_t *node, size_t offset, size_t size, const void *buffer)
 {
+  if (!node || !buffer) return -1;
+
   ramfs_file_t *file = (ramfs_file_t *)node->private_data;
 
-  if (!file || file->is_dir || !buffer) return 1;
+  if (!file) return -1;
+  if (file->is_dir) return -1;
 
   size_t end = offset + size;
 
   if (end > file->size) {
     uint8_t *new_data = kmalloc(end);
+    if (!new_data) return -1;
 
     if (file->data) {
       memcpy(new_data, file->data, file->size);
       kfree(file->data);
+    } else {
+      memset(new_data, 0, end);
     }
 
     if (offset > file->size) {
@@ -113,6 +127,7 @@ static size_t ramfs_write(vfs_node_t *node, size_t offset, size_t size, const vo
 
     file->data = new_data;
     file->size = end;
+    file->node.size = file->size;
   }
 
   memcpy(file->data + offset, buffer, size);
@@ -121,9 +136,11 @@ static size_t ramfs_write(vfs_node_t *node, size_t offset, size_t size, const vo
 
 static int ramfs_readdir(vfs_node_t *node, size_t index, vfs_dirent_t *dirent)
 {
-  ramfs_file_t *dir = (ramfs_file_t *)node->private_data;
+  if (!node || !dirent) return -1;
 
-  if (!dir || !dir->is_dir) return 1;
+  const ramfs_file_t *dir = (ramfs_file_t *)node->private_data;
+
+  if (!dir || !dir->is_dir) return -1;
 
   ramfs_file_t *child = dir->children;
 
@@ -132,23 +149,12 @@ static int ramfs_readdir(vfs_node_t *node, size_t index, vfs_dirent_t *dirent)
       strncpy(dirent->name, child->name, sizeof(dirent->name));
       dirent->name[sizeof(dirent->name) - 1] = '\0';
 
-      vfs_node_t *child_node = kmalloc(sizeof(vfs_node_t));
-      strncpy(child_node->name, child->name, sizeof(child_node->name));
-
-      child_node->name[sizeof(child_node->name) - 1] = '\0';
-      child_node->type = child->is_dir ? VFS_NODE_DIR : VFS_NODE_FILE;
-      child_node->permissions = VFS_READ | VFS_WRITE;
-      child_node->size = child->size;
-      child_node->private_data = child;
-      child_node->ops = &ramfs_ops;
-      child_node->parent = node;
-
-      dirent->node = child_node;
+      dirent->node = &child->node;
       return 0;
     }
   }
 
-  return 1;
+  return -1;
 }
 
 static vfs_node_t *ramfs_finddir(vfs_node_t *node, const char *name)
@@ -160,16 +166,8 @@ static vfs_node_t *ramfs_finddir(vfs_node_t *node, const char *name)
   ramfs_file_t *child = dir->children;
   while (child) {
     if (strcmp(child->name, name) == 0) {
-      vfs_node_t *child_node = kmalloc(sizeof(vfs_node_t));
-      strncpy(child_node->name, child->name, sizeof(child_node->name));
-      child_node->name[sizeof(child_node->name) - 1] = '\0';
-      child_node->type = child->is_dir ? VFS_NODE_DIR : VFS_NODE_FILE;
-      child_node->permissions = VFS_READ | VFS_WRITE;
-      child_node->size = child->size;
-      child_node->private_data = child;
-      child_node->ops = &ramfs_ops;
-      child_node->parent = node;
-      return child_node;
+      child->node.parent = node;
+      return &child->node;
     }
 
     child = child->next;
@@ -180,12 +178,16 @@ static vfs_node_t *ramfs_finddir(vfs_node_t *node, const char *name)
 
 static vfs_node_t *ramfs_create_node(vfs_node_t *parent_node, const char *name, bool is_dir, const void *content, size_t size)
 {
+  if (!parent_node || !name) return NULL;
+
   ramfs_file_t *parent = (ramfs_file_t *)parent_node->private_data;
 
   if (!parent || !parent->is_dir) return NULL;
 
   ramfs_file_t *file = kmalloc(sizeof(ramfs_file_t));
+  if (!file) return NULL;
   memset(file, 0, sizeof(ramfs_file_t));
+
   strncpy(file->name, name, sizeof(file->name));
   file->name[sizeof(file->name) - 1] = '\0';
   file->is_dir = is_dir;
@@ -193,21 +195,79 @@ static vfs_node_t *ramfs_create_node(vfs_node_t *parent_node, const char *name, 
 
   if (!is_dir && content && size > 0) {
     file->data = kmalloc(size);
+
+    if (!file->data) {
+      kfree(file);
+      return NULL;
+    }
+
     memcpy(file->data, content, size);
     file->size = size;
   }
 
+  ramfs_init_node_file(file);
+  file->node.private_data = file;
+  file->node.parent = parent_node;
   file->next = parent->children;
   parent->children = file;
-  vfs_node_t *node = kmalloc(sizeof(vfs_node_t));
-  strncpy(node->name, name, sizeof(node->name));
-  node->name[sizeof(node->name) - 1] = '\0';
-  node->type = is_dir ? VFS_NODE_DIR : VFS_NODE_FILE;
-  node->permissions = VFS_READ | VFS_WRITE;
-  node->size = file->size;
-  node->private_data = file;
-  node->ops = &ramfs_ops;
-  node->parent = parent_node;
 
-  return node;
+  return &file->node;
+}
+
+int ramfs_rmf(vfs_node_t *parent_node, const char *name)
+{
+  if (!parent_node || !name) return -1;
+
+  ramfs_file_t *parent = (ramfs_file_t *)parent_node->private_data;
+  if (!parent || !parent->is_dir) return -1;
+
+  ramfs_file_t *prev = NULL;
+  ramfs_file_t *current = parent->children;
+
+  while(current) {
+    if (!current->is_dir && strcmp(current->name, name) == 0) {
+      if (prev) prev->next = current->next;
+      else parent->children = current->next;
+
+      if (current->data) kfree(current->data);
+      kfree(current);
+
+      return 0;
+    }
+
+    prev = current;
+    current = current->next;
+  }
+
+  return -1;
+}
+
+int ramfs_rmdir(vfs_node_t *parent_node, const char *name)
+{
+  if (!parent_node || !name) return -1;
+
+  ramfs_file_t *parent = (ramfs_file_t *)parent_node->private_data;
+  if (!parent || !parent->is_dir) return -1;
+
+  ramfs_file_t *prev = NULL;
+  ramfs_file_t *current = parent->children;
+
+  while(current) {
+    if (current->is_dir && strcmp(current->name, name) == 0) {
+
+      if (current->children) return -2; // Not empty
+
+      if (prev) prev->next = current->next;
+      else parent->children = current->next;
+
+      kfree(current);
+
+      return 0;
+    }
+
+    prev = current;
+    current = current->next;
+  }
+  
+  return -1;
 }
