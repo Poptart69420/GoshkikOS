@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "../vfs.h"
 #include "../../../include/hcf.h"
+#include "../../../../kernel.h"
 
 typedef struct tar_header_struct
 {
@@ -23,6 +24,16 @@ typedef struct tar_header_struct
   uint64_t minor_number;
   char prefix[155];
 }__attribute__((packed)) tar_header;
+
+#define TAR_REGTYPE  '0'        // Regular file
+#define TAR_AREGTYPE '\0'       // Regular file
+#define TAR_LNKTYPE  '1'        // Hard link
+#define TAR_SYMTYPE  '2'        // Symbolic link
+#define TAR_CHRTYPE  '3'        // Character special
+#define TAR_BLKTYPE  '4'        // Block special
+#define TAR_DIRTYPE  '5'        // Directory
+#define TAR_FIFOTYPE '6'        // Named pipe
+#define TAR_CONTTYPE '7'        // Contiguous file
 
 void mount_initrd(void);
 

@@ -7,6 +7,8 @@ static vfs_node_t *ramfs_finddir(vfs_node_t *node, const char *name);
 static int        ramfs_readdir(vfs_node_t *node, size_t index, vfs_dirent_t *dirent);
 static size_t     ramfs_read(vfs_node_t *node, size_t offset, size_t size, void *buffer);
 static size_t     ramfs_write(vfs_node_t *node, size_t offset, size_t size, const void *buffer);
+static int        ramfs_open(vfs_node_t *node);
+static int        ramfs_close(vfs_node_t *node);
 static vfs_node_t *ramfs_create_node(vfs_node_t *parent_node, const char *name, bool is_dir, const void *content, size_t size);
 static int        ramfs_rmf(vfs_node_t *parent_node, const char *name);
 static int        ramfs_rmdir(vfs_node_t *parent_node, const char *name);
@@ -25,8 +27,8 @@ static vfs_ops_t ramfs_ops =
 {
   .read = ramfs_read,
   .write   = ramfs_write,
-  .open    = NULL,
-  .close   = NULL,
+  .open    = ramfs_open,
+  .close   = ramfs_close,
   .readdir = ramfs_readdir,
   .finddir = ramfs_finddir,
   .create  = ramfs_create_node,
@@ -55,23 +57,16 @@ static void ramfs_init_node_file(ramfs_file_t *file)
 static vfs_node_t *ramfs_mount(void *data)
 {
   (void) data;
-
   ramfs_file_t *root_file = kmalloc(sizeof(ramfs_file_t));
   if (!root_file) return NULL;
-
   memset(root_file, 0, sizeof(ramfs_file_t));
-
-  strncpy(root_file->name, "/", sizeof(root_file->name));
-  root_file->name[sizeof(root_file->name) - 1] = '\0';
+  root_file->name[0] = '\0';
   root_file->is_dir = true;
   root_file->parent = NULL;
   root_file->children = NULL;
   root_file->next = NULL;
-
   ramfs_init_node_file(root_file);
-
   root_file->node.parent = NULL;
-
   return &root_file->node;
 }
 
@@ -126,6 +121,16 @@ static size_t ramfs_write(vfs_node_t *node, size_t offset, size_t size, const vo
 
   memcpy(file->data + offset, buffer, size);
   return size;
+}
+
+static int ramfs_open(vfs_node_t *node)  {
+  (void)node;
+  return 0;
+}
+
+static int ramfs_close(vfs_node_t *node) {
+  (void)node;
+  return 0;
 }
 
 static int ramfs_readdir(vfs_node_t *node, size_t index, vfs_dirent_t *dirent)
