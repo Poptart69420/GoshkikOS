@@ -27,6 +27,7 @@ mkdir -p iso_root
 # Copy the relevant files over.
 mkdir -p iso_root/boot
 cp -v build/bin/goshkikOS iso_root/boot/
+cp -v build/boot/initrd.tar iso_root/boot/
 mkdir -p iso_root/boot/limine
 cp -v bootloader/limine.conf bootloader/Limine/limine-bios.sys bootloader/Limine/limine-bios-cd.bin \
       bootloader/Limine/limine-uefi-cd.bin iso_root/boot/limine/

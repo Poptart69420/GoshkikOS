@@ -1,40 +1,38 @@
-#include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
-#include <limine.h>
+#include "kernel.h"
 
-#include "klibc/mem/mem.h"
-#include "klibc/gdt/gdt.h"
-#include "klibc/isr/isr.h"
-#include "klibc/pic/pic.h"
-#include "klibc/drivers/vterm/vterm.h"
-#include "klibc/pit/pit.h"
-#include "klibc/drivers/ps2/ps2.h"
-#include "klibc/drivers/ps2/kbd.h"
-#include "klibc/timer/timer.h"
-#include "klibc/include/global.h"
-#include "klibc/mem/memmap.h"
-#include "klibc/mem/pmm.h"
-#include "klibc/mem/vmm.h"
-#include "klibc/limine_requests/limine_requests.h"
-#include "klibc/include/hcf.h"
-#include "klibc/mem/kheap.h"
-#include "klibc/drivers/fs/vfs.h"
-#include "klibc/drivers/fs/ramfs/ramfs.h"
+kernel_table master_kernel_table;
+kernel_table *kernel;
 
-void kmain(void)
+static void boot_info(void)
 {
+  kernel = &master_kernel_table;
+
+  if (!framebuffer_request.response) hcf();
+  if (!hhdm_request.response)        hcf();
+  if (!memmap_request.response)      hcf();
+  if (!module_request.response)      hcf();
+
+  kernel->framebuffer = framebuffer_request.response;
+  kernel->hhdm        = hhdm_request.response;
+  kernel->memmap      = memmap_request.response;
+  kernel->module      = module_request.response;
+
   if (LIMINE_BASE_REVISION_SUPPORTED == false) {
     hcf();
   }
 
-  if (framebuffer_request.response == NULL
-      || framebuffer_request.response->framebuffer_count < 1) {
+  if (kernel->framebuffer == NULL
+      || kernel->framebuffer->framebuffer_count < 1) {
     hcf();
   }
-  struct limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[0];
+}
 
-  vterm_init(framebuffer);
+void kmain(void)
+{
+  boot_info();
+
+  struct limine_framebuffer *fb = kernel->framebuffer->framebuffers[0];
+  vterm_init(fb);
 
   vterm_print("\n");
 
@@ -63,47 +61,10 @@ void kmain(void)
   vfs_register_filesystem(&fs_ramfs);
   vfs_mount("ramfs", NULL, "/");
 
-  vterm_print("\n");
-
-  vterm_print("Creating directory \"/test\"\n");
-  vterm_print("Creating directory \"/test/test2\"\n");
-  vfs_create_dir("/test");
-  vfs_create_dir("/test/test2");
-  vterm_print("ls /: ");
-  vfs_ls("/");
-  vterm_print("\n");
-
-  vterm_print("ls /test: ");
-  vfs_ls("/test");
-
-  vterm_print("\n");
-
-  vterm_print("Removing directory \"/test\"\n");
-  vfs_remove("/test");
-  vterm_print("ls /: ");
-  vfs_ls("/");
-
-  vterm_print("\n");
-
-  vterm_print("Removing directory \"/test/test2\"\n");
-  vfs_remove("/test/test2");
-  vterm_print("ls /test: ");
-  vfs_ls("/test");
-
-  vterm_print("\n");
-
-  vterm_print("Removing directory \"/test\"\n");
-  vfs_remove("/test");
-  vterm_print("ls /: ");
-  vfs_ls("/");
-
-  vterm_print("\n\n");
-
+  mount_initrd();
 
   pic_unmask_irq(0);
   pic_unmask_irq(1);
-
-  vterm_print("\n\n");
 
   __asm__ volatile ("sti");
 

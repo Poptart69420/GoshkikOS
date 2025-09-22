@@ -37,11 +37,16 @@ int vfs_mount(const char *fs_name, void *mount_data, const char *mount_path)
 {
   char tmp[256];
   strncpy(tmp, mount_path, sizeof(tmp));
+  tmp[sizeof(tmp) - 1] = '\0';
+
+  size_t tlen = strlen(tmp);
+  if (tlen > 1 && tmp[tlen - 1] == '/')
+    tmp[tlen - 1] = '\0';
 
   vterm_print("VFS:   Mount ");
   vterm_print(fs_name);
   vterm_print(" at ");
-  vterm_print(mount_path);
+  vterm_print(tmp);
   vterm_print("\n");
 
   for (int i = 0; i < MAX_FILESYSTEMS; ++i) {
@@ -53,8 +58,8 @@ int vfs_mount(const char *fs_name, void *mount_data, const char *mount_path)
 
       for (int j = 0; j < MAX_MOUNTS; ++j) {
         if (!mounts[j].root_node) {
-          strncpy(mounts[j].path, tmp, 255);
-          mounts[j].path[255] = '\0';
+          strncpy(mounts[j].path, tmp, sizeof(mounts[j].path));
+          mounts[j].path[sizeof(mounts[j].path) - 1] = '\0';
           mounts[j].root_node = root;
           return 0;
         }
@@ -69,38 +74,44 @@ static vfs_node_t *vfs_resolve(const char *path)
 {
   char tmp[256];
   strncpy(tmp, path, sizeof(tmp));
+  tmp[sizeof(tmp) - 1] = '\0';
 
   const mount_t *best = NULL;
   size_t best_length = 0;
+  size_t path_length = strlen(tmp);
 
   for (int i = 0; i < MAX_MOUNTS; ++i) {
     if (!mounts[i].root_node) continue;
-
     size_t length = strlen(mounts[i].path);
-    if (strncmp(path, mounts[i].path, length) == 0 && length > best_length) {
-      best = &mounts[i];
-      best_length = length;
+    if (length > path_length) continue;
+    if (strncmp(tmp, mounts[i].path, length) == 0) {
+      if (tmp[length] == '\0' || tmp[length] == '/' ||
+          (length == 1 && mounts[i].path[0] == '/')) {
+        if (length > best_length) {
+          best = &mounts[i];
+          best_length = length;
+        }
+      }
     }
   }
 
   if (!best) return NULL;
 
   path_t parsed;
-  path_parse(tmp + best_length, &parsed);
+  const char *sub = tmp + best_length;
+  if (*sub == '/') ++sub;
+  path_parse(sub, &parsed);
 
   vfs_node_t *node = best->root_node;
 
   for (size_t i = 0; i < parsed.count; ++i) {
     if (!node->ops || !node->ops->finddir) return NULL;
-
     node = node->ops->finddir(node, parsed.parts[i]);
-
     if (!node) return NULL;
   }
 
   return node;
 }
-
 
 vfs_node_t *vfs_root(void)
 {
@@ -268,10 +279,9 @@ int vfs_remove(const char *path)
 
 void vfs_ls(const char *path)
 {
-  char tmp[256];
-  strncpy(tmp, path, sizeof(tmp));
-  vfs_node_t *dir = vfs_lookup(tmp);
-  if (!dir || !(dir->permissions & VFS_NODE_DIR)) {
+  vfs_node_t *dir = vfs_lookup(path);
+
+  if (!dir || dir->type != VFS_NODE_DIR) {
     vterm_print("Not a directory\n");
     return;
   }

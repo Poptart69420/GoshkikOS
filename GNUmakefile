@@ -6,6 +6,10 @@ MAKEFLAGS += -rR
 # Change as needed.
 override OUTPUT := build/bin/goshkikOS
 
+# This is the initd.tar
+override INITRD_TAR := build/boot/initrd.tar
+
+
 # User controllable toolchain and toolchain prefix.
 TOOLCHAIN := x86_64-elf
 TOOLCHAIN_PREFIX :=
@@ -105,7 +109,7 @@ override HEADER_DEPS := $(addprefix build/obj/,$(CFILES:.c=.c.d) $(ASFILES:.S=.S
 
 # Default target. This must come first, before header dependencies.
 .PHONY: all
-all: $(OUTPUT)
+all: $(OUTPUT) $(INITRD_TAR)
 
 # Include header dependencies.
 -include $(HEADER_DEPS)
@@ -114,6 +118,11 @@ all: $(OUTPUT)
 $(OUTPUT): GNUmakefile linker.lds $(OBJ)
 	mkdir -p "$$(dirname $@)"
 	$(LD) $(LDFLAGS) $(filter build/obj/src/crt%, $(OBJ)) $(filter-out build/obj/src/crt%, $(OBJ)) -o $@
+
+# Initrd.tar
+$(INITRD_TAR):
+	@mkdir -p build/boot
+	tar --create -f build/boot/initrd.tar initrd
 
 # Compilation rules for *.c files.
 build/obj/%.c.o: %.c GNUmakefile
@@ -133,4 +142,4 @@ build/obj/%.asm.o: %.asm GNUmakefile
 # Remove object files and the final executable.
 .PHONY: clean
 clean:
-	rm -rf build/bin build/obj
+	rm -rf build/bin build/obj build/boot/initrd.tar goshkikOS.iso iso_root

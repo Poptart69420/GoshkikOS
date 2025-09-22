@@ -14,18 +14,6 @@ static vfs_ops_t  ramfs_ops;
 
 // Structs
 
-static ramfs_file_t ramfs_root_file =
-{
-  .name     = "",
-  .is_dir   = true,
-  .data     = NULL,
-  .size     = 0,
-  .parent   = NULL,
-  .children = NULL,
-  .next     = NULL,
-  .node     = {}
-};
-
 filesystem_t fs_ramfs =
 {
   .name  = "ramfs",
@@ -68,17 +56,23 @@ static vfs_node_t *ramfs_mount(void *data)
 {
   (void) data;
 
-  strncpy(ramfs_root_file.name, "/", sizeof(ramfs_root_file.name));
-  ramfs_root_file.name[sizeof(ramfs_root_file.name) - 1] = '\0';
-  ramfs_root_file.is_dir = true;
-  ramfs_root_file.parent = NULL;
-  ramfs_root_file.children = NULL;
-  ramfs_root_file.next = NULL;
-  ramfs_init_node_file(&ramfs_root_file);
+  ramfs_file_t *root_file = kmalloc(sizeof(ramfs_file_t));
+  if (!root_file) return NULL;
 
-  ramfs_root_file.node.parent = NULL;
+  memset(root_file, 0, sizeof(ramfs_file_t));
 
-  return &ramfs_root_file.node;
+  strncpy(root_file->name, "/", sizeof(root_file->name));
+  root_file->name[sizeof(root_file->name) - 1] = '\0';
+  root_file->is_dir = true;
+  root_file->parent = NULL;
+  root_file->children = NULL;
+  root_file->next = NULL;
+
+  ramfs_init_node_file(root_file);
+
+  root_file->node.parent = NULL;
+
+  return &root_file->node;
 }
 
 // Ops functions
