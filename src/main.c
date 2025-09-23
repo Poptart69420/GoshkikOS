@@ -33,7 +33,7 @@ static void boot_info(void)
 
 void test_initrd_read(void)
 {
-  const char *path = "/initrd/initrd/etc/test.txt";
+  const char *path = "/initrd/etc/test.txt";
   vfs_node_t *file = vfs_lookup(path);
 
   if (!file) {
@@ -64,6 +64,45 @@ void test_initrd_read(void)
 
   buf[read_bytes] = '\0';
   vterm_print("\nContents of file \"test.txt\":\n");
+  vterm_print(buf);
+
+  kfree(buf);
+  vfs_close(file);
+}
+
+void test_initrd_read2(void)
+{
+  const char *path = "/initrd/etc/dwadawd.txt";
+  vfs_node_t *file = vfs_lookup(path);
+
+  if (!file) {
+    vterm_print("File not found\n");
+    return;
+  }
+
+  if (vfs_open(file) != 0) {
+    vterm_print("VFS: Failed to open file\n");
+  }
+
+  if (file->size == 0) {
+    vterm_print("VFS: File empty\n");
+    vfs_close(file);
+    return;
+  }
+
+  char *buf = kmalloc(file->size + 1);
+  if (!buf) hcf();
+
+  size_t read_bytes = vfs_read(file, 0, file->size, buf);
+  if (read_bytes == (size_t)-1 || read_bytes > file->size) {
+    vterm_print("VFS: Failed to read\n");
+    kfree(buf);
+    vfs_close(file);
+    return;
+  }
+
+  buf[read_bytes] = '\0';
+  vterm_print("\nContents of file \"dwadawd.txt\":\n");
   vterm_print(buf);
 
   kfree(buf);
@@ -106,7 +145,10 @@ void kmain(void)
 
   mount_initrd();
 
+  vfs_ls("/initrd");
+
   test_initrd_read();
+  test_initrd_read2();
 
   pic_unmask_irq(0);
   pic_unmask_irq(1);
