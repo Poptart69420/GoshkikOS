@@ -1,8 +1,8 @@
 #ifndef MEM_H_
 #define MEM_H_
 
-#include <stddef.h>
 #include "../../limine.h"
+#include <stddef.h>
 
 #define PAGE_SIZE 4096
 

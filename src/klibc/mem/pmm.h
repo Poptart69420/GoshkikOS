@@ -1,14 +1,14 @@
 #ifndef PMM_H_
 #define PMM_H_
 
-#include <stdint.h>
-#include <stddef.h>
-#include "../drivers/vterm/vterm.h"
-#include "mem.h"
 #include "../../limine.h"
-#include "memmap.h"
+#include "../drivers/vterm/vterm.h"
 #include "../include/global.h"
 #include "../include/hcf.h"
+#include "mem.h"
+#include "memmap.h"
+#include <stddef.h>
+#include <stdint.h>
 
 void init_pmm(void);
 uintptr_t pmm_alloc_page(void);

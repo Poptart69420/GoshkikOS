@@ -1,11 +1,11 @@
 #ifndef ISR_H_
 #define ISR_H_
 
-#include <stddef.h>
-#include "../include/registers.h"
-#include "../idt/idt.h"
 #include "../drivers/vterm/vterm.h"
+#include "../idt/idt.h"
+#include "../include/registers.h"
 #include "../pic/pic.h"
+#include <stddef.h>
 
 // Handlers
 

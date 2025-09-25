@@ -1,8 +1,8 @@
 #ifndef PIT_H_
 #define PIT_H_
 
-#include <stdint.h>
 #include "../include/io.h"
+#include <stdint.h>
 
 #define PIT_DIVISOR 1193182
 

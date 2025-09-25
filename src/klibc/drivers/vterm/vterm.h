@@ -1,10 +1,10 @@
 #ifndef VTERM_H_
 #define VTERM_H_
 
-#include <stdint.h>
-#include <stddef.h>
 #include "../../../limine.h"
 #include "font/font.h"
+#include <stddef.h>
+#include <stdint.h>
 
 void vterm_clear(uint32_t color);
 void vterm_init(const struct limine_framebuffer *fb);

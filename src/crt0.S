@@ -1,5 +1,5 @@
 .section .text
-
+    
 .global _start
 _start:
     # Set up end of the stack frame linked list.
