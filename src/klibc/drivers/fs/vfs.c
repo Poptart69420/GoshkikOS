@@ -8,6 +8,7 @@ list_t *fs_types;
 void init_vfs(void) {
     root = NULL;
     fs_types = new_list();
+    vterm_print("VFS:   Initialized");
 }
 
 void vfs_register_fs(vfs_filesystem_t *fs) { list_append(fs_types, fs); }
@@ -209,7 +210,7 @@ static const char *vfs_basename(const char *path) {
     return base;
 }
 
-int vfs_create(const char *path, int perm, uint64_t flags) {
+int vfs_create(const char *path, mode_t perms, uint64_t flags) {
     vfs_node_t *parent = vfs_open(path, VFS_WRITEONLY | VFS_PARENT);
     if (!parent)
         return -1;
@@ -218,7 +219,7 @@ int vfs_create(const char *path, int perm, uint64_t flags) {
     int ret;
 
     if (parent->create) {
-        ret = parent->create(parent, child, perm, flags);
+        ret = parent->create(parent, child, perms, flags);
     } else {
         ret = -1;
     }
@@ -227,8 +228,8 @@ int vfs_create(const char *path, int perm, uint64_t flags) {
     return ret;
 }
 
-int vfs_mkdir(const char *path, int perm) {
-    return vfs_create(path, perm, VFS_DIR);
+int vfs_mkdir(const char *path, mode_t perms) {
+    return vfs_create(path, perms, VFS_DIR);
 }
 
 int vfs_unlink(const char *path) {
@@ -307,9 +308,9 @@ int vfs_truncate(vfs_node_t *node, size_t size) {
     return -1;
 }
 
-int vfs_chmod(vfs_node_t *node, mode_t perm) {
+int vfs_chmod(vfs_node_t *node, mode_t perms) {
     (void)node;
-    (void)perm;
+    (void)perms;
 
     return -1;
 }
@@ -401,7 +402,33 @@ vfs_node_t *vfs_openat(vfs_node_t *at, const char *path, uint64_t flags) {
 
             if ((next_node->flags & VFS_LINK) &&
                 (!(flags & VFS_NOFOLOW) || i < path_depth - 1)) {
+                vfs_node_t *symlink = next_node;
+                if (loop_max-- <= 0) {
+                    vfs_close(symlink);
+                    return NULL;
+                }
+
+                char linkpath[PATH_MAX];
+                ssize_t size;
+                if ((size = vfs_readlink(symlink, linkpath, sizeof(linkpath))) <
+                    0) {
+                    vfs_close(symlink);
+                    return NULL;
+                }
+
+                linkpath[size] = '\0';
+
+                next_node = vfs_open(linkpath, flags);
+                vfs_close(symlink);
             }
+            break;
         }
+        vfs_close(current_node);
+        current_node = next_node;
     }
+
+    if (!current_node)
+        return NULL;
+
+    return current_node;
 }

@@ -12,6 +12,10 @@ void *memcpy(void *restrict dest, const void *restrict src, size_t n) {
     return dest;
 }
 
+void *mempcpy(void *restrict dest, const void *restrict src, size_t len) {
+    return (char *)memcpy(dest, src, len) + len;
+}
+
 void *memset(void *s, int c, size_t n) {
     uint8_t *p = (uint8_t *)s;
 

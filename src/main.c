@@ -63,6 +63,7 @@ void kmain(void) {
     ps2_entry();
     init_keyboard();
     init_timer();
+    init_vfs();
 
     pic_unmask_irq(0);
     pic_unmask_irq(1);

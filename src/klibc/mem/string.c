@@ -14,6 +14,34 @@ size_t strnlen(const char *s, size_t max) {
     return len;
 }
 
+char *stpcpy(char *dest, const char *src) {
+    char *p;
+    p = mempcpy(dest, src, strlen(src));
+    *p = '\0';
+    return p;
+}
+
+char *stpncpy(char *restrict dest, const char *restrict src, size_t n) {
+    size_t len;
+    len = strnlen(src, n);
+    return memset(memcpy(dest, src, len), 0, n - len);
+}
+
+char *strcpy(char *dest, const char *src) {
+    stpcpy(dest, src);
+    return dest;
+}
+
+char *strncpy(char *dest, const char *src, size_t n) {
+    stpncpy(dest, src, n);
+    return dest;
+}
+
+char *strcat(char *dest, const char *src) {
+    stpcpy(dest + strlen(dest), src);
+    return dest;
+}
+
 int strcmp(const char *a, const char *b) {
     while (*a && (*a == *b)) {
         a++;
