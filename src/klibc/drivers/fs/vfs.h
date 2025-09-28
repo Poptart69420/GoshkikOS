@@ -100,7 +100,11 @@ typedef struct vfs_filesystem_struct_t {
                  const void *data);
 } vfs_filesystem_t;
 
+extern vfs_node_t *root;
+
 // Functions
+
+void vfs_register_fs(vfs_filesystem_t *fs);
 
 void init_vfs(void);
 
@@ -122,6 +126,8 @@ int vfs_create(const char *path, mode_t perms, uint64_t flags);
 int vfs_mkdir(const char *path, mode_t perms);
 
 void vfs_close(vfs_node_t *node);
+
+struct dirent_t *vfs_readdir(vfs_node_t *node, uint64_t index);
 
 ssize_t vfs_readlink(vfs_node_t *node, char *buffer, size_t buffer_size);
 

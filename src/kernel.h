@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "klibc/drivers/fs/tmpfs/tmpfs.h"
 #include "klibc/drivers/fs/vfs.h"
 #include "klibc/drivers/ps2/kbd.h"
 #include "klibc/drivers/ps2/ps2.h"

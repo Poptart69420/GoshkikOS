@@ -34,6 +34,27 @@ static void boot_info(void) {
     }
 }
 
+static void ls(const char *path) {
+    vfs_node_t *node = vfs_open(path, VFS_READONLY);
+    if (!node) {
+        vterm_print("Path ");
+        vterm_print(path);
+        vterm_print(" doesn't exist\n");
+        return;
+    }
+
+    uint64_t index = 0;
+    struct dirent_t *ret;
+    while ((ret = vfs_readdir(node, index)) != NULL) {
+        vterm_print(ret->d_name);
+        vterm_print("\n");
+        kfree(ret);
+        index++;
+    }
+
+    vfs_close(node);
+}
+
 void kmain(void) {
     boot_info();
 
@@ -65,6 +86,12 @@ void kmain(void) {
     init_timer();
     init_vfs();
 
+    init_tmpfs();
+
+    root = new_tmpfs();
+    vfs_mount("/", root);
+    vfs_mkdir("/home", VFS_READWRITE);
+    ls("/");
     pic_unmask_irq(0);
     pic_unmask_irq(1);
 

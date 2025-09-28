@@ -75,12 +75,11 @@ To run it with the debugging output.
  
 - Finished paging (memmap, pmm, vmm)
 
-- VFS (FS loader)
+- VFS (FS modularity layer)
 
+- Tmpfs (pretty much finished, just missing access time and proper attribute handling)
 
 ## - To-Do (Actual Project)
-
-- Tmpfs (currently working on)
 
 - Modular driver loader
 

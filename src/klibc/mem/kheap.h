@@ -18,9 +18,13 @@ typedef struct block_header {
 } block_header_t;
 
 size_t init_kheap(void);
-void *kmalloc(size_t size);
+
+__attribute__((malloc)) void *kmalloc(size_t size);
+
 void *kzalloc(size_t size);
+
 void *kcalloc(size_t n, size_t size);
+
 void kfree(void *ptr);
 
 #endif // KHEAP_H_

@@ -1,5 +1,7 @@
 #ifndef TMPFS_H_
 #define TMPFS_H_
+
+#include "../../../list/list.h"
 #include "../vfs.h"
 
 #define TMPFS_FLAGS_FILE 0x01
@@ -15,7 +17,7 @@ typedef struct tmpfs_inode_struct_t {
     struct tmpfs_inode_struct_t *parent;
     list_t *entries;
     uint64_t flags;
-    size_t *buffer_size;
+    size_t buffer_size;
     char *buffer;
     mode_t perm;
     uid_t owner;
@@ -28,6 +30,10 @@ typedef struct tmpfs_dirent_struct_t {
     char name[PATH_MAX];
     tmpfs_inode_t *inode;
 } tmpfs_dirent_t;
+
+void init_tmpfs(void);
+
+vfs_node_t *new_tmpfs(void);
 
 vfs_node_t *tmpfs_lookup(vfs_node_t *node, const char *name);
 

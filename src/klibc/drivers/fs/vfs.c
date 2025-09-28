@@ -2,13 +2,12 @@
 #include "../../../kernel.h"
 
 vfs_node_t *root;
-
 list_t *fs_types;
 
 void init_vfs(void) {
     root = NULL;
     fs_types = new_list();
-    vterm_print("VFS:   Initialized");
+    vterm_print("VFS:   Initialized\n");
 }
 
 void vfs_register_fs(vfs_filesystem_t *fs) { list_append(fs_types, fs); }
