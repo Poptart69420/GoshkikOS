@@ -81,6 +81,8 @@ To run it with the debugging output.
 
 ## - To-Do (Actual Project)
 
+- Modular device handling
+
 - Modular driver loader
 
 - Persistant file systems

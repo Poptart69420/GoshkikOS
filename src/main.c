@@ -59,49 +59,6 @@ static void ls(const char *path) {
     vfs_close(node);
 }
 
-static void cat(const char *path) {
-    vfs_node_t *node = vfs_open(path, VFS_READONLY);
-    if (!node) {
-        vterm_print("File ");
-        vterm_print(path);
-        kerror("not found");
-        return;
-    }
-
-    vterm_print("cat ");
-    vterm_print(path);
-    vterm_print("\n");
-
-    if (!(node->flags & VFS_FILE)) {
-        kerror("Not a file");
-        vfs_close(node);
-        return;
-    }
-
-    char *buffer = kmalloc(node->size + 1);
-    if (!buffer) {
-        kerror("Out of memory");
-        vfs_close(node);
-        return;
-    }
-
-    uint64_t bytes = vfs_read(node, buffer, 0, node->size);
-
-    if (bytes == 0) {
-        vterm_print("no data read\n");
-        kfree(buffer);
-        vfs_close(node);
-        return;
-    }
-
-    buffer[bytes] = '\0';
-    vterm_print(buffer);
-    vterm_print("\n");
-
-    kfree(buffer);
-    vfs_close(node);
-}
-
 void kmain(void) {
     boot_info();
 
@@ -133,27 +90,13 @@ void kmain(void) {
     init_timer();
     init_vfs();
 
-    init_tmpfs();
-
-    vfs_root = new_tmpfs();
-
     mount_initrd();
+
+    init_tmpfs();
 
     vterm_print("\n");
 
     ls("/");
-
-    vterm_print("\n");
-
-    ls("/initrd");
-
-    vterm_print("\n");
-
-    ls("/initrd/etc");
-
-    vterm_print("\n");
-
-    cat("/initrd/etc/dwadawd.txt");
 
     pic_unmask_irq(0);
     pic_unmask_irq(1);
