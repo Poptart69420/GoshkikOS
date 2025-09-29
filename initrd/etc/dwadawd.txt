@@ -1,1 +1,1 @@
-dadwadaw
+GoshkikOS has an initrd system!!!

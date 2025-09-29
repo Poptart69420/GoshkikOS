@@ -37,4 +37,6 @@ void gdt_init(void) {
     gdt_reload();
     tss_reload();
     spinlock_release(lock);
+    vterm_print("GDT...");
+    kok();
 }

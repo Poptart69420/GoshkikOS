@@ -2,6 +2,7 @@
 #define VTERM_H_
 
 #include "../../../limine.h"
+#include "colors.h"
 #include "font/font.h"
 #include <stddef.h>
 #include <stdint.h>
@@ -10,5 +11,7 @@ void vterm_clear(uint32_t color);
 void vterm_init(const struct limine_framebuffer *fb);
 void vterm_putc(const char c);
 void vterm_print(const char *str);
+void vterm_set_fg_color(uint32_t color);
+void vterm_set_term_color(uint32_t color);
 
 #endif // VTERM_H_

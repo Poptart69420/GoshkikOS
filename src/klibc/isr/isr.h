@@ -1,6 +1,8 @@
 #ifndef ISR_H_
 #define ISR_H_
 
+#include "../drivers/vterm/kerror.h"
+#include "../drivers/vterm/kok.h"
 #include "../drivers/vterm/vterm.h"
 #include "../idt/idt.h"
 #include "../include/registers.h"

@@ -39,9 +39,13 @@ static void ls(const char *path) {
     if (!node) {
         vterm_print("Path ");
         vterm_print(path);
-        vterm_print(" doesn't exist\n");
+        kerror("doesn't exist");
         return;
     }
+
+    vterm_print("ls ");
+    vterm_print(path);
+    vterm_print("\n");
 
     uint64_t index = 0;
     struct dirent_t *ret;
@@ -52,6 +56,49 @@ static void ls(const char *path) {
         index++;
     }
 
+    vfs_close(node);
+}
+
+static void cat(const char *path) {
+    vfs_node_t *node = vfs_open(path, VFS_READONLY);
+    if (!node) {
+        vterm_print("File ");
+        vterm_print(path);
+        kerror(" not found");
+        return;
+    }
+
+    vterm_print("cat ");
+    vterm_print(path);
+    vterm_print("\n");
+
+    if (!(node->flags & VFS_FILE)) {
+        kerror("Not a file");
+        vfs_close(node);
+        return;
+    }
+
+    char *buffer = kmalloc(node->size + 1);
+    if (!buffer) {
+        kerror("Out of memory");
+        vfs_close(node);
+        return;
+    }
+
+    uint64_t bytes = vfs_read(node, buffer, 0, node->size);
+
+    if (bytes == 0) {
+        vterm_print("no data read\n");
+        kfree(buffer);
+        vfs_close(node);
+        return;
+    }
+
+    buffer[bytes] = '\0';
+    vterm_print(buffer);
+    vterm_print("\n");
+
+    kfree(buffer);
     vfs_close(node);
 }
 
@@ -88,10 +135,16 @@ void kmain(void) {
 
     init_tmpfs();
 
-    root = new_tmpfs();
-    vfs_mount("/", root);
-    vfs_mkdir("/home", VFS_READWRITE);
-    ls("/");
+    mount_initrd();
+
+    vterm_print("\n");
+
+    ls("/initrd/etc");
+
+    vterm_print("\n");
+
+    cat("/initrd/etc/dwadawd.txt");
+
     pic_unmask_irq(0);
     pic_unmask_irq(1);
 

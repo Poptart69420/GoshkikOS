@@ -1,0 +1,12 @@
+#ifndef COLORS_H_
+#define COLORS_H_
+
+#define COLOR_BLACK 0x000000
+#define COLOR_WHITE 0xFFFFFF
+#define COLOR_RED 0xFF00000
+#define COLOR_GREEN 0x00FF00
+#define COLOR_BLUE 0x0000FF
+#define COLOR_YELLOW 0xFAFA00
+#define COLOR_PINK 0xFA00FF
+
+#endif // COLORS_H_

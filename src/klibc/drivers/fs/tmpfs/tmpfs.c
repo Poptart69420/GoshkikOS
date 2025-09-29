@@ -57,6 +57,8 @@ static vfs_node_t *inode_to_node(tmpfs_inode_t *inode) {
         node->flags |= VFS_LINK;
     }
 
+    node->size = inode->buffer_size;
+
     node->close = tmpfs_close;
     inode->open_count++;
     return node;
@@ -91,7 +93,8 @@ vfs_node_t *new_tmpfs(void) {
 
 void init_tmpfs(void) {
     vfs_register_fs(&tmpfs);
-    vterm_print("TMPFS: Registered\n");
+    vterm_print("TMPFS...");
+    kok();
 }
 
 vfs_node_t *tmpfs_lookup(vfs_node_t *node, const char *name) {
@@ -128,14 +131,18 @@ ssize_t tmpfs_read(vfs_node_t *node, void *buffer, uint64_t offset,
     return count;
 }
 
-ssize_t tmpfs_write(vfs_node_t *node, void *buffer, uint64_t offset,
+ssize_t tmpfs_write(vfs_node_t *node, const void *buffer, uint64_t offset,
                     size_t count) {
-    const tmpfs_inode_t *inode = (tmpfs_inode_t *)node->private_inode;
+    tmpfs_inode_t *inode = (tmpfs_inode_t *)node->private_inode;
 
     if (offset + count > inode->buffer_size)
         tmpfs_truncate(node, offset + count);
 
     memcpy((void *)((uintptr_t)inode->buffer + offset), buffer, count);
+
+    inode->buffer_size = offset + count;
+    node->size = inode->buffer_size;
+
     return count;
 }
 

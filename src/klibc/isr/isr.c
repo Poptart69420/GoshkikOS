@@ -60,6 +60,8 @@ void isr_install(void) {
     }
 
     idt_reload();
+    vterm_print("ISR...");
+    kok();
 }
 
 void isr_handler(registers_t *reg) {
@@ -75,12 +77,12 @@ void isr_handler(registers_t *reg) {
         if (reg->cs & 0x3) {
             vterm_print("\n");
             vterm_print("-----EXCEPTION-----\n");
-            vterm_print(isr_exception_messages[reg->isr]);
+            kerror(isr_exception_messages[reg->isr]);
             // do something
         } else {
             vterm_print("\n");
             vterm_print("-----KERNEL EXCEPTION-----\n");
-            vterm_print(isr_exception_messages[reg->isr]);
+            kerror(isr_exception_messages[reg->isr]);
 
             for (;;)
                 __asm__ volatile("hlt");

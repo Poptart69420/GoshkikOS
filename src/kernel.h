@@ -5,10 +5,13 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "klibc/drivers/fs/tarfs/tarfs.h"
 #include "klibc/drivers/fs/tmpfs/tmpfs.h"
 #include "klibc/drivers/fs/vfs.h"
 #include "klibc/drivers/ps2/kbd.h"
 #include "klibc/drivers/ps2/ps2.h"
+#include "klibc/drivers/vterm/kerror.h"
+#include "klibc/drivers/vterm/kok.h"
 #include "klibc/drivers/vterm/vterm.h"
 #include "klibc/gdt/gdt.h"
 #include "klibc/include/global.h"

@@ -96,7 +96,8 @@ void vmm_load_cr3(uintptr_t physical_address) {
 
 void init_vmm(void) {
     const uintptr_t old_cr3_physical = read_cr3() & PAGE_MASK;
-    uint64_t *old_pml4 = (uint64_t *)physical_to_virtual(old_cr3_physical);
+    const uint64_t *old_pml4 =
+        (uint64_t *)physical_to_virtual(old_cr3_physical);
 
     current_pml4 = alloc_table();
     uint64_t *new_pml4 = (uint64_t *)physical_to_virtual(current_pml4);
@@ -106,7 +107,7 @@ void init_vmm(void) {
     }
 
     for (uint64_t i = 0; i < g_memmap->entry_count; ++i) {
-        struct limine_memmap_entry *e = g_memmap->entries[i];
+        const struct limine_memmap_entry *e = g_memmap->entries[i];
 
         if (e->type == LIMINE_MEMMAP_USABLE) {
             uintptr_t end = e->base + e->length;
@@ -131,5 +132,6 @@ void init_vmm(void) {
 
     vmm_load_cr3(current_pml4);
 
-    vterm_print("VMM:   Initialized\n");
+    vterm_print("VMM...");
+    kok();
 }

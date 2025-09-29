@@ -12,8 +12,10 @@ static size_t total_pages = 0;
 void init_pmm(void) {
     const struct limine_memmap_entry *biggest = memmap_find_biggest_region();
 
+    vterm_print("PMM...");
+
     if (!biggest) {
-        vterm_print("PMM:   No Usable Region Found\n");
+        kerror("No usable region found");
         hcf();
     }
 
@@ -32,7 +34,7 @@ void init_pmm(void) {
         BIT_CLEAR(pmm_bitmap, i);
     }
 
-    vterm_print("PMM:   Initalized\n");
+    kok();
 }
 
 uintptr_t pmm_alloc_page(void) {

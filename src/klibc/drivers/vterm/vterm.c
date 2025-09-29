@@ -7,8 +7,12 @@ static uint64_t height;
 
 static size_t cursor_x = 0;
 static size_t cursor_y = 0;
-static uint32_t term_color = 0x00000000; // black
-static uint32_t fg_color = 0x009a00;     // green
+static uint32_t term_color; // black
+static uint32_t fg_color;   // green
+
+void vterm_set_fg_color(uint32_t color) { fg_color = color; }
+
+void vterm_set_term_color(uint32_t color) { term_color = color; }
 
 void vterm_clear(uint32_t color) {
     for (size_t y = 0; y < height; ++y) {
@@ -25,6 +29,9 @@ void vterm_init(const struct limine_framebuffer *fb) {
     pitch = fb->pitch;
     width = fb->width;
     height = fb->height;
+
+    vterm_set_fg_color(COLOR_WHITE);
+    vterm_set_term_color(COLOR_BLACK);
 
     vterm_clear(term_color);
 }

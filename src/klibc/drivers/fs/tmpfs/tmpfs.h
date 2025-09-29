@@ -40,7 +40,7 @@ vfs_node_t *tmpfs_lookup(vfs_node_t *node, const char *name);
 ssize_t tmpfs_read(vfs_node_t *node, void *buffer, uint64_t offset,
                    size_t count);
 
-ssize_t tmpfs_write(vfs_node_t *node, void *buffer, uint64_t offset,
+ssize_t tmpfs_write(vfs_node_t *node, const void *buffer, uint64_t offset,
                     size_t count);
 
 void tmpfs_close(vfs_node_t *node);

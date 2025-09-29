@@ -4,6 +4,8 @@
 #include "../../include/io.h"
 #include "../../include/registers.h"
 #include "../../mem/mem.h"
+#include "../vterm/kerror.h"
+#include "../vterm/kok.h"
 #include "../vterm/vterm.h"
 #include <stdbool.h>
 #include <stdint.h>

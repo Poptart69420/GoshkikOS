@@ -2,8 +2,11 @@
 #define MEMMAP_H_
 
 #include "../../limine.h"
+#include "../drivers/vterm/kerror.h"
+#include "../drivers/vterm/kok.h"
 #include "../drivers/vterm/vterm.h"
 #include "../include/global.h"
+#include "../include/hcf.h"
 #include "../limine_requests/limine_requests.h"
 #include "mem.h"
 #include <stddef.h>

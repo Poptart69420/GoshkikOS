@@ -40,5 +40,8 @@ uint64_t ps2_entry(void) {
 
     ps2_write(PS2_COMMAND, PS2_ENABLE_P1);
 
+    vterm_print("PS/2...");
+    kok();
+
     return 0;
 }

@@ -8,8 +8,10 @@ size_t init_kheap(void) {
 
     uintptr_t physical = pmm_alloc_page();
 
+    vterm_print("Kheap...");
+
     if (!physical) {
-        vterm_print("Kheap: Init Failed\n");
+        kerror("Failed to initialize kheap");
         return 0;
     }
 
@@ -19,7 +21,7 @@ size_t init_kheap(void) {
     free_list->free = 1;
     free_list->next = NULL;
 
-    vterm_print("Kheap: Initialized\n");
+    kok();
     return free_list->size;
 }
 
@@ -82,7 +84,7 @@ static void *kheap_alloc(size_t size) {
 
     void *new_block = request_more_memory(size);
     if (!new_block) {
-        vterm_print("Kheap: Out Of Memory\n");
+        kerror("Out of memory");
         return NULL;
     }
 

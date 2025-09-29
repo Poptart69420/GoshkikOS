@@ -7,7 +7,8 @@ list_t *fs_types;
 void init_vfs(void) {
     root = NULL;
     fs_types = new_list();
-    vterm_print("VFS:   Initialized\n");
+    vterm_print("VFS...");
+    kok();
 }
 
 void vfs_register_fs(vfs_filesystem_t *fs) { list_append(fs_types, fs); }
@@ -307,6 +308,11 @@ int vfs_truncate(vfs_node_t *node, size_t size) {
     return -1;
 }
 
+int vfs_chroot(vfs_node_t *new_root) {
+    root = new_root;
+    return 0;
+}
+
 int vfs_chmod(vfs_node_t *node, mode_t perms) {
     (void)node;
     (void)perms;
@@ -350,7 +356,7 @@ vfs_node_t *vfs_open(const char *path, uint64_t flags) {
 }
 
 vfs_node_t *vfs_openat(vfs_node_t *at, const char *path, uint64_t flags) {
-    if (!(flags & VFS_READONLY) && !(flags & VFS_WRITEONLY)) {
+    if (!((flags & VFS_READONLY) || (flags & VFS_WRITEONLY))) {
         return NULL;
     }
 

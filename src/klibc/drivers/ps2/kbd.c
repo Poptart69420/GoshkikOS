@@ -10,4 +10,8 @@ static void keyboard_handler(registers_t *regs) {
     pic_send_eoi(1);
 }
 
-void init_keyboard(void) { isr_register(0x21, keyboard_handler); }
+void init_keyboard(void) {
+    isr_register(0x21, keyboard_handler);
+    vterm_print("PS/2 Keyboard...");
+    kok();
+}

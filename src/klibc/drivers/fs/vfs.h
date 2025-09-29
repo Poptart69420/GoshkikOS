@@ -12,6 +12,8 @@
 #include "../../list/list.h"
 #include "../../mem/kheap.h"
 #include "../../mem/string.h"
+#include "../vterm/kerror.h"
+#include "../vterm/kok.h"
 #include "../vterm/vterm.h"
 #include <stddef.h>
 #include <stdint.h>
@@ -51,8 +53,8 @@ typedef struct vfs_node_struct_t {
     int64_t (*read)(struct vfs_node_struct_t *, void *buffer, uint64_t off,
                     size_t count);
 
-    int64_t (*write)(struct vfs_node_struct_t *, void *buffer, uint64_t off,
-                     size_t count);
+    int64_t (*write)(struct vfs_node_struct_t *, const void *buffer,
+                     uint64_t off, size_t count);
 
     void (*close)(struct vfs_node_struct_t *);
 
@@ -130,6 +132,8 @@ void vfs_close(vfs_node_t *node);
 struct dirent_t *vfs_readdir(vfs_node_t *node, uint64_t index);
 
 ssize_t vfs_readlink(vfs_node_t *node, char *buffer, size_t buffer_size);
+
+int vfs_chroot(vfs_node_t *new_root);
 
 vfs_node_t *vfs_dup(vfs_node_t *node);
 

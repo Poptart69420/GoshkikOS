@@ -10,4 +10,8 @@ void timer_handler(registers_t *reg) {
     (void)ticks; // Supress warning
 }
 
-void init_timer(void) { isr_register(0x20, timer_handler); }
+void init_timer(void) {
+    isr_register(0x20, timer_handler);
+    vterm_print("Timer...");
+    kok();
+}
