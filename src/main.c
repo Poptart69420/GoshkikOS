@@ -64,7 +64,7 @@ static void cat(const char *path) {
     if (!node) {
         vterm_print("File ");
         vterm_print(path);
-        kerror(" not found");
+        kerror("not found");
         return;
     }
 
@@ -135,7 +135,17 @@ void kmain(void) {
 
     init_tmpfs();
 
+    vfs_root = new_tmpfs();
+
     mount_initrd();
+
+    vterm_print("\n");
+
+    ls("/");
+
+    vterm_print("\n");
+
+    ls("/initrd");
 
     vterm_print("\n");
 

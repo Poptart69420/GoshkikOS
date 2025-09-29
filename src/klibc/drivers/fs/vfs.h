@@ -102,7 +102,7 @@ typedef struct vfs_filesystem_struct_t {
                  const void *data);
 } vfs_filesystem_t;
 
-extern vfs_node_t *root;
+extern vfs_node_t *vfs_root;
 
 // Functions
 

@@ -1,11 +1,11 @@
 #include "vfs.h"
 #include "../../../kernel.h"
 
-vfs_node_t *root;
+vfs_node_t *vfs_root;
 list_t *fs_types;
 
 void init_vfs(void) {
-    root = NULL;
+    vfs_root = NULL;
     fs_types = new_list();
     vterm_print("VFS...");
     kok();
@@ -38,7 +38,7 @@ int vfs_mount(const char *name, vfs_node_t *local_root) {
 
     mount_point->flags |= VFS_MOUNT;
 
-    local_root->parent = mount_point->parent;
+    local_root->parent = mount_point;
     return 0;
 }
 
@@ -47,7 +47,7 @@ int vfs_unmount(const char *path) {
     if (!parent)
         return -1;
 
-    const char *child = path + strlen(path - 1);
+    const char *child = path + strlen(path) - 1;
     if (*child == '/')
         child--;
     while (*child != '/') {
@@ -71,8 +71,8 @@ int vfs_unmount(const char *path) {
 
 ssize_t vfs_read(vfs_node_t *node, void *buffer, uint64_t offset,
                  size_t count) {
-    if (node->write) {
-        return node->read(node, (void *)buffer, offset, count);
+    if (node->read) {
+        return node->read(node, buffer, offset, count);
     } else {
         return -1;
     }
@@ -117,9 +117,11 @@ int vfs_wait(vfs_node_t *node, short type) {
 }
 
 vfs_node_t *vfs_lookup(vfs_node_t *node, const char *name) {
-    if ((!strcmp("..", name)) && node->parent)
+    if (!strcmp(".", name))
+        return vfs_dup(node);
+    if (!strcmp("..", name) && node->parent)
         return vfs_dup(node->parent);
-    if ((!strcmp(".", name)))
+    if (!strcmp("..", name))
         return vfs_dup(node);
 
     for (vfs_node_t *current = node->child; current;
@@ -157,7 +159,7 @@ void vfs_close(vfs_node_t *node) {
     if (node->ref_count > 0)
         return;
 
-    if (node->flags & VFS_MOUNT || node == root)
+    if (node->flags & VFS_MOUNT || node == vfs_root)
         return;
 
     if (node->children_count > 0)
@@ -309,7 +311,7 @@ int vfs_truncate(vfs_node_t *node, size_t size) {
 }
 
 int vfs_chroot(vfs_node_t *new_root) {
-    root = new_root;
+    vfs_root = new_root;
     return 0;
 }
 
@@ -349,7 +351,7 @@ vfs_node_t *vfs_dup(vfs_node_t *node) {
 
 vfs_node_t *vfs_open(const char *path, uint64_t flags) {
     if (path[0] == '/' || path[0] == '\0') {
-        return vfs_openat(root, path, flags);
+        return vfs_openat(vfs_root, path, flags);
     }
 
     return NULL;
@@ -392,8 +394,9 @@ vfs_node_t *vfs_openat(vfs_node_t *at, const char *path, uint64_t flags) {
     int loop_max = SYMLOOP_MAX;
 
     for (int i = 0; i < path_depth; ++i) {
-        if (!current_node)
+        if (!current_node) {
             return NULL;
+        }
 
         vfs_node_t *next_node = vfs_lookup(current_node, path_array[i]);
 
@@ -432,8 +435,9 @@ vfs_node_t *vfs_openat(vfs_node_t *at, const char *path, uint64_t flags) {
         current_node = next_node;
     }
 
-    if (!current_node)
+    if (!current_node) {
         return NULL;
+    }
 
     return current_node;
 }

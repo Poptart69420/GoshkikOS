@@ -219,6 +219,8 @@ int tmpfs_link(vfs_node_t *parent_src, const char *src, vfs_node_t *parent_dest,
 }
 
 int tmpfs_symlink(vfs_node_t *node, const char *name, const char *target) {
+    if (!strcmp(name, ".") || !strcmp(name, ".."))
+        return -1;
     tmpfs_inode_t *inode = (tmpfs_inode_t *)node->private_inode;
 
     if (tmpfs_exist(inode, name))
@@ -287,6 +289,8 @@ void tmpfs_close(vfs_node_t *node) {
 
 int tmpfs_create(vfs_node_t *node, const char *name, mode_t perms,
                  uint64_t flags) {
+    if (!strcmp(name, ".") || !strcmp(name, ".."))
+        return -1;
     tmpfs_inode_t *inode = (tmpfs_inode_t *)node->private_inode;
     if (tmpfs_exist(inode, name))
         return -1;
