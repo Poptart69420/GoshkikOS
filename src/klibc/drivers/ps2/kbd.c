@@ -1,11 +1,11 @@
 #include "kbd.h"
 
-static void keyboard_handler(registers_t *regs) {
+static void keyboard_handler(fault_frame_t *frame) {
     uint8_t scancode = ps2_read();
 
     (void)scancode; // supress warning
 
-    (void)regs;
+    (void)frame;
 
     pic_send_eoi(1);
 }

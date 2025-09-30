@@ -2,6 +2,12 @@
 
 static uintptr_t current_pml4 = 0;
 
+uint64_t get_address_space(void) {
+    uint64_t cr3;
+    __asm__ volatile("mov %%cr3, %%rax" : "=a"(cr3));
+    return (cr3 + g_hhdm_offset);
+}
+
 static inline void *physical_to_virtual(uintptr_t physical) {
     return (void *)(g_hhdm_offset + physical);
 }

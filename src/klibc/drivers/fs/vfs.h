@@ -50,11 +50,11 @@ typedef struct vfs_node_struct_t {
     uint64_t ref_count;
     uint64_t size;
 
-    int64_t (*read)(struct vfs_node_struct_t *, void *buffer, uint64_t off,
-                    size_t count);
+    ssize_t (*read)(struct vfs_node_struct_t *, void *buffer, uint64_t off,
+                    ssize_t count);
 
-    int64_t (*write)(struct vfs_node_struct_t *, const void *buffer,
-                     uint64_t off, size_t count);
+    ssize_t (*write)(struct vfs_node_struct_t *, const void *buffer,
+                     uint64_t off, ssize_t count);
 
     void (*close)(struct vfs_node_struct_t *);
 
@@ -98,7 +98,7 @@ typedef struct vfs_mount_point_struct_t {
 
 typedef struct vfs_filesystem_struct_t {
     char name[16];
-    int (*mount)(const char *source, const char *target, unsigned long flags,
+    int (*mount)(const char *source, const char *target, size_t flags,
                  const void *data);
 } vfs_filesystem_t;
 

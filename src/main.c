@@ -104,6 +104,7 @@ void kmain(void) {
     pic_unmask_irq(1);
 
     enable_interrupt();
+    halt();
 
     hcf();
 }

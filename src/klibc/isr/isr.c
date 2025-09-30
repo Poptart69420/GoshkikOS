@@ -42,6 +42,13 @@ static const char *isr_exception_messages[] = {"Divide by zero",
 
 extern void *isr_stub_table[];
 
+void kpanic(const char *error, fault_frame_t *frame) {
+    (void)error;
+    (void)frame;
+    disable_interrupt();
+    hcf();
+}
+
 void isr_install(void) {
 
     for (int i = 0; i < IDT_ENTRIES; ++i) {
@@ -64,34 +71,30 @@ void isr_install(void) {
     kok();
 }
 
-void isr_handler(registers_t *reg) {
-    if (reg->cs & 0x3) {
+void isr_handler(fault_frame_t *frame) {
+    if (frame->cs & 0x3) {
         __asm__ volatile("swapgs" ::: "memory");
     }
 
-    if (reg->isr < IDT_ENTRIES && handlers[reg->isr] != NULL) {
-        handlers[reg->isr](reg);
+    if (frame->err_code < IDT_ENTRIES && handlers[frame->err_code] != NULL) {
+        handlers[frame->err_code](frame);
     }
 
-    if (reg->isr < 32) {
-        if (reg->cs & 0x3) {
+    if (frame->err_code < 32) {
+        if (frame->cs & 0x3) {
             vterm_print("\n");
             vterm_print("-----EXCEPTION-----\n");
-            kerror(isr_exception_messages[reg->isr]);
+            kerror(isr_exception_messages[frame->err_code]);
             // do something
         } else {
             vterm_print("\n");
             vterm_print("-----KERNEL EXCEPTION-----\n");
-            kerror(isr_exception_messages[reg->isr]);
 
-            for (;;)
-                __asm__ volatile("hlt");
-
-            // do something
+            kpanic(isr_exception_messages[frame->err_code], frame);
         }
     }
 
-    if (reg->cs & 0x3) {
+    if (frame->cs & 0x3) {
         __asm__ volatile("swapgs" ::: "memory");
     }
 }

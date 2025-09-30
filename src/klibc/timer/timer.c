@@ -1,7 +1,7 @@
 #include "timer.h"
 
-void timer_handler(registers_t *reg) {
-    (void)reg; // Suppress warning
+void timer_handler(fault_frame_t *frame) {
+    (void)frame; // Suppress warning
 
     static int ticks = 0;
     ticks++;

@@ -38,11 +38,11 @@ vfs_node_t *new_tmpfs(void);
 
 vfs_node_t *tmpfs_lookup(vfs_node_t *node, const char *name);
 
-int64_t tmpfs_read(vfs_node_t *node, void *buffer, uint64_t offset,
-                   size_t count);
+ssize_t tmpfs_read(vfs_node_t *node, void *buffer, uint64_t offset,
+                   ssize_t count);
 
-int64_t tmpfs_write(vfs_node_t *node, const void *buffer, uint64_t offset,
-                    size_t count);
+ssize_t tmpfs_write(vfs_node_t *node, const void *buffer, uint64_t offset,
+                    ssize_t count);
 
 void tmpfs_close(vfs_node_t *node);
 

@@ -1,8 +1,8 @@
 #ifndef PS2_H_
 #define PS2_H_
 
+#include "../../arch/x86_64/arch.h"
 #include "../../include/io.h"
-#include "../../include/registers.h"
 #include "../../mem/mem.h"
 #include "../vterm/kerror.h"
 #include "../vterm/kok.h"

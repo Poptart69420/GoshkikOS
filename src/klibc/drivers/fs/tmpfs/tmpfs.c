@@ -115,22 +115,24 @@ vfs_node_t *tmpfs_lookup(vfs_node_t *node, const char *name) {
     return NULL;
 }
 
-int64_t tmpfs_read(vfs_node_t *node, void *buffer, uint64_t offset,
-                   size_t count) {
-    const tmpfs_inode_t *inode = (const tmpfs_inode_t *)node->private_inode;
+ssize_t tmpfs_read(vfs_node_t *node, void *buffer, uint64_t offset,
+                   ssize_t count) {
+    const tmpfs_inode_t *inode = (tmpfs_inode_t *)node->private_inode;
 
     if (offset + count > inode->buffer_size) {
-        if (offset >= inode->buffer_size)
+        if (offset >= inode->buffer_size) {
             return 0;
+        }
+
         count = inode->buffer_size - offset;
     }
 
     memcpy(buffer, (void *)((uintptr_t)inode->buffer + offset), count);
-    return (int64_t)count;
+    return count;
 }
 
-int64_t tmpfs_write(vfs_node_t *node, const void *buffer, uint64_t offset,
-                    size_t count) {
+ssize_t tmpfs_write(vfs_node_t *node, const void *buffer, uint64_t offset,
+                    ssize_t count) {
     tmpfs_inode_t *inode = (tmpfs_inode_t *)node->private_inode;
 
     if (offset + count > inode->buffer_size)
@@ -141,7 +143,7 @@ int64_t tmpfs_write(vfs_node_t *node, const void *buffer, uint64_t offset,
     inode->buffer_size = offset + count;
     node->size = inode->buffer_size;
 
-    return (int64_t)count;
+    return count;
 }
 
 int tmpfs_truncate(vfs_node_t *node, size_t size) {

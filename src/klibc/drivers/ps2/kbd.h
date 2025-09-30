@@ -1,7 +1,7 @@
 #ifndef KBD_H_
 #define KBD_H_
 
-#include "../../include/registers.h"
+#include "../../arch/x86_64/arch.h"
 #include "../../isr/isr.h"
 #include "../../pic/pic.h"
 #include "../vterm/vterm.h"

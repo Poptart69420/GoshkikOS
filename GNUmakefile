@@ -121,7 +121,7 @@ $(OUTPUT): GNUmakefile linker.lds $(OBJ)
 # Initrd.tar
 $(INITRD_TAR):
 	@mkdir -p build/boot
-	tar --create -f build/boot/initrd.tar initrd
+	tar --create --file=build/boot/initrd.tar -C initrd .
 
 # Compilation rules for *.c files.
 build/obj/%.c.o: %.c GNUmakefile

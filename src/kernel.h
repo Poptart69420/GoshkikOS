@@ -1,10 +1,6 @@
 #ifndef KERNEL_H_
 #define KERNEL_H_
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-
 #include "klibc/arch/x86_64/asm.h"
 #include "klibc/drivers/fs/tarfs/tarfs.h"
 #include "klibc/drivers/fs/tmpfs/tmpfs.h"
