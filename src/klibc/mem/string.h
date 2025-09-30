@@ -2,8 +2,6 @@
 #define STRING_H_
 
 #include "mem.h"
-#include <stddef.h>
-#include <stdint.h>
 
 size_t strlen(const char *s);
 size_t strnlen(const char *s, size_t max);

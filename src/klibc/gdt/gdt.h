@@ -8,8 +8,8 @@
 #include "../drivers/vterm/kok.h"
 #include "../drivers/vterm/vterm.h"
 #include "../include/selectors.h"
-#include "../lock/spinlock.h"
 #include "../mem/mem.h"
+#include "../scheduling/spinlock.h"
 
 struct tss_desc {
     uint16_t length;
@@ -60,6 +60,7 @@ struct gdtr {
     struct tss_desc tss;
 } __attribute__((packed));
 
+void gdt_setup(void);
 void gdt_init(void);
 
 #endif // GDT_H_

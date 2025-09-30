@@ -1,1 +1,2 @@
-qemu-system-x86_64 -cdrom goshkikOS.iso -m 2G -smp 2
+qemu-system-x86_64 -cdrom goshkikOS.iso -m 2G -enable-kvm -serial stdio -no-reboot
+

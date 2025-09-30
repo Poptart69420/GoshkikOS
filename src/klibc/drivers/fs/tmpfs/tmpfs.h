@@ -3,6 +3,7 @@
 
 #include "../../../list/list.h"
 #include "../vfs.h"
+#include <stddef.h>
 
 #define TMPFS_FLAGS_FILE 0x01
 #define TMPFS_FLAGS_DIR 0x02
@@ -37,10 +38,10 @@ vfs_node_t *new_tmpfs(void);
 
 vfs_node_t *tmpfs_lookup(vfs_node_t *node, const char *name);
 
-ssize_t tmpfs_read(vfs_node_t *node, void *buffer, uint64_t offset,
+int64_t tmpfs_read(vfs_node_t *node, void *buffer, uint64_t offset,
                    size_t count);
 
-ssize_t tmpfs_write(vfs_node_t *node, const void *buffer, uint64_t offset,
+int64_t tmpfs_write(vfs_node_t *node, const void *buffer, uint64_t offset,
                     size_t count);
 
 void tmpfs_close(vfs_node_t *node);

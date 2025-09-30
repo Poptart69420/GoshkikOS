@@ -6,7 +6,6 @@
 #include "../../vterm/kok.h"
 #include "../../vterm/vterm.h"
 #include "../tmpfs/tmpfs.h"
-#include <stdint.h>
 
 typedef struct ustar_header_struct_t {
     char name[100];

@@ -8,8 +8,6 @@
 #include "../include/hcf.h"
 #include "pmm.h"
 #include "vmm.h"
-#include <stddef.h>
-#include <stdint.h>
 
 #define HEAP_START 0xFFFF800010000000
 

@@ -10,8 +10,6 @@
 #include "mem.h"
 #include "memmap.h"
 #include "pmm.h"
-#include <stddef.h>
-#include <stdint.h>
 
 #define PAGE_SIZE_VMM 0x1000
 #define VMM_PRESENT (1ull << 0)

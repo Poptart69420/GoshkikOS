@@ -1,48 +1,146 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
-export PROJECT_ROOT="$PWD"
+SYSROOT="./sysroot"
+TARGET="$(uname -m)-goshkikos"
+NPROC=$(nproc)
 
-mkdir -p "$PROJECT_ROOT/cross_compiler"
+for i in "$@"; do
+  case $i in
+    --sysroot=*)
+      SYSROOT="${i#*=}"
+      shift # past argument=value
+      ;;
+    --cc=*)
+      CC="${i#*=}"
+      shift # past argument=value
+      ;;
+    --ar=*)
+      AR="${i#*=}"
+      shift # past argument=value
+      ;;
+    --target=*)
+      TARGET="${i#*=}"
+      shift # past argument=value
+      ;;
+    --nproc=*)
+      NPROC="${i#*=}"
+      shift # past argument=value
+      ;;
+    --help)
+      echo "./cross-compile.sh [OPTIONS]"
+      echo "options :"
+      echo "--help : show this help"
+      echo "--target : target of the toolchain [$TARGET]"
+      echo "--cc : C compiler to compile the toolchain"
+      echo "--ar : archiver to use to compile the toolchain"
+      echo "--sysroot : path to sysroot for include/libray path [$(realpath $SYSROOT)]"
+      echo "--nproc : -j option for makefile [$NPROC]"
+      exit
+      ;;
+    -*|--*)
+      echo "Unknown option $i"
+      exit 1
+      ;;
+    *)
+      ;;
+  esac
+done
 
-export PREFIX="$PROJECT_ROOT/cross_compiler/build"
+#make absolute path
+SYSROOT="$(realpath "$SYSROOT")"
 
-export SYS_ROOT="$PROJECT_ROOT/sysroot"
+ARCH=${TARGET%%-*}
 
-export TARGET=x86_64-elf
+#save the path to the top
+TOP=$PWD
 
-export PATH="$PREFIX/bin:$PATH"
+PREFIX=$TOP/cross_compiler
 
-BINUTILS_SRC="$PROJECT_ROOT/cross_compiler/binutils-gdb"
-GCC_SRC="$PROJECT_ROOT/cross_compiler/gcc"
+#put everything inside toolchain
+mkdir -p cross_compiler/bin
+cd cross_compiler
 
-cd "$PROJECT_ROOT/cross_compiler"
+#pre export the cross_compiler/bin in PATH
+#as gcc might require binutils stuff to be in the PATH
+export PATH="$PWD/bin:$PATH"
 
-echo "--- Building Binutils ---"
-rm -rf build/build-binutils
-mkdir -p build/build-binutils
-cd build/build-binutils
-"$BINUTILS_SRC/configure" \
-    --target="$TARGET" \
-    --prefix="$PREFIX" \
-    --with-sysroot="$SYS_ROOT" \
-    --disable-nls \
-    --disable-werror
-make -j$(nproc)
-make install
-cd ../../
+#download the archive
+if wget --version > /dev/null 2> /dev/null ; then
+  WGET="wget"
+elif curl --version > /dev/null 2> /dev/null ; then
+  WGET="curl"
+else
+  echo "error : curl and wget are not installed, please install one of the two"
+  exit 1
+fi
 
-echo "--- Building GCC ---"
-rm -rf build/build-gcc
-mkdir -p build/build-gcc
-cd build/build-gcc
-"$GCC_SRC/configure" \
-    --target="$TARGET" \
-    --prefix="$PREFIX" \
-    --with-sysroot="$SYS_ROOT" \
-    --disable-nls \
-    --enable-languages=c
-make -j$(nproc) all-gcc
-make install-gcc
-cd "$PROJECT_ROOT"
+BINUTILS_VERSION=2.44
+GCC_VERSION=12.2.0
+if [ ! -e binutils.tar.xz ] ; then
+  $WGET -Obinutils.tar.xz "https://ftp.gnu.org/gnu/binutils/binutils-$BINUTILS_VERSION.tar.xz"
+fi
+if [ ! -e gcc.tar.xz ] ; then
+  $WGET -Ogcc.tar.xz "https://ftp.gnu.org/gnu/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.xz"
+fi
+if [ ! -d binutils-$BINUTILS_VERSION ] ; then
+  tar xf binutils.tar.xz
+fi
+if [ ! -d gcc-$GCC_VERSION ] ; then
+  tar xf gcc.tar.xz
+fi
+
+#put your autoconf version below
+AUTOCONF_VERSION=2.71
+
+#now apply the patch and run automake if not aready done
+if [ ! -e gcc-$GCC_VERSION/gcc/config/goshkikos.h ] ; then
+  patch -ruN -p1 -d gcc-$GCC_VERSION -i $TOP/gcc.patch
+  sed -i -e "s/2.69/$AUTOCONF_VERSION/g" gcc-$GCC_VERSION/config/override.m4
+  cd gcc-$GCC_VERSION/libstdc++-v3
+  autoreconf
+  automake
+  cd ../..
+fi
+if [ ! -e binutils-$BINUTILS_VERSION/ld/emulparams/elf_x86_64_goshkikos.sh ] ; then
+  patch -ruN -p1 -d binutils-$BINUTILS_VERSION -i $TOP/binutils.patch
+  sed -i -e "s/2.69/$AUTOCONF_VERSION/g" binutils-$BINUTILS_VERSION/config/override.m4
+  cd binutils-$BINUTILS_VERSION/ld
+  autoreconf
+  automake
+  cd ../..
+fi
+
+#now compile all the shit
+#don't compile if aready done
+if [ ! -e bin/$TARGET-ld ] ; then
+  cd binutils-$BINUTILS_VERSION
+  ./configure --target=$TARGET --prefix="$PREFIX" --with-sysroot="$SYSROOT" --disable-nls --disable-werror
+  make -j$NPROC
+  make install
+  cd ..
+fi
+if [ ! -e bin/$TARGET-gcc ] ; then
+  cd gcc-$GCC_VERSION
+  mkdir -p build && cd build
+  ../configure --target=$TARGET --prefix="$PREFIX" --with-sysroot="$SYSROOT" --disable-nls --enable-languages=c,c++ --disable-hosted-libstdcxx --disable-multilib
+  make all-gcc -j$NPROC
+  make all-target-libgcc -j$NPROC
+  make install-gcc
+  make install-target-libgcc
+  cd ../..
+fi
+
+cd $TOP
+
+echo "#generated automaticly by ./cross_compile.sh" > add-to-path.sh
+echo "export PATH=$TOP/cross_compiler/bin:\$PATH" >> add-to-path.sh
+echo "export CC=$TARGET-gcc" >> add-to-path.sh
+echo "export LD=$TARGET-ld" >> add-to-path.sh
+echo "export AS=$TARGET-as" >> add-to-path.sh
+echo "export AR=$TARGET-ar" >> add-to-path.sh
+
+chmod +x add-to-path.sh
+
+echo "please run '''. add-to-path.sh''' before compiling anything"

@@ -2,13 +2,18 @@
 
 struct gdtr gdt = {0};
 struct gdt_ptr gdt_ptr = {0};
-lock_t lock;
+spinlock_t lock;
 
 extern void gdt_reload(void);
 extern void tss_reload(void);
 
+void gdt_setup(void) {
+    spinlock_init(&lock);
+    gdt_init();
+}
+
 void gdt_init(void) {
-    spinlock_acquire(lock);
+    spinlock_acquire(&lock);
 
     // kernel
 
@@ -36,7 +41,7 @@ void gdt_init(void) {
 
     gdt_reload();
     tss_reload();
-    spinlock_release(lock);
+    spinlock_release(&lock);
     vterm_print("GDT...");
     kok();
 }

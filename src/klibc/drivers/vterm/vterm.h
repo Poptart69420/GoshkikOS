@@ -7,6 +7,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define FB_HEIGHT 1080
+#define FB_WIDTH 1920
+
 void vterm_clear(uint32_t color);
 void vterm_init(const struct limine_framebuffer *fb);
 void vterm_putc(const char c);

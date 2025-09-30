@@ -9,8 +9,6 @@
 #include "../include/hcf.h"
 #include "../limine_requests/limine_requests.h"
 #include "mem.h"
-#include <stddef.h>
-#include <stdint.h>
 
 void init_memmap(struct limine_memmap_response *response);
 struct limine_memmap_entry *memmap_find_biggest_region(void);

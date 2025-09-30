@@ -9,8 +9,6 @@
 #include "../include/hcf.h"
 #include "mem.h"
 #include "memmap.h"
-#include <stddef.h>
-#include <stdint.h>
 
 void init_pmm(void);
 uintptr_t pmm_alloc_page(void);

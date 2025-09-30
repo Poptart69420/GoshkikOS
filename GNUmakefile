@@ -9,9 +9,8 @@ override OUTPUT := build/bin/goshkikOS
 # This is the initd.tar
 override INITRD_TAR := build/boot/initrd.tar
 
-
 # User controllable toolchain and toolchain prefix.
-TOOLCHAIN := x86_64-elf
+TOOLCHAIN := x86_64-goshkikos
 TOOLCHAIN_PREFIX :=
 ifneq ($(TOOLCHAIN),)
     ifeq ($(TOOLCHAIN_PREFIX),)
@@ -36,7 +35,7 @@ ifeq ($(TOOLCHAIN),llvm)
 endif
 
 # User controllable C flags.
-CFLAGS := -g -O2 -pipe 
+CFLAGS := -g -O2 -pipe -fno-builtin 
 
 # User controllable C preprocessor flags. We set none by default.
 CPPFLAGS :=
@@ -122,7 +121,7 @@ $(OUTPUT): GNUmakefile linker.lds $(OBJ)
 # Initrd.tar
 $(INITRD_TAR):
 	@mkdir -p build/boot
-	tar --create --file=build/boot/initrd.tar -C initrd .
+	tar --create -f build/boot/initrd.tar initrd
 
 # Compilation rules for *.c files.
 build/obj/%.c.o: %.c GNUmakefile

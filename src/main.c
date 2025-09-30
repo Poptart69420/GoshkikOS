@@ -63,6 +63,8 @@ void kmain(void) {
     boot_info();
 
     struct limine_framebuffer *fb = kernel->framebuffer->framebuffers[0];
+    if (fb->width > FB_WIDTH || fb->height > FB_HEIGHT)
+        hcf();
     vterm_init(fb);
 
     vterm_print("\n");
@@ -81,7 +83,7 @@ void kmain(void) {
     init_vmm();
     init_kheap();
 
-    gdt_init();
+    gdt_setup();
     isr_install();
     pic_remap(0x20, 0x28);
     pit_init();
@@ -101,7 +103,7 @@ void kmain(void) {
     pic_unmask_irq(0);
     pic_unmask_irq(1);
 
-    __asm__ volatile("sti");
+    enable_interrupt();
 
     hcf();
 }

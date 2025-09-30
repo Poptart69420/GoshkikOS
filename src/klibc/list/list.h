@@ -3,6 +3,7 @@
 
 #include "../mem/kheap.h"
 #include "../mem/mem.h"
+#include <stddef.h>
 
 struct list_struct_t;
 
