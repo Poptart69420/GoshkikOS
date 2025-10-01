@@ -76,21 +76,21 @@ void isr_handler(fault_frame_t *frame) {
         __asm__ volatile("swapgs" ::: "memory");
     }
 
-    if (frame->err_code < IDT_ENTRIES && handlers[frame->err_code] != NULL) {
-        handlers[frame->err_code](frame);
+    if (frame->err_type < IDT_ENTRIES && handlers[frame->err_type] != NULL) {
+        handlers[frame->err_type](frame);
     }
 
-    if (frame->err_code < 32) {
+    if (frame->err_type < 32) {
         if (frame->cs & 0x3) {
             vterm_print("\n");
             vterm_print("-----EXCEPTION-----\n");
-            kerror(isr_exception_messages[frame->err_code]);
+            kerror(isr_exception_messages[frame->err_type]);
             // do something
         } else {
             vterm_print("\n");
             vterm_print("-----KERNEL EXCEPTION-----\n");
 
-            kpanic(isr_exception_messages[frame->err_code], frame);
+            kpanic(isr_exception_messages[frame->err_type], frame);
         }
     }
 

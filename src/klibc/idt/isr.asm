@@ -1,40 +1,40 @@
 %macro pushall 0
     
-push rax
-push rbx
-push rcx
-push rdx
+push r15
+push r14
+push r13
+push r12
+push r11
+push r10
+push r9
+push r8
 push rbp
 push rdi
 push rsi
-push r8
-push r9
-push r10
-push r11
-push r12
-push r13
-push r14
-push r15
+push rdx
+push rcx
+push rbx
+push rax
 
 %endmacro
 
 %macro popall 0
 
-pop r15
-pop r14
-pop r13
-pop r12
-pop r11
-pop r10
-pop r9
-pop r8
+pop rax
+pop rbx
+pop rcx
+pop rdx
 pop rsi
 pop rdi
 pop rbp
-pop rdx
-pop rcx
-pop rbx
-pop rax
+pop r8
+pop r9
+pop r10
+pop r11
+pop r12
+pop r13
+pop r14
+pop r15
 
 %endmacro
 
@@ -42,12 +42,47 @@ extern isr_handler
 
 isr_common:
     pushall
-    cld
+    
+    mov rax, cr3
+    push rax
+    mov rax, cr2
+    push rax
+
+    xor rax, rax
+    mov ax, ds
+    push rax
+    mov ax, es
+    push rax
+    mov ax, fs
+    push rax
+    mov ax, gs
+    push rax
+
     mov rdi, rsp
-    xor rbp, rbp
+    cld
+    and rsp, ~0xf
+
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov gs, ax
+    mov fs, ax
+    
     call isr_handler
+
+    pop rax
+    mov gs, ax
+    pop rax
+    mov fs, ax
+    pop rax
+    mov es, ax
+    pop rax
+    mov ds, ax
+
+    add rsp, 16
+    
     popall
-    add rsp, 24
+    add rsp, 16
     iretq
 
 %macro isr 1
@@ -56,7 +91,6 @@ global isr%1
 isr%1:
     push 0
     push %1
-    push fs
     jmp isr_common
 
 %endmacro
@@ -66,7 +100,6 @@ isr%1:
 global isr%1
 isr%1:
     push %1
-    push fs
     jmp isr_common
 
 %endmacro
