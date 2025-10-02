@@ -35,10 +35,10 @@ ifeq ($(TOOLCHAIN),llvm)
 endif
 
 # User controllable C flags.
-CFLAGS := -g -O2 -pipe -fno-builtin 
+CFLAGS := -g -O2 -pipe -fno-builtin -I src/include
 
 # User controllable C preprocessor flags. We set none by default.
-CPPFLAGS :=
+CPPFLAGS := -I src/include
 
 # User controllable nasm flags.
 NASMFLAGS := -F dwarf -g
@@ -76,7 +76,6 @@ override CFLAGS += \
 
 # Internal C preprocessor flags that should not be changed by the user.
 override CPPFLAGS := \
-    -I src \
     $(CPPFLAGS) \
     -DLIMINE_API_REVISION=3 \
     -MMD \

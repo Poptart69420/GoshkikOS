@@ -1,4 +1,4 @@
-#include "kernel.h"
+#include <kernel.h>
 
 kernel_table master_kernel_table;
 kernel_table *kernel;
@@ -34,31 +34,6 @@ static void boot_info(void) {
     }
 }
 
-static void ls(const char *path) {
-    vfs_node_t *node = vfs_open(path, VFS_READONLY);
-    if (!node) {
-        vterm_print("Path ");
-        vterm_print(path);
-        kerror("doesn't exist");
-        return;
-    }
-
-    vterm_print("ls ");
-    vterm_print(path);
-    vterm_print("\n");
-
-    uint64_t index = 0;
-    struct dirent_t *ret;
-    while ((ret = vfs_readdir(node, index)) != NULL) {
-        vterm_print(ret->d_name);
-        vterm_print("\n");
-        kfree(ret);
-        index++;
-    }
-
-    vfs_close(node);
-}
-
 void kmain(void) {
     boot_info();
 
@@ -78,11 +53,12 @@ void kmain(void) {
 
     g_hhdm_offset = hhdm_request.response->offset;
 
-    init_memmap(memmap_request.response);
+    init_mmu(memmap_request.response);
     init_pmm();
     init_vmm();
     init_kheap();
 
+    init_serial();
     gdt_setup();
     isr_install();
     pic_remap(0x20, 0x28);
@@ -90,21 +66,10 @@ void kmain(void) {
     ps2_entry();
     init_keyboard();
     init_timer();
-    init_vfs();
-
-    mount_initrd();
-
-    init_tmpfs();
-
-    vterm_print("\n");
-
-    ls("/");
 
     pic_unmask_irq(0);
     pic_unmask_irq(1);
 
     enable_interrupt();
     halt();
-
-    hcf();
 }

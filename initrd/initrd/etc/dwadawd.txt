@@ -1,1 +1,0 @@
-GoshkikOS can read tarballs!!!
