@@ -75,11 +75,13 @@ To run it with the debugging output.
  
 - Finished paging (memmap, pmm, vmm)
 
-- VFS (FS modularity layer)
-
-- Tmpfs (pretty much finished, just missing access time and proper attribute handling)
-
 ## - To-Do (Actual Project)
+
+- VFS
+
+- Tmpfs
+
+- Tarfs
 
 - Modular device handling
 
