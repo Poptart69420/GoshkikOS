@@ -1,8 +1,8 @@
 #ifndef MEM_H_
 #define MEM_H_
 
-#include <klibc/limits.h>
 #include <limine/limine.h>
+#include <limits.h>
 #include <stddef.h>
 
 void *memcpy(void *restrict dest, const void *restrict src, size_t n);

@@ -35,5 +35,6 @@ uint64_t get_address_space(void);
 void init_vmm(void);
 uintptr_t vmm_resolve(uintptr_t virtual);
 void vmm_map(uintptr_t virtual, uintptr_t physical, uint64_t flags);
+void vmm_unmap(uintptr_t virtual);
 
 #endif // VMM_H_
