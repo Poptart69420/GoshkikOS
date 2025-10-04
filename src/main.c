@@ -34,6 +34,11 @@ static void boot_info(void) {
     }
 }
 
+typedef struct my_object_t {
+    int id;
+    char buffer[56];
+} my_object_t;
+
 void kmain(void) {
     boot_info();
 

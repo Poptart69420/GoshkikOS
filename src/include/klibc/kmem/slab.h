@@ -3,6 +3,7 @@
 
 #include <arch/x86_64/mem/pmm/pmm.h>
 #include <arch/x86_64/mem/vmm/vmm.h>
+#include <klibc/kmem/kheap.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <vterm/kerror.h>
@@ -35,4 +36,15 @@ typedef struct slab_cache_t {
     void (*ctor)(void *);
     void (*dtor)(void *);
 } slab_cache_t;
+
+void *slab_alloc(struct slab_cache_t *cache_in);
+
+void slab_free(struct slab_cache_t *cache_in, void *object);
+
+void slab_destroy(struct slab_cache_t *cache);
+
+struct slab_cache_t *slab_cache_create(const char *name, size_t object_size,
+                                       size_t align, void (*ctor)(void *),
+                                       void (*dtor)(void *));
+
 #endif // SLAB_H_

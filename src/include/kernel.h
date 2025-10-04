@@ -12,8 +12,10 @@
 #include <arch/x86_64/ps2/keyboard/kbd.h>
 #include <arch/x86_64/ps2/ps2.h>
 #include <arch/x86_64/serial/serial.h>
+#include <fs/vfs/vfs.h>
 #include <global/global.h>
 #include <klibc/kmem/kheap.h>
+#include <klibc/kmem/slab.h>
 #include <limine/limine_requests.h>
 #include <stdbool.h>
 #include <vterm/vterm.h>

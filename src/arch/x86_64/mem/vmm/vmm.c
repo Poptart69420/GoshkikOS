@@ -8,11 +8,11 @@ uint64_t get_address_space(void) {
     return (cr3 + g_hhdm_offset);
 }
 
-static inline void *physical_to_virtual(uintptr_t physical) {
+void *physical_to_virtual(uintptr_t physical) {
     return (void *)(g_hhdm_offset + physical);
 }
 
-static inline uintptr_t virtual_to_physical(void *virtual) {
+uintptr_t virtual_to_physical(void *virtual) {
     return (uintptr_t)virtual - g_hhdm_offset;
 }
 

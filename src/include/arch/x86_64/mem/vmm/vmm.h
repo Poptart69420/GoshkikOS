@@ -36,5 +36,7 @@ void init_vmm(void);
 uintptr_t vmm_resolve(uintptr_t virtual);
 void vmm_map(uintptr_t virtual, uintptr_t physical, uint64_t flags);
 void vmm_unmap(uintptr_t virtual);
+void *physical_to_virtual(uintptr_t physical);
+uintptr_t virtual_to_physical(void *virtual);
 
 #endif // VMM_H_
