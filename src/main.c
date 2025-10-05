@@ -34,11 +34,6 @@ static void boot_info(void) {
     }
 }
 
-typedef struct my_object_t {
-    int id;
-    char buffer[56];
-} my_object_t;
-
 void kmain(void) {
     boot_info();
 
@@ -62,6 +57,7 @@ void kmain(void) {
     init_pmm();
     init_vmm();
     init_kheap();
+    init_vfs();
 
     init_serial();
     gdt_setup();
@@ -71,6 +67,9 @@ void kmain(void) {
     ps2_entry();
     init_keyboard();
     init_timer();
+
+    vfs_register("tmpfs", vfs_root);
+    vfs_unregister("tmpfs");
 
     pic_unmask_irq(0);
     pic_unmask_irq(1);

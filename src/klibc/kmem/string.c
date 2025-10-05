@@ -103,3 +103,25 @@ char *strdup(const char *str) {
     char *new_str = kmalloc(str_size);
     return strcpy(new_str, str);
 }
+
+char *strtok_r(char *str, const char *delim, char **save_ptr) {
+    if (str) {
+        *save_ptr = str;
+        return NULL;
+    }
+
+    while (strchr(delim, **save_ptr) && save_ptr)
+        (*save_ptr)++;
+    char *ret = *save_ptr;
+    while (!strchr(delim, **save_ptr) && **save_ptr)
+        (*save_ptr)++;
+
+    if (!*ret)
+        return NULL;
+    return ret;
+}
+
+char *strtok(char *str, const char *delim) {
+    static char *ptr;
+    return strtok_r(str, delim, &ptr);
+}
