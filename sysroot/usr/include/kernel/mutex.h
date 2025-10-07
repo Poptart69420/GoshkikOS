@@ -2,17 +2,17 @@
 #define MUTEX_H
 
 #include <kernel/spinlock.h>
-#include <stddef.h>
 #include <stdatomic.h>
+#include <stddef.h>
 
 struct process_struct;
 
 typedef struct mutex {
-	spinlock lock;
-	atomic_int locked;
-	struct process_struct *waiter_head;
-	struct process_struct *waiter_tail;
-	size_t waiter_count;
+  spinlock lock;
+  atomic_int locked;
+  struct process_struct *waiter_head;
+  struct process_struct *waiter_tail;
+  size_t waiter_count;
 } mutex_t;
 
 void init_mutex(mutex_t *mutex);

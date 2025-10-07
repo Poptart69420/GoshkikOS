@@ -8,40 +8,40 @@ extern void gdt_reload(void);
 extern void tss_reload(void);
 
 void gdt_setup(void) {
-    spinlock_init(&lock);
-    gdt_init();
+  spinlock_init(&lock);
+  gdt_init();
 }
 
 void gdt_init(void) {
-    spinlock_acquire(&lock);
+  spinlock_acquire(&lock);
 
-    // kernel
+  // kernel
 
-    gdt.entries[1].access = 0b10011010;
-    gdt.entries[1].granularity = 0b00100000;
+  gdt.entries[1].access = 0b10011010;
+  gdt.entries[1].granularity = 0b00100000;
 
-    gdt.entries[2].access = 0b10010010;
+  gdt.entries[2].access = 0b10010010;
 
-    // user
+  // user
 
-    gdt.entries[3].access = 0b11110010;
+  gdt.entries[3].access = 0b11110010;
 
-    gdt.entries[4].access = 0b11111010;
-    gdt.entries[4].granularity = 0b001000000;
+  gdt.entries[4].access = 0b11111010;
+  gdt.entries[4].granularity = 0b001000000;
 
-    // tss
+  // tss
 
-    gdt.tss.length = sizeof(struct tss);
-    gdt.tss.flags = 0b10001001;
+  gdt.tss.length = sizeof(struct tss);
+  gdt.tss.flags = 0b10001001;
 
-    // pointer
+  // pointer
 
-    gdt_ptr.limit = sizeof(gdt) - 1;
-    gdt_ptr.ptr = (uint64_t)&gdt;
+  gdt_ptr.limit = sizeof(gdt) - 1;
+  gdt_ptr.ptr = (uint64_t)&gdt;
 
-    gdt_reload();
-    tss_reload();
-    spinlock_release(&lock);
-    vterm_print("GDT...");
-    kok();
+  gdt_reload();
+  tss_reload();
+  spinlock_release(&lock);
+  vterm_print("GDT...");
+  kok();
 }

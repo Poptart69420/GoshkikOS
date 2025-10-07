@@ -1,5 +1,5 @@
-//FROM FILE COMES FROM TLIBC (tayoky 2025)
-//SEE https://github.com/tayoky/tlibc FOR LASTED VERSION
+// FROM FILE COMES FROM TLIBC (tayoky 2025)
+// SEE https://github.com/tayoky/tlibc FOR LASTED VERSION
 
 #include <sys/cdefs.h>
 
@@ -8,8 +8,7 @@ _BEGIN_C_HEADER
 #ifndef LIMITS_H
 #define LIMITS_H
 
-
-//intergers limits
+// intergers limits
 
 #ifdef __CHAR_BIT__
 #define CHAR_BIT __CHAR_BIT__
@@ -23,7 +22,7 @@ _BEGIN_C_HEADER
 #define SCHAR_MAX 127
 #endif
 
-#define SCHAR_MIN (-SCHAR_MAX -1)
+#define SCHAR_MIN (-SCHAR_MAX - 1)
 #define UCHAR_MAX (SCHAR_MAX * 2 + 1)
 
 #ifdef __SHRT_MAX__
@@ -32,7 +31,7 @@ _BEGIN_C_HEADER
 #define SHRT_MAX 32767
 #endif
 
-#define SHRT_MIN (-SHRT_MAX -1)
+#define SHRT_MIN (-SHRT_MAX - 1)
 #define USHRT_MAX (SHRT_MAX * 2UL + 1)
 
 #ifdef __INT_MAX__
@@ -41,7 +40,7 @@ _BEGIN_C_HEADER
 #define INT_MAX 2147483647
 #endif
 
-#define INT_MIN (-INT_MAX -1)
+#define INT_MIN (-INT_MAX - 1)
 #define UINT_MAX (INT_MAX * 2 + 1)
 
 #ifdef __LONG_MAX__
@@ -52,7 +51,7 @@ _BEGIN_C_HEADER
 #define LONG_MAX 9223372036854775807UL
 #endif
 
-#define LONG_MIN (-LONG_MAX -1)
+#define LONG_MIN (-LONG_MAX - 1)
 #define ULONG_MAX (LONG_MAX * 2UL + 1)
 
 #ifdef __LONG_LONG_MAX__
@@ -61,7 +60,7 @@ _BEGIN_C_HEADER
 #define LLONG_MAX LONG_MAX
 #endif
 
-#define LLONG_MIN (-LLONG_MAX -1)
+#define LLONG_MIN (-LLONG_MAX - 1)
 #define ULLONG_MAX (LLONG_MAX * 2UL + 1)
 
 #ifdef __PTRDIFF_MAX__
@@ -70,7 +69,7 @@ _BEGIN_C_HEADER
 #define SSIZE_MAX LONG_MAX
 #endif
 
-#define SSIZE_MIN (-SSIZE_MAX -1)
+#define SSIZE_MIN (-SSIZE_MAX - 1)
 
 #define PATH_MAX 256
 #define ATEXIT_MAX 63
@@ -78,7 +77,7 @@ _BEGIN_C_HEADER
 #define PAGE_SIZE PAGESIZE
 
 #define MB_CUR_MAX 4
-#define SYMLOOP_MAX 8 //os specific
+#define SYMLOOP_MAX 8 // os specific
 
 #endif
 

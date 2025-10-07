@@ -1,5 +1,5 @@
-//FROM FILE COMES FROM TLIBC (tayoky 2025)
-//SEE https://github.com/tayoky/tlibc FOR LASTED VERSION
+// FROM FILE COMES FROM TLIBC (tayoky 2025)
+// SEE https://github.com/tayoky/tlibc FOR LASTED VERSION
 
 #include <sys/cdefs.h>
 
@@ -8,7 +8,7 @@ _BEGIN_C_HEADER
 #ifndef SYS_MODULE_H
 #define SYS_MODULE_H
 
-int insmod(const char *pathname,const char **argv);
+int insmod(const char *pathname, const char **argv);
 int rmmod(const char *name);
 
 #endif

@@ -8,12 +8,12 @@
 #define halt() while (1)
 
 static inline int have_interrupt() {
-    uintptr_t flags;
-    __asm__ volatile("pushf\n"
-                     "pop %0"
-                     : "=rm"(flags));
+  uintptr_t flags;
+  __asm__ volatile("pushf\n"
+                   "pop %0"
+                   : "=rm"(flags));
 
-    return (flags & (1 << 9));
+  return (flags & (1 << 9));
 }
 
 #endif // ASM_H_

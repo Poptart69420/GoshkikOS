@@ -1,5 +1,5 @@
-//FROM FILE COMES FROM TLIBC (tayoky 2025)
-//SEE https://github.com/tayoky/tlibc FOR LASTED VERSION
+// FROM FILE COMES FROM TLIBC (tayoky 2025)
+// SEE https://github.com/tayoky/tlibc FOR LASTED VERSION
 
 #include <sys/cdefs.h>
 
@@ -11,29 +11,29 @@ _BEGIN_C_HEADER
 #include <sys/time.h>
 
 struct input_event {
-    struct timeval timestamp;
-    unsigned long ie_class;
-    unsigned long ie_subclass;
-    unsigned long ie_type;
-    union {
-        struct {
-            unsigned long axis;
-            long x;
-            long y;
-        } ie_move;
-        struct {
-            char c;
-            char padding[3];
-            unsigned long scancode;
-            unsigned long flags;
-        } ie_key;
-        char ie_string[24];
-    };
+  struct timeval timestamp;
+  unsigned long ie_class;
+  unsigned long ie_subclass;
+  unsigned long ie_type;
+  union {
+    struct {
+      unsigned long axis;
+      long x;
+      long y;
+    } ie_move;
+    struct {
+      char c;
+      char padding[3];
+      unsigned long scancode;
+      unsigned long flags;
+    } ie_key;
+    char ie_string[24];
+  };
 };
 
 struct input_request {
-    unsigned long ir_type;
-    unsigned long ir_arg;
+  unsigned long ir_type;
+  unsigned long ir_arg;
 };
 
 // non device specific
@@ -76,11 +76,11 @@ struct input_request {
 #define IE_KEY_PRESS 0x01
 #define IE_KEY_RELEASE 0x02
 #define IE_KEY_HOLD 0x03
-#define IE_KEY_GRAPH 0x04  // printable key
-#define IE_KEY_GRPAH IE_KEY_GRAPH  //conserved 
+#define IE_KEY_GRAPH 0x04         // printable key
+#define IE_KEY_GRPAH IE_KEY_GRAPH // conserved
 
-//ioctl
-#define I_INPUT_GET_CONTROL  1001
+// ioctl
+#define I_INPUT_GET_CONTROL 1001
 #define I_INPUT_DROP_CONTROL 1002
 
 #endif

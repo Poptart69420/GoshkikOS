@@ -12,9 +12,9 @@
 #define HEAP_START 0xFFFF800010000000
 
 typedef struct block_header {
-    size_t size;
-    int free;
-    struct block_header *next;
+  size_t size;
+  int free;
+  struct block_header *next;
 } block_header_t;
 
 size_t init_kheap(void);

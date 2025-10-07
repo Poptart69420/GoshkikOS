@@ -8,6 +8,6 @@ void read_main_conf_file(void);
 /// @param section the section name
 /// @param key the key name to search
 /// @return an string the caller must free
-char *ini_get_value(const char*ini_file,const char *section,const char *key);
+char *ini_get_value(const char *ini_file, const char *section, const char *key);
 
 #endif

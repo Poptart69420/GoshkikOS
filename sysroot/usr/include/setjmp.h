@@ -1,5 +1,5 @@
-//FROM FILE COMES FROM TLIBC (tayoky 2025)
-//SEE https://github.com/tayoky/tlibc FOR LASTED VERSION
+// FROM FILE COMES FROM TLIBC (tayoky 2025)
+// SEE https://github.com/tayoky/tlibc FOR LASTED VERSION
 
 #include <sys/cdefs.h>
 
@@ -8,8 +8,8 @@ _BEGIN_C_HEADER
 #ifndef _SETJMP_H
 #define _SETJMP_H
 
-#include <stdint.h>
 #include <signal.h>
+#include <stdint.h>
 
 #ifdef x86_64
 typedef uint64_t jmp_buf[8];
@@ -20,9 +20,9 @@ typedef uintptr_t jmp_buf[8];
 #endif
 
 struct __sigjmp_buf {
-	jmp_buf buf;
-	sigset_t mask;
-	int savemask;
+  jmp_buf buf;
+  sigset_t mask;
+  int savemask;
 };
 typedef struct __sigjmp_buf sigjmp_buf[1];
 

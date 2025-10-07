@@ -1,9 +1,9 @@
 #ifndef SYS_H
 #define SYS_H
 
-#include <stdint.h>
 #include <kernel/arch.h>
 #include <kernel/scheduler.h>
+#include <stdint.h>
 
 void init_syscall(void);
 
@@ -26,7 +26,7 @@ void sys_exit(int);
 int sys_dup(int);
 int sys_dup2(int, int);
 off_t sys_seek(int, int64_t, int);
-int sys_ioctl(int fd,uint64_t request,void *arg);
+int sys_ioctl(int fd, uint64_t request, void *arg);
 int sys_usleep(useconds_t usec);
 int sys_sleepuntil(struct timeval *time);
 int sys_gettimeofday(struct timeval *tv, struct timezone *tz);

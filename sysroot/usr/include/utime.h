@@ -1,5 +1,5 @@
-//FROM FILE COMES FROM TLIBC (tayoky 2025)
-//SEE https://github.com/tayoky/tlibc FOR LASTED VERSION
+// FROM FILE COMES FROM TLIBC (tayoky 2025)
+// SEE https://github.com/tayoky/tlibc FOR LASTED VERSION
 
 #include <sys/cdefs.h>
 
@@ -11,11 +11,11 @@ _BEGIN_C_HEADER
 #include <sys/types.h>
 
 struct utimbuf {
-	time_t actime;
-	time_t modtime;
+  time_t actime;
+  time_t modtime;
 };
 
-int utime(const char *path,const struct utimbuf *times);
+int utime(const char *path, const struct utimbuf *times);
 
 #endif
 

@@ -17,24 +17,24 @@ struct slab_cache_t;
 struct slab_t;
 
 typedef struct slab_t {
-    struct slab_t *next;
-    struct slab_cache_t *cache;
-    uint32_t free_count;
-    uint32_t total_objects;
-    uint32_t magic;
-    void *free_list;
+  struct slab_t *next;
+  struct slab_cache_t *cache;
+  uint32_t free_count;
+  uint32_t total_objects;
+  uint32_t magic;
+  void *free_list;
 } slab_t;
 
 typedef struct slab_cache_t {
-    const char *name;
-    size_t object_size;
-    size_t align;
-    size_t objects_per_slab;
-    slab_t *partial;
-    slab_t *full;
-    slab_t *empty;
-    void (*ctor)(void *);
-    void (*dtor)(void *);
+  const char *name;
+  size_t object_size;
+  size_t align;
+  size_t objects_per_slab;
+  slab_t *partial;
+  slab_t *full;
+  slab_t *empty;
+  void (*ctor)(void *);
+  void (*dtor)(void *);
 } slab_cache_t;
 
 void *slab_alloc(struct slab_cache_t *cache_in);

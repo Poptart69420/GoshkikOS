@@ -1,5 +1,5 @@
-//FROM FILE COMES FROM TLIBC (tayoky 2025)
-//SEE https://github.com/tayoky/tlibc FOR LASTED VERSION
+// FROM FILE COMES FROM TLIBC (tayoky 2025)
+// SEE https://github.com/tayoky/tlibc FOR LASTED VERSION
 
 #include <sys/cdefs.h>
 
@@ -12,10 +12,10 @@ _BEGIN_C_HEADER
 
 #define WNOHANG 0x01
 
-#define WIFEXITED(status)   (status & (1UL << 16))
+#define WIFEXITED(status) (status & (1UL << 16))
 #define WIFSIGNALED(status) (status & (1UL << 17))
-#define WCOREDUMP(status)   (status & (1UL << 18))
-#define WIFSTOPPED(status)  (status & (1UL << 19))
+#define WCOREDUMP(status) (status & (1UL << 18))
+#define WIFSTOPPED(status) (status & (1UL << 19))
 
 #define WEXITSTATUS(status) (status & 0xFFFF)
 #define WTERMSIG WEXITSTATUS

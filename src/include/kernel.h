@@ -22,10 +22,10 @@
 #include <vterm/vterm.h>
 
 typedef struct kernel_table_struct {
-    struct limine_framebuffer_response *framebuffer;
-    struct limine_hhdm_response *hhdm;
-    struct limine_memmap_response *memmap;
-    struct limine_module_response *module;
+  struct limine_framebuffer_response *framebuffer;
+  struct limine_hhdm_response *hhdm;
+  struct limine_memmap_response *memmap;
+  struct limine_module_response *module;
 } kernel_table;
 
 extern kernel_table *kernel;

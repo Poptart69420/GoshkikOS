@@ -1,5 +1,5 @@
-//FROM FILE COMES FROM TLIBC (tayoky 2025)
-//SEE https://github.com/tayoky/tlibc FOR LASTED VERSION
+// FROM FILE COMES FROM TLIBC (tayoky 2025)
+// SEE https://github.com/tayoky/tlibc FOR LASTED VERSION
 
 #include <sys/cdefs.h>
 
@@ -8,15 +8,15 @@ _BEGIN_C_HEADER
 #ifndef UNISTD_H
 #define UNISTD_H
 
+#include <fcntl.h>
 #include <sys/type.h>
 #include <sys/types.h>
-#include <fcntl.h>
 
-//we can't include stdint because of namespace pollution
+// we can't include stdint because of namespace pollution
 #ifndef __intptr_t_defined
 #define __intptr_t_defined 1
 typedef __PTRDIFF_TYPE__ intptr_t;
-typedef __SIZE_TYPE__    uintptr_t;
+typedef __SIZE_TYPE__ uintptr_t;
 #endif
 
 #ifndef SEEK_SET
@@ -61,7 +61,7 @@ int close(int fd);
 int unlink(const char *pathname);
 int link(const char *oldpath, const char *newpath);
 int symlink(const char *target, const char *linkpath);
-ssize_t readlink(const char *path,char *buf, size_t bufsize);
+ssize_t readlink(const char *path, char *buf, size_t bufsize);
 int rmdir(const char *pathname);
 
 unsigned int sleep(unsigned int seconds);
@@ -69,39 +69,39 @@ int usleep(useconds_t usec);
 
 int pipe(int pipefd[2]);
 
-int execve(const char *pathname,char * const argv[],char * const envp[]);
+int execve(const char *pathname, char *const argv[], char *const envp[]);
 
 pid_t fork(void);
 
-int mkdir(const char *pathname,mode_t mode);
+int mkdir(const char *pathname, mode_t mode);
 
-//not syscall exec
+// not syscall exec
 
 int execl(const char *pathname, const char *arg, ... /*, (char *) NULL */);
 int execlp(const char *file, const char *arg, ... /*, (char *) NULL */);
-int execle(const char *pathname, const char *arg, ... /*, (char *) NULL, char *const envp[] */);
+int execle(const char *pathname, const char *arg,
+           ... /*, (char *) NULL, char *const envp[] */);
 int execv(const char *pathname, char *const argv[]);
 int execvp(const char *file, char *const argv[]);
-int execvpe(const char *file, char *const argv[],char *const envp[]);
+int execvpe(const char *file, char *const argv[], char *const envp[]);
 
-//cwd management
+// cwd management
 
 char *getcwd(char *buf, size_t size);
 int chdir(const char *path);
 
-
 int isatty(int fd);
 
-//process management
+// process management
 pid_t getpid();
 pid_t tcgetpgrp(int fd);
-int tcsetpgrp(int fd,pid_t pgrp);
+int tcsetpgrp(int fd, pid_t pgrp);
 int setpgid(pid_t pid, pid_t pgid);
 pid_t getpgid(pid_t pid);
 pid_t getpgrp(void);
 int setpgrp(void);
 
-//user management
+// user management
 int setuid(uid_t uid);
 int seteuid(uid_t uid);
 uid_t getuid(void);
@@ -116,10 +116,10 @@ int getlogin_r(char *buf, size_t bufsize);
 long pathconf(const char *pathname, int varcode);
 #define _PC_PATH_MAX 0
 
-int getopt(int argc,char *const*argv,const char *optstring);
+int getopt(int argc, char *const *argv, const char *optstring);
 
 #ifndef NULL
-#define NULL ((void*)0)
+#define NULL ((void *)0)
 #endif
 
 extern char **environ;

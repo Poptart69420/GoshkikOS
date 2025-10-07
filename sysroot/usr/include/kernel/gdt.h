@@ -12,20 +12,21 @@
 #define GDT_SEGMENT_ACCESS_PRESENT 0X80
 
 typedef struct {
-	uint16_t limit;
-	uint16_t base1;
-	uint8_t base2;
-	uint8_t access;
-	uint8_t flags;
-	uint8_t base3;
+  uint16_t limit;
+  uint16_t base1;
+  uint8_t base2;
+  uint8_t access;
+  uint8_t flags;
+  uint8_t base3;
 } __attribute__((packed)) gdt_segment;
 
 typedef struct {
-	uint16_t size;
-	uint64_t offset;
+  uint16_t size;
+  uint64_t offset;
 } __attribute__((packed)) GDTR;
 
 void init_gdt(void);
 
-gdt_segment create_gdt_segement(uint64_t base,uint64_t limit,uint8_t access,uint8_t falgs);
+gdt_segment create_gdt_segement(uint64_t base, uint64_t limit, uint8_t access,
+                                uint8_t falgs);
 #endif
