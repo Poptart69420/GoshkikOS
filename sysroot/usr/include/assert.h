@@ -12,7 +12,7 @@ _BEGIN_C_HEADER
 #define assert(cond)
 #else
 void __assert(const char *expr, const char *file, long line, const char *func);
-#define assert(cond)                                                           \
+#define assert(cond) \
   ((cond) ? (void)(0) : __assert(#cond, __FILE__, __LINE__, __func__))
 #endif
 

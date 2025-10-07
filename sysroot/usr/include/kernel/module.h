@@ -5,7 +5,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef struct kmodule_struct {
+typedef struct kmodule_struct
+{
   uint64_t magic;
   char *name;
   char *description;
@@ -16,12 +17,14 @@ typedef struct kmodule_struct {
   void *base; // the base address of the module
 } kmodule;
 
-typedef struct kmodule_section_struct {
+typedef struct kmodule_section_struct
+{
   void *base;
   size_t size;
 } kmodule_section;
 
-typedef struct loaded_module_struct {
+typedef struct loaded_module_struct
+{
   list *sections;
   kmodule *meta;
 } loaded_module;
@@ -44,7 +47,8 @@ int have_opt(int argc, char **argv, char *option);
 #define EXPORT(sym) __export_symbol(&sym, #sym);
 #define UNEXPORT(sym) __unexport_symbol(&sym, #sym);
 
-typedef struct exported_sym {
+typedef struct exported_sym
+{
   const char *name;
   uintptr_t value;
   size_t size;

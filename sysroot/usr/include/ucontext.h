@@ -12,7 +12,8 @@ _BEGIN_C_HEADER
 #include <sys/signal.h>
 
 typedef uintptr_t mcontext_t[64];
-typedef struct __ucontext {
+typedef struct __ucontext
+{
   struct __ucontext *uc_link;
   sigset_t uc_sigmask;
   stack_t uc_stack;

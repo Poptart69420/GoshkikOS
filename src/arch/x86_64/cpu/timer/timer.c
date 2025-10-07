@@ -1,6 +1,7 @@
 #include <arch/x86_64/cpu/timer/timer.h>
 
-void timer_handler(fault_frame_t *frame) {
+void timer_handler(fault_frame_t *frame)
+{
   (void)frame; // Suppress warning
 
   static int ticks = 0;
@@ -10,7 +11,8 @@ void timer_handler(fault_frame_t *frame) {
   (void)ticks; // Supress warning
 }
 
-void init_timer(void) {
+void init_timer(void)
+{
   isr_register(0x20, timer_handler);
   vterm_print("Timer...");
   kok();

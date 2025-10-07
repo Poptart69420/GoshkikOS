@@ -6,7 +6,8 @@
 #include <stdint.h>
 #include <sys/mman.h>
 
-typedef struct memseg_struct {
+typedef struct memseg_struct
+{
   uintptr_t addr;
   size_t size;
   uint64_t prot;

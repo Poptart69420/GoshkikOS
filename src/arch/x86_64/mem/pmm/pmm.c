@@ -9,12 +9,14 @@ static size_t total_pages = 0;
 #define BIT_CLEAR(b, i) ((b)[(i) / 8] &= ~(1 << ((i) % 8)))
 #define BIT_TEST(b, i) ((b)[(i) / 8] & (1 << ((i) % 8)))
 
-void init_pmm(void) {
+void init_pmm(void)
+{
   const struct limine_memmap_entry *biggest = memmap_find_biggest_region();
 
   vterm_print("PMM...");
 
-  if (!biggest) {
+  if (!biggest)
+  {
     kerror("No usable region found");
     hcf();
   }
@@ -25,21 +27,26 @@ void init_pmm(void) {
 
   pmm_bitmap = (uint8_t *)(g_hhdm_offset + managed_base);
 
-  for (size_t i = 0; i < pmm_bitmap_size; ++i) {
+  for (size_t i = 0; i < pmm_bitmap_size; ++i)
+  {
     pmm_bitmap[i] = 0xFF;
   }
 
   size_t used_pages = (pmm_bitmap_size + PAGE_SIZE - 1) / PAGE_SIZE;
-  for (size_t i = used_pages; i < total_pages; ++i) {
+  for (size_t i = used_pages; i < total_pages; ++i)
+  {
     BIT_CLEAR(pmm_bitmap, i);
   }
 
   kok();
 }
 
-uintptr_t pmm_alloc_page(void) {
-  for (size_t i = 0; i < total_pages; ++i) {
-    if (!BIT_TEST(pmm_bitmap, i)) {
+uintptr_t pmm_alloc_page(void)
+{
+  for (size_t i = 0; i < total_pages; ++i)
+  {
+    if (!BIT_TEST(pmm_bitmap, i))
+    {
       BIT_SET(pmm_bitmap, i);
       return managed_base + i * PAGE_SIZE;
     }
@@ -48,21 +55,26 @@ uintptr_t pmm_alloc_page(void) {
   return 0;
 }
 
-void pmm_free_page(uintptr_t physical_address) {
-  if (physical_address < managed_base) {
+void pmm_free_page(uintptr_t physical_address)
+{
+  if (physical_address < managed_base)
+  {
     return;
   }
 
   size_t i = (physical_address - managed_base) / PAGE_SIZE;
-  if (i < total_pages) {
+  if (i < total_pages)
+  {
     BIT_CLEAR(pmm_bitmap, i);
   }
 }
 
-void *pmm_alloc_page_hhdm(void) {
+void *pmm_alloc_page_hhdm(void)
+{
   uintptr_t physical = pmm_alloc_page();
 
-  if (!physical) {
+  if (!physical)
+  {
     return NULL;
   }
 

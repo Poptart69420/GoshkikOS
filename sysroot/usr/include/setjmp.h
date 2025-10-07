@@ -19,7 +19,8 @@ typedef uint64_t jmp_buf[14];
 typedef uintptr_t jmp_buf[8];
 #endif
 
-struct __sigjmp_buf {
+struct __sigjmp_buf
+{
   jmp_buf buf;
   sigset_t mask;
   int savemask;

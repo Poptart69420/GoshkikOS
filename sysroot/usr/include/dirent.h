@@ -8,7 +8,8 @@ _BEGIN_C_HEADER
 #ifndef DIRENT_H
 #define DIRENT_H
 
-struct dirent {
+struct dirent
+{
   char d_name[256]; // pretty sure it should use limtit.h::PATH_MAX
   int d_ino;        // stub inode don't exist in stanix
 };

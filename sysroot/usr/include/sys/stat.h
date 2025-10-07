@@ -11,7 +11,8 @@ _BEGIN_C_HEADER
 #include <sys/type.h>
 #include <sys/types.h>
 
-struct stat {
+struct stat
+{
   dev_t st_dev;         // ID of device containing file
   ino_t st_ino;         // file serial number
   mode_t st_mode;       // mode of file (see below)
@@ -59,11 +60,11 @@ struct stat {
 // types test
 
 #define S_ISBLK(m) ((m & S_IFMT) == S_IFBLK) // Test for a block special file.
-#define S_ISCHR(m)                                                             \
-  ((m & S_IFMT) == S_IFCHR) // Test for a character special file.
+#define S_ISCHR(m) \
+  ((m & S_IFMT) == S_IFCHR)                  // Test for a character special file.
 #define S_ISDIR(m) ((m & S_IFMT) == S_IFDIR) // Test for a directory.
-#define S_ISFIFO(m)                                                            \
-  ((m & S_IFMT) == S_IFIFO) // Test for a pipe or FIFO special file.
+#define S_ISFIFO(m) \
+  ((m & S_IFMT) == S_IFIFO)                  // Test for a pipe or FIFO special file.
 #define S_ISREG(m) ((m & S_IFMT) == S_IFREG) // Test for a regular file.
 #define S_ISLNK(m) ((m & S_IFMT) == S_IFLNK) // Test for a symbolic link.
 

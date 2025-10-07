@@ -5,7 +5,8 @@
 #include <limits.h>
 #include <sys/types.h>
 
-typedef struct shm_file {
+typedef struct shm_file
+{
   char name[PATH_MAX];
   size_t size;
   list *blocks;

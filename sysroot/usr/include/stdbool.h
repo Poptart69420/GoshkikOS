@@ -8,7 +8,7 @@ _BEGIN_C_HEADER
 #ifndef STDBOOL_H
 #define STDBOOL_H
 
-#if defined __STDC_VERSION__ &&                                                \
+#if defined __STDC_VERSION__ && \
     __STDC_VERSION__ > 201710L /* bool, true and false are keywords. */
 #else
 #define bool _Bool

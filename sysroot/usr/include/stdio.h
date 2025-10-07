@@ -14,7 +14,8 @@ _BEGIN_C_HEADER
 // maybee should be equal to PATH_MAX from limits.h ???
 #define FILENAME_MAX 256
 
-struct _FILE {
+struct _FILE
+{
   struct _FILE *next;
   struct _FILE *prev;
   char *buf;

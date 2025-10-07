@@ -10,12 +10,14 @@ _BEGIN_C_HEADER
 
 #include <sys/types.h>
 
-union sigval {
+union sigval
+{
   int sival_int;   // integer value
   void *sival_ptr; // pointer value
 };
 
-typedef struct {
+typedef struct
+{
   int si_signo;          // signal number
   int si_code;           // signal code
   int si_errno;          // error value

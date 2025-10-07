@@ -11,7 +11,8 @@
 #include <vterm/kok.h>
 #include <vterm/vterm.h>
 
-struct tss_desc {
+struct tss_desc
+{
   uint16_t length;
   uint16_t base_low;
   uint8_t base_mid;
@@ -22,7 +23,8 @@ struct tss_desc {
   uint32_t reserved;
 } __attribute__((packed));
 
-struct tss {
+struct tss
+{
   uint32_t reserved;
   uint64_t rsp0;
   uint64_t rsp1;
@@ -40,7 +42,8 @@ struct tss {
   uint16_t base_iomap;
 } __attribute__((packed));
 
-struct gdt_desc {
+struct gdt_desc
+{
   uint16_t limit;
   uint16_t base_low;
   uint8_t base_mid;
@@ -50,12 +53,14 @@ struct gdt_desc {
 
 } __attribute__((packed));
 
-struct gdt_ptr {
+struct gdt_ptr
+{
   uint16_t limit;
   uint64_t ptr;
 } __attribute__((packed));
 
-struct gdtr {
+struct gdtr
+{
   struct gdt_desc entries[5];
   struct tss_desc tss;
 } __attribute__((packed));

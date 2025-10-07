@@ -12,7 +12,8 @@ vfs_node *new_tmpfs();
 
 struct tmpfs_inode_struct;
 
-typedef struct tmpfs_inode_struct {
+typedef struct tmpfs_inode_struct
+{
   struct tmpfs_inode_struct *parent;
   list *entries;
   uint64_t flags;
@@ -28,7 +29,8 @@ typedef struct tmpfs_inode_struct {
   size_t open_count;
 } tmpfs_inode;
 
-typedef struct tmpfs_dirent_struct {
+typedef struct tmpfs_dirent_struct
+{
   char name[PATH_MAX];
   tmpfs_inode *inode;
 } tmpfs_dirent;

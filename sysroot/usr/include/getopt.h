@@ -8,7 +8,8 @@ _BEGIN_C_HEADER
 #ifndef _GETOPT_H
 #define _GETOPT_H
 
-struct option {
+struct option
+{
   const char *name;
   int has_arg;
   int *flag;

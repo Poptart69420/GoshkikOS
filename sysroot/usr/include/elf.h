@@ -94,7 +94,8 @@ typedef int64_t Elf64_Sxword;
 #define ELFDATA2MSB 2 // Big-endian
 
 // 32-bit ELF header
-typedef struct {
+typedef struct
+{
   unsigned char e_ident[EI_NIDENT];
   Elf32_Half e_type;
   Elf32_Half e_machine;
@@ -112,7 +113,8 @@ typedef struct {
 } Elf32_Ehdr;
 
 // 64-bit ELF header
-typedef struct {
+typedef struct
+{
   unsigned char e_ident[EI_NIDENT];
   Elf64_Half e_type;
   Elf64_Half e_machine;
@@ -132,7 +134,8 @@ typedef struct {
 // section header
 
 // 32-bit ELF section header
-typedef struct {
+typedef struct
+{
   Elf32_Word sh_name;
   Elf32_Word sh_type;
   Elf32_Word sh_flags;
@@ -145,7 +148,8 @@ typedef struct {
   Elf32_Word sh_entsize;
 } Elf32_Shdr;
 
-typedef struct {
+typedef struct
+{
   Elf64_Word sh_name;
   Elf64_Word sh_type;
   Elf64_Xword sh_flags;
@@ -185,7 +189,8 @@ typedef struct {
 // symbols
 
 // 32-bit ELF symbol
-typedef struct {
+typedef struct
+{
   Elf32_Word st_name;
   Elf32_Addr st_value;
   Elf32_Word st_size;
@@ -195,7 +200,8 @@ typedef struct {
 } Elf32_Sym;
 
 // 64-bit ELF symbol
-typedef struct {
+typedef struct
+{
   Elf64_Word st_name;
   unsigned char st_info;
   unsigned char st_other;
@@ -231,26 +237,30 @@ typedef struct {
 // relocation
 
 // 32-bit ELF relocation
-typedef struct {
+typedef struct
+{
   Elf32_Addr r_offset;
   Elf32_Word r_info;
 } Elf32_Rel;
 
 // 32-bit ELF relocation with addend
-typedef struct {
+typedef struct
+{
   Elf32_Addr r_offset;
   Elf32_Word r_info;
   Elf32_Sword r_addend;
 } Elf32_Rela;
 
 // 64-bit relocation
-typedef struct {
+typedef struct
+{
   Elf64_Addr r_offset; // Address of reference
   Elf64_Xword r_info;  // Symbol index and type of relocation
 } Elf64_Rel;
 
 // 64-bit relocation with addend
-typedef struct {
+typedef struct
+{
   Elf64_Addr r_offset;   // Address of reference
   Elf64_Xword r_info;    // Symbol index and type of relocation
   Elf64_Sxword r_addend; // Constant part of expression
@@ -286,13 +296,13 @@ typedef struct {
 #define R_X86_64_DTPMOD64 16 /* ID of module containing symbol */
 #define R_X86_64_DTPOFF64 17 /* Offset in module's TLS block */
 #define R_X86_64_TPOFF64 18  /* Offset in initial TLS block */
-#define R_X86_64_TLSGD                                                         \
+#define R_X86_64_TLSGD \
   19 /* 32 bit signed PC relative offset to two GOT entries for GD symbol */
-#define R_X86_64_TLSLD                                                         \
-  20 /* 32 bit signed PC relative offset to two GOT entries for LD symbol */
+#define R_X86_64_TLSLD \
+  20                         /* 32 bit signed PC relative offset to two GOT entries for LD symbol */
 #define R_X86_64_DTPOFF32 21 /* Offset in TLS block */
-#define R_X86_64_GOTTPOFF                                                      \
-  22 /* 32 bit signed PC relative offset to GOT entry for IE symbol */
+#define R_X86_64_GOTTPOFF \
+  22                           /* 32 bit signed PC relative offset to GOT entry for IE symbol */
 #define R_X86_64_TPOFF32 23    /* Offset in initial TLS block */
 #define R_X86_64_PC64 24       /* PC relative 64 bit */
 #define R_X86_64_GOTOFF64 25   /* 64 bit offset to GOT */
@@ -304,7 +314,8 @@ typedef struct {
 // program header
 
 // 32-bit ELF program header
-typedef struct {
+typedef struct
+{
   Elf32_Word p_type;
   Elf32_Off p_offset;
   Elf32_Addr p_vaddr;
@@ -316,7 +327,8 @@ typedef struct {
 } Elf32_Phdr;
 
 // 64-bit ELF program header
-typedef struct {
+typedef struct
+{
   Elf64_Word p_type;
   Elf64_Word p_flags;
   Elf64_Off p_offset;

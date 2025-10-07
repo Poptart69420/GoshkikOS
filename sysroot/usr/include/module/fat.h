@@ -18,7 +18,8 @@
 #define ATTR_ARCHIVE 0x20
 
 // also for fat12
-typedef struct fat16_bpb {
+typedef struct fat16_bpb
+{
   uint8_t drive_num;
   uint8_t reserved;
   uint8_t boot_signature;
@@ -29,7 +30,8 @@ typedef struct fat16_bpb {
   uint16_t signature;
 } __attribute__((packed)) fat16_bpb;
 
-typedef struct fat32_bpb {
+typedef struct fat32_bpb
+{
   uint32_t sectors_per_fat32;
   uint16_t ext_flags;
   uint16_t version;      // must be 0
@@ -47,7 +49,8 @@ typedef struct fat32_bpb {
   uint16_t signature;
 } __attribute__((packed)) fat32_bpb;
 
-typedef struct fat_bpb {
+typedef struct fat_bpb
+{
   char jmp_boot[3];
   char oem_name[8];
   uint16_t byte_per_sector;
@@ -55,8 +58,8 @@ typedef struct fat_bpb {
   uint16_t reserved_sectors; // count
   uint8_t fat_count;
   uint16_t root_entires_count; // only fat12/16
-  uint16_t sectors_count16; // 16 bits version of total sectors count (must be 0
-                            // for fat32)
+  uint16_t sectors_count16;    // 16 bits version of total sectors count (must be 0
+                               // for fat32)
   uint8_t media;
   uint16_t sectors_per_fat16; // only fat12/16
   uint16_t sectors_per_track;
@@ -64,13 +67,15 @@ typedef struct fat_bpb {
   uint32_t hidden_sectors;
   uint32_t sectors_count32; // 32 bits version of total sectors count (must be
                             // not 0 if 16bits version is 0 or fat32)
-  union {
+  union
+  {
     fat32_bpb fat32;
     fat16_bpb fat16;
   } extended;
 } __attribute__((packed)) fat_bpb;
 
-typedef struct fat_entry {
+typedef struct fat_entry
+{
   char name[11];
   uint8_t attribute;
   uint8_t reserved;
@@ -86,7 +91,8 @@ typedef struct fat_entry {
   uint32_t file_size;
 } __attribute__((packed)) fat_entry;
 
-typedef struct fat {
+typedef struct fat
+{
   int fat_type;
   vfs_node *dev;
   uint16_t reserved_sectors;
@@ -97,7 +103,8 @@ typedef struct fat {
 } fat;
 
 // in memory inode
-typedef struct fat_inode {
+typedef struct fat_inode
+{
   fat_entry entry;
   uint32_t first_cluster;
   fat fat_info;

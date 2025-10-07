@@ -8,7 +8,8 @@
 #include <sys/ioctl.h>
 #include <termios.h>
 
-typedef struct tty {
+typedef struct tty
+{
   void *private_data;
   void (*out)(char, void *);
   ring_buffer *input_buffer;
@@ -22,7 +23,8 @@ typedef struct tty {
   int unconnected;
 } tty;
 
-typedef struct pty {
+typedef struct pty
+{
   ring_buffer *output_buffer;
   vfs_node *slave;
 } pty;

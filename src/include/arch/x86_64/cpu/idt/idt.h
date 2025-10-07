@@ -21,7 +21,8 @@
 #define IDT_TRAP_KERNEL (IDT_PRESENT | IDT_DPL0 | IDT_TYPE_TRAP)     // 0x8F
 #define IDT_TRAP_USER (IDT_PRESENT | IDT_DPL3 | IDT_TYPE_TRAP)       // 0xEF
 
-struct idt_entry {
+struct idt_entry
+{
   uint16_t offset_low;
   uint16_t selector;
   uint8_t ist;
@@ -31,7 +32,8 @@ struct idt_entry {
   uint32_t reserved;
 } __attribute__((packed));
 
-struct idtr {
+struct idtr
+{
   uint16_t limit;
   uint64_t base;
 } __attribute__((packed));

@@ -11,7 +11,8 @@ _BEGIN_C_HEADER
 #include <stdio.h>
 #include <sys/types.h>
 
-struct passwd {
+struct passwd
+{
   char *pw_name;   // user's login name
   char *pw_passwd; // user's password
   uid_t pw_uid;    // numerical user ID

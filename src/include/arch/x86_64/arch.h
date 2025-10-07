@@ -3,7 +3,8 @@
 
 #include <stdint.h>
 
-typedef struct fault_frame_struct_t {
+typedef struct fault_frame_struct_t
+{
   uint64_t gs;
   uint64_t fs;
   uint64_t es;
@@ -34,7 +35,8 @@ typedef struct fault_frame_struct_t {
   uint64_t ss;
 } fault_frame_t;
 
-typedef struct acontext_struct_t {
+typedef struct acontext_struct_t
+{
   char sse[512];
   fault_frame_t frame;
 } acontext_t;

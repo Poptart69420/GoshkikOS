@@ -18,7 +18,8 @@ struct process_struct;
 
 #define MAX_FD 32
 
-typedef struct {
+typedef struct
+{
   vfs_node *node;
   uint64_t offset;
   uint64_t present;
@@ -30,7 +31,8 @@ typedef struct {
 #define FD_APPEND 0x04
 #define FD_NONBLOCK 0x08
 
-typedef struct process_struct {
+typedef struct process_struct
+{
   acontext context;
   addrspace_t addrspace;
   uintptr_t kernel_stack;

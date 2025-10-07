@@ -9,7 +9,8 @@
 
 // any change here must be replicataed in interrupt handler
 // and context switch
-typedef struct fault_frame {
+typedef struct fault_frame
+{
   uint64_t gs;
   uint64_t fs;
   uint64_t es;
@@ -40,7 +41,8 @@ typedef struct fault_frame {
   uint64_t ss;
 } fault_frame;
 
-typedef struct arch_specific {
+typedef struct arch_specific
+{
   gdt_segment gdt[7];
   GDTR gdtr;
   idt_gate idt[256];
@@ -49,7 +51,8 @@ typedef struct arch_specific {
   uint64_t hPDP[8];
 } arch_specific;
 
-typedef struct acontext {
+typedef struct acontext
+{
   char sse[512];
   fault_frame frame;
 } acontext;

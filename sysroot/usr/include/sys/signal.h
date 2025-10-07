@@ -53,8 +53,10 @@ typedef unsigned int sigset_t;
 
 #include <sys/siginfo.h>
 
-struct sigaction {
-  union { /* signal handler */
+struct sigaction
+{
+  union
+  { /* signal handler */
     void (*__sa_handler)(int);
     void (*__sa_sigaction)(int, siginfo_t *, void *);
   } __sigaction_u;
@@ -62,7 +64,8 @@ struct sigaction {
   int sa_flags;     /* see signal options below*/
 };
 
-typedef struct {
+typedef struct
+{
   void *ss_sp;    /* base address of stack */
   int ss_flags;   /* flags */
   size_t ss_size; /* number of bytes in stack */

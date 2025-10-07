@@ -11,7 +11,8 @@ _BEGIN_C_HEADER
 #include <locale.h>
 #include <sys/time.h>
 
-struct tm {
+struct tm
+{
   int tm_sec;   // Seconds. [0-60] 1 leap second
   int tm_min;   // Minutes. [0-59]
   int tm_hour;  // Hours.   [0-23]

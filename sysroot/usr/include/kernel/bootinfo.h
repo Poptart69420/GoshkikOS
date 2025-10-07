@@ -3,7 +3,8 @@
 
 #include <kernel/limine.h>
 
-typedef struct {
+typedef struct
+{
   struct limine_boot_time_response *boot_time_response;
 } bootinfo_table;
 

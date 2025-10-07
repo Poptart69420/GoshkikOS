@@ -42,17 +42,17 @@ typedef double double_t;
 
 #define isunordered(x, y) (isnan(x) || isnan(y))
 
-#define ifunc(name)                                                            \
-  int name(int x);                                                             \
-  long l##name(long x);                                                        \
+#define ifunc(name)     \
+  int name(int x);      \
+  long l##name(long x); \
   long long ll##name(long long x);
-#define ffunc(name)                                                            \
-  float name##f(float x);                                                      \
-  double name(double x);                                                       \
+#define ffunc(name)       \
+  float name##f(float x); \
+  double name(double x);  \
   long double name##l(long double x);
-#define ffunc2(name)                                                           \
-  float name##f(float x, float y);                                             \
-  double name(double x, double y);                                             \
+#define ffunc2(name)               \
+  float name##f(float x, float y); \
+  double name(double x, double y); \
   long double name##l(long double x, long double y);
 
 // abs

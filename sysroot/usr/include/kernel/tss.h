@@ -3,7 +3,8 @@
 
 #include <stdint.h>
 
-typedef struct {
+typedef struct
+{
   uint32_t reserved;
   uint32_t rspl0;
   uint32_t rsph0;

@@ -7,7 +7,8 @@
 #define enable_interrupt() asm("sti")
 #define halt() while (1)
 
-static inline int have_interrupt() {
+static inline int have_interrupt()
+{
   uintptr_t flags;
   asm volatile("pushf\n"
                "pop %0"

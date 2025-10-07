@@ -7,12 +7,14 @@ spinlock_t lock;
 extern void gdt_reload(void);
 extern void tss_reload(void);
 
-void gdt_setup(void) {
+void gdt_setup(void)
+{
   spinlock_init(&lock);
   gdt_init();
 }
 
-void gdt_init(void) {
+void gdt_init(void)
+{
   spinlock_acquire(&lock);
 
   // kernel

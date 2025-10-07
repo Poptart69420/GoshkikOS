@@ -9,25 +9,29 @@ _BEGIN_C_HEADER
 #define _SYSCALL_H
 
 #ifdef __x86_64__
-static inline long __syscall0(long n) {
+static inline long __syscall0(long n)
+{
   long ret;
   asm volatile("int $0x80" : "=a"(ret) : "a"(n) : "memory");
   return ret;
 }
 
-static inline long __syscall1(long n, long a1) {
+static inline long __syscall1(long n, long a1)
+{
   long ret;
   asm volatile("int $0x80" : "=a"(ret) : "a"(n), "D"(a1) : "memory");
   return ret;
 }
 
-static inline long __syscall2(long n, long a1, long a2) {
+static inline long __syscall2(long n, long a1, long a2)
+{
   long ret;
   asm volatile("int $0x80" : "=a"(ret) : "a"(n), "D"(a1), "S"(a2) : "memory");
   return ret;
 }
 
-static inline long __syscall3(long n, long a1, long a2, long a3) {
+static inline long __syscall3(long n, long a1, long a2, long a3)
+{
   long ret;
   asm volatile("int $0x80"
                : "=a"(ret)
@@ -36,7 +40,8 @@ static inline long __syscall3(long n, long a1, long a2, long a3) {
   return ret;
 }
 
-static inline long __syscall4(long n, long a1, long a2, long a3, long a4) {
+static inline long __syscall4(long n, long a1, long a2, long a3, long a4)
+{
   long ret;
   asm volatile("int $0x80"
                : "=a"(ret)
@@ -46,7 +51,8 @@ static inline long __syscall4(long n, long a1, long a2, long a3, long a4) {
 }
 
 static inline long __syscall5(long n, long a1, long a2, long a3, long a4,
-                              long a5) {
+                              long a5)
+{
   long ret;
   register long r8 __asm__("r8") = a5;
   asm volatile("int $0x80"
@@ -57,7 +63,8 @@ static inline long __syscall5(long n, long a1, long a2, long a3, long a4,
 }
 
 static inline long __syscall6(long n, long a1, long a2, long a3, long a4,
-                              long a5, long a6) {
+                              long a5, long a6)
+{
   long ret;
   register long r8 __asm__("r8") = a5;
   register long r9 __asm__("r9") = a6;
@@ -68,14 +75,16 @@ static inline long __syscall6(long n, long a1, long a2, long a3, long a4,
   return ret;
 }
 #elif defined(__aarch64__)
-static inline long __syscall0(long n) {
+static inline long __syscall0(long n)
+{
   register long ret asm("r0");
   register long num asm("r8") = n;
   asm("svc 0" : "=r"(ret) : "r"(num) : "memory");
   return ret;
 }
 
-static inline long __syscall1(long n, long a1) {
+static inline long __syscall1(long n, long a1)
+{
   register long ret asm("r0");
   register long num asm("r8") = n;
   register long r0 asm("r0") = a1;
@@ -83,7 +92,8 @@ static inline long __syscall1(long n, long a1) {
   return ret;
 }
 
-static inline long __syscall2(long n, long a1, long a2) {
+static inline long __syscall2(long n, long a1, long a2)
+{
   register long ret asm("r0");
   register long num asm("r8") = n;
   register long r0 asm("r0") = a1;
@@ -92,7 +102,8 @@ static inline long __syscall2(long n, long a1, long a2) {
   return ret;
 }
 
-static inline long __syscall3(long n, long a1, long a2, long a3) {
+static inline long __syscall3(long n, long a1, long a2, long a3)
+{
   register long ret asm("r0");
   register long num asm("r8") = n;
   register long r0 asm("r0") = a1;
@@ -103,7 +114,8 @@ static inline long __syscall3(long n, long a1, long a2, long a3) {
 }
 
 static inline long __syscall5(long n, long a1, long a2, long a3, long a4,
-                              long a5) {
+                              long a5)
+{
   register long ret asm("r0");
   register long num asm("r8") = n;
   register long r0 asm("r0") = a1;
@@ -119,7 +131,8 @@ static inline long __syscall5(long n, long a1, long a2, long a3, long a4,
 }
 
 static inline long __syscall6(long n, long a1, long a2, long a3, long a4,
-                              long a5, long a6) {
+                              long a5, long a6)
+{
   register long ret asm("r0");
   register long num asm("r8") = n;
   register long r0 asm("r0") = a1;

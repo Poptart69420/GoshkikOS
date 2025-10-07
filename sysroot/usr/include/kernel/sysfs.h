@@ -4,7 +4,8 @@
 #include <kernel/list.h>
 #include <kernel/vfs.h>
 
-typedef struct sysfs_inode {
+typedef struct sysfs_inode
+{
   const char *name;
   list *child;
   int type;

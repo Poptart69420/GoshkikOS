@@ -16,7 +16,8 @@
 struct slab_cache_t;
 struct slab_t;
 
-typedef struct slab_t {
+typedef struct slab_t
+{
   struct slab_t *next;
   struct slab_cache_t *cache;
   uint32_t free_count;
@@ -25,7 +26,8 @@ typedef struct slab_t {
   void *free_list;
 } slab_t;
 
-typedef struct slab_cache_t {
+typedef struct slab_cache_t
+{
   const char *name;
   size_t object_size;
   size_t align;

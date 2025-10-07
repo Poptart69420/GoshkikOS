@@ -2,7 +2,10 @@
 
 static handlers_t handlers[IDT_ENTRIES] = {NULL};
 
-void isr_register(int isr, handlers_t handler) { handlers[isr] = handler; }
+void isr_register(int isr, handlers_t handler)
+{
+  handlers[isr] = handler;
+}
 
 static const char *isr_exception_messages[] = {"Divide by zero",
                                                "Debug",
@@ -42,24 +45,29 @@ static const char *isr_exception_messages[] = {"Divide by zero",
 
 extern void *isr_stub_table[];
 
-void kpanic(const char *error, fault_frame_t *frame) {
+void kpanic(const char *error, fault_frame_t *frame)
+{
   (void)error;
   (void)frame;
   disable_interrupt();
   hcf();
 }
 
-void isr_install(void) {
+void isr_install(void)
+{
 
-  for (int i = 0; i < IDT_ENTRIES; ++i) {
+  for (int i = 0; i < IDT_ENTRIES; ++i)
+  {
     uint8_t ist = 0;
     uint8_t attr = IDT_INT_KERNEL;
 
-    if (i == 14) {
+    if (i == 14)
+    {
       ist = 2;
     }
 
-    if (i == 0x80) {
+    if (i == 0x80)
+    {
       attr = IDT_INT_USER;
     }
 
@@ -71,22 +79,29 @@ void isr_install(void) {
   kok();
 }
 
-void isr_handler(fault_frame_t *frame) {
-  if (frame->cs & 0x3) {
+void isr_handler(fault_frame_t *frame)
+{
+  if (frame->cs & 0x3)
+  {
     __asm__ volatile("swapgs" ::: "memory");
   }
 
-  if (frame->err_type < IDT_ENTRIES && handlers[frame->err_type] != NULL) {
+  if (frame->err_type < IDT_ENTRIES && handlers[frame->err_type] != NULL)
+  {
     handlers[frame->err_type](frame);
   }
 
-  if (frame->err_type < 32) {
-    if (frame->cs & 0x3) {
+  if (frame->err_type < 32)
+  {
+    if (frame->cs & 0x3)
+    {
       vterm_print("\n");
       vterm_print("-----EXCEPTION-----\n");
       kerror(isr_exception_messages[frame->err_type]);
       // do something
-    } else {
+    }
+    else
+    {
       vterm_print("\n");
       vterm_print("-----KERNEL EXCEPTION-----\n");
 
@@ -94,7 +109,8 @@ void isr_handler(fault_frame_t *frame) {
     }
   }
 
-  if (frame->cs & 0x3) {
+  if (frame->cs & 0x3)
+  {
     __asm__ volatile("swapgs" ::: "memory");
   }
 }

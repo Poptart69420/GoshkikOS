@@ -3,7 +3,8 @@
 kernel_table master_kernel_table;
 kernel_table *kernel;
 
-static void boot_info(void) {
+static void boot_info(void)
+{
   kernel = &master_kernel_table;
 
   if (!framebuffer_request.response)
@@ -20,21 +21,25 @@ static void boot_info(void) {
   kernel->memmap = memmap_request.response;
   kernel->module = module_request.response;
 
-  if (LIMINE_BASE_REVISION_SUPPORTED == false) {
+  if (LIMINE_BASE_REVISION_SUPPORTED == false)
+  {
     hcf();
   }
 
   if (kernel->framebuffer == NULL ||
-      kernel->framebuffer->framebuffer_count < 1) {
+      kernel->framebuffer->framebuffer_count < 1)
+  {
     hcf();
   }
 
-  if (!kernel->module || kernel->module->module_count == 0) {
+  if (!kernel->module || kernel->module->module_count == 0)
+  {
     hcf();
   }
 }
 
-void kmain(void) {
+void kmain(void)
+{
   boot_info();
 
   struct limine_framebuffer *fb = kernel->framebuffer->framebuffers[0];

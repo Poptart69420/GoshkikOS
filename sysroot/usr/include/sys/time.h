@@ -10,17 +10,20 @@ _BEGIN_C_HEADER
 
 #include <sys/type.h>
 
-struct timeval {
+struct timeval
+{
   time_t tv_sec;       // seconds
   suseconds_t tv_usec; // microseconds
 };
 
-struct timespec {
+struct timespec
+{
   time_t tv_sec; // seconds
   long tv_nsec;  // nanoseconds
 };
 
-struct timezone {
+struct timezone
+{
   int tz_minuteswest;
   int tz_dsttime;
 };

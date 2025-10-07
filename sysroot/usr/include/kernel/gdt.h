@@ -11,7 +11,8 @@
 #define GDT_SEGMENT_ACCESS_DPL_USER 0X60
 #define GDT_SEGMENT_ACCESS_PRESENT 0X80
 
-typedef struct {
+typedef struct
+{
   uint16_t limit;
   uint16_t base1;
   uint8_t base2;
@@ -20,7 +21,8 @@ typedef struct {
   uint8_t base3;
 } __attribute__((packed)) gdt_segment;
 
-typedef struct {
+typedef struct
+{
   uint16_t size;
   uint64_t offset;
 } __attribute__((packed)) GDTR;

@@ -6,7 +6,8 @@
 
 #define FONT_TYPE_PSF1 0x01
 
-typedef struct {
+typedef struct
+{
   void *header;
   void *font;
   char font_type;
@@ -21,7 +22,8 @@ typedef struct {
   uintmax_t ANSI_esc_mode;
 } terminal_emu_settings;
 
-typedef struct {
+typedef struct
+{
   uint16_t magic;        // Magic bytes for identification.
   uint8_t fontMode;      // PSF font mode.
   uint8_t characterSize; // PSF character size.

@@ -10,7 +10,8 @@ _BEGIN_C_HEADER
 
 #include <sys/types.h>
 
-struct winsize {
+struct winsize
+{
   unsigned short ws_row;    // rows, in characters
   unsigned short ws_col;    // columns, in characters
   unsigned short ws_xpixel; // horizontal size, pixels

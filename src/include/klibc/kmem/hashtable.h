@@ -14,7 +14,8 @@
 #define FNV1PRIME 0x100000001b3ull
 #define FNV1OFFSET 0xcbf29ce484222325ull
 
-typedef struct hash_entry_t {
+typedef struct hash_entry_t
+{
   struct hash_entry_t *next;
   struct hash_entry_t *prev;
   uintmax_t hash;
@@ -23,7 +24,8 @@ typedef struct hash_entry_t {
   void *value;
 } hash_entry_t;
 
-typedef struct {
+typedef struct
+{
   size_t entry_count;
   size_t capacity;
   hash_entry_t **entries;

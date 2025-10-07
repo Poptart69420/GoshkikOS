@@ -12,7 +12,8 @@
 #include <stdint.h>
 #include <sys/time.h>
 
-typedef struct kernel_table_struct {
+typedef struct kernel_table_struct
+{
   arch_specific arch;
   bootinfo_table bootinfo;
   struct limine_kernel_address_response *kernel_address;

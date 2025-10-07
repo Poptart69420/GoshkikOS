@@ -11,14 +11,16 @@ struct heap_segment_struct;
 #define HEAP_SEG_MAGIC_FREE 0x1308
 #define HEAP_SEG_MAGIC_ALLOCATED 0x0505
 
-typedef struct heap_segment_struct {
+typedef struct heap_segment_struct
+{
   uint64_t magic;
   uint64_t lenght;
   struct heap_segment_struct *next;
   struct heap_segment_struct *prev;
 } heap_segment;
 
-typedef struct {
+typedef struct
+{
   uint64_t start;
   uint64_t lenght;
   heap_segment *first_seg;

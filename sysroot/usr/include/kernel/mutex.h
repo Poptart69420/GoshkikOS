@@ -7,7 +7,8 @@
 
 struct process_struct;
 
-typedef struct mutex {
+typedef struct mutex
+{
   spinlock lock;
   atomic_int locked;
   struct process_struct *waiter_head;

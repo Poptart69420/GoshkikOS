@@ -2,7 +2,8 @@
 #define IDT_H
 #include <stdint.h>
 
-typedef struct {
+typedef struct
+{
   uint16_t offset1;
   uint16_t selector;
   uint8_t ist;
@@ -12,7 +13,8 @@ typedef struct {
   uint32_t reserved;
 } __attribute__((packed)) idt_gate;
 
-typedef struct {
+typedef struct
+{
   uint16_t size;
   uint64_t offset;
 } __attribute__((packed)) IDTR;

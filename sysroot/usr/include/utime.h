@@ -10,7 +10,8 @@ _BEGIN_C_HEADER
 
 #include <sys/types.h>
 
-struct utimbuf {
+struct utimbuf
+{
   time_t actime;
   time_t modtime;
 };

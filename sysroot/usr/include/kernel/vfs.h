@@ -27,7 +27,8 @@ struct vfs_node_struct;
 struct vfs_mount_point_struct;
 struct memseg_struct;
 
-typedef struct vfs_node_struct {
+typedef struct vfs_node_struct
+{
   void *private_inode;
   struct vfs_mount_point_struct *mount_point;
   uint64_t flags;
@@ -63,7 +64,8 @@ typedef struct vfs_node_struct {
   struct vfs_node_struct *linked_node; // used from mount point
 } vfs_node;
 
-typedef struct vfs_mount_point_struct {
+typedef struct vfs_mount_point_struct
+{
   char name[PATH_MAX];
   struct vfs_mount_point_struct *prev;
   struct vfs_mount_point_struct *next;
@@ -71,7 +73,8 @@ typedef struct vfs_mount_point_struct {
   uint64_t flags;
 } vfs_mount_point;
 
-typedef struct vfs_filesystem_struct {
+typedef struct vfs_filesystem_struct
+{
   char name[16];
   int (*mount)(const char *source, const char *target, unsigned long flags,
                const void *data);

@@ -3,14 +3,16 @@
 static uintptr_t heap_current = HEAP_START;
 static block_header_t *free_list = NULL;
 
-size_t init_kheap(void) {
+size_t init_kheap(void)
+{
   heap_current = HEAP_START;
 
   uintptr_t physical = pmm_alloc_page();
 
   vterm_print("Kheap...");
 
-  if (!physical) {
+  if (!physical)
+  {
     kerror("Failed to initialize kheap");
     return 0;
   }
@@ -25,7 +27,8 @@ size_t init_kheap(void) {
   return free_list->size;
 }
 
-static void split_block(block_header_t *block, size_t size) {
+static void split_block(block_header_t *block, size_t size)
+{
   if (block->size <= size + sizeof(block_header_t))
     return;
 
@@ -39,7 +42,8 @@ static void split_block(block_header_t *block, size_t size) {
   block->next = new_block;
 }
 
-static void *request_more_memory(size_t size) {
+static void *request_more_memory(size_t size)
+{
   if (size > SIZE_MAX - sizeof(block_header_t))
     return NULL;
 
@@ -47,7 +51,8 @@ static void *request_more_memory(size_t size) {
   total_size = (total_size + PAGE_SIZE_VMM - 1) & ~(PAGE_SIZE_VMM - 1);
 
   uintptr_t alloc_base = heap_current;
-  for (size_t offset = 0; offset < total_size; offset += PAGE_SIZE_VMM) {
+  for (size_t offset = 0; offset < total_size; offset += PAGE_SIZE_VMM)
+  {
     uintptr_t physical = pmm_alloc_page();
     if (!physical)
       return NULL;
@@ -63,15 +68,18 @@ static void *request_more_memory(size_t size) {
   return (void *)((uintptr_t)block + sizeof(block_header_t));
 }
 
-static void *kheap_alloc(size_t size) {
+static void *kheap_alloc(size_t size)
+{
   if (size == 0)
     return NULL;
   size = (size + 15) & ~15ULL;
 
   block_header_t *current = free_list;
 
-  while (current) {
-    if (current->free && current->size >= size) {
+  while (current)
+  {
+    if (current->free && current->size >= size)
+    {
       split_block(current, size);
       current->free = 0;
       return (void *)((uintptr_t)current + sizeof(block_header_t));
@@ -83,7 +91,8 @@ static void *kheap_alloc(size_t size) {
   }
 
   void *new_block = request_more_memory(size);
-  if (!new_block) {
+  if (!new_block)
+  {
     kerror("Out of memory");
     return NULL;
   }
@@ -93,7 +102,8 @@ static void *kheap_alloc(size_t size) {
   return new_block;
 }
 
-static void kheap_free(void *ptr) {
+static void kheap_free(void *ptr)
+{
   if (!ptr)
     return;
 
@@ -103,29 +113,41 @@ static void kheap_free(void *ptr) {
 
   block_header_t *current = free_list;
 
-  while (current) {
-    if (current->free && current->next && current->next->free) {
+  while (current)
+  {
+    if (current->free && current->next && current->next->free)
+    {
       current->size += sizeof(block_header_t) + current->next->size;
       current->next = current->next->next;
-    } else {
+    }
+    else
+    {
       current = current->next;
     }
   }
 }
 
-void *kmalloc(size_t size) { return kheap_alloc(size); }
+void *kmalloc(size_t size)
+{
+  return kheap_alloc(size);
+}
 
-void *kzalloc(size_t size) {
+void *kzalloc(size_t size)
+{
   void *ptr = kmalloc(size);
   if (ptr)
     memset(ptr, 0, size);
   return ptr;
 }
 
-void *kcalloc(size_t n, size_t size) {
+void *kcalloc(size_t n, size_t size)
+{
   if (n && size && n > (SIZE_MAX / size))
     return NULL;
   return kzalloc(n * size);
 }
 
-void kfree(void *ptr) { kheap_free(ptr); }
+void kfree(void *ptr)
+{
+  kheap_free(ptr);
+}

@@ -2,7 +2,8 @@
 #define TARFS_H
 #include <stdint.h>
 
-typedef struct ustar_header_struct {
+typedef struct ustar_header_struct
+{
   char name[100];
   char file_mode[8];
   char owner[8];

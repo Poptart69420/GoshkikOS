@@ -5,7 +5,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef struct {
+typedef struct
+{
   char *buffer;
   uint64_t write_offset;
   uint64_t read_offset;

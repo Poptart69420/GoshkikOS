@@ -8,7 +8,8 @@ _BEGIN_C_HEADER
 #ifndef POLL_H
 #define POLL_H
 
-struct pollfd {
+struct pollfd
+{
   int fd;        // file descriptor
   short events;  // requested events
   short revents; // returned events
@@ -22,7 +23,7 @@ int poll(struct pollfd *fds, nfds_t nfds, int timeout);
 #define POLLWRBAND 0x02 // data on priority bands greater than 0 may be written
 #define POLLRDNORM 0x04 // data on priority band 0 may be read
 #define POLLRDBAND 0x08 // data on priority bands greater than 0 may be read
-#define POLLIN                                                                 \
+#define POLLIN \
   (POLLRDNORM | POLLRDBAND) // same effect as POLLRDNORM | POLLRDBAND
 #define POLLPRI 0x10        // high priority data may be read
 #define POLLOUT POLLWRNORM  // same value as POLLWRNORM

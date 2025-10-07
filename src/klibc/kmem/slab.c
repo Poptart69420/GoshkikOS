@@ -1,15 +1,18 @@
 #include <klibc/kmem/slab.h>
 
-static inline size_t align_up(size_t v, size_t a) {
+static inline size_t align_up(size_t v, size_t a)
+{
   return (v + (a - 1)) & ~(a - 1);
 }
 
-static inline slab_t *slab_from_object(void *object) {
+static inline slab_t *slab_from_object(void *object)
+{
   uintptr_t base = (uintptr_t)object & ~(PAGE_SIZE_SLAB - 1);
   return (slab_t *)base;
 }
 
-static slab_t *slab_init(slab_cache_t *cache) {
+static slab_t *slab_init(slab_cache_t *cache)
+{
   uintptr_t physical = pmm_alloc_page();
   if (!physical)
     return NULL;
@@ -27,7 +30,8 @@ static slab_t *slab_init(slab_cache_t *cache) {
   size_t usable = PAGE_SIZE_SLAB - first_object_offset;
   size_t objects = usable / cache->object_size;
 
-  if (objects == 0) {
+  if (objects == 0)
+  {
     return NULL;
   }
 
@@ -39,7 +43,8 @@ static slab_t *slab_init(slab_cache_t *cache) {
   uint8_t *object = (uint8_t *)virtual_address + first_object_offset;
   void *previous = NULL;
 
-  for (size_t i = 0; i < objects; ++i) {
+  for (size_t i = 0; i < objects; ++i)
+  {
     void *slot = (void *)object;
     *(void **)slot = previous;
     previous = slot;
@@ -52,7 +57,8 @@ static slab_t *slab_init(slab_cache_t *cache) {
 
 struct slab_cache_t *slab_cache_create(const char *name, size_t object_size,
                                        size_t align, void (*ctor)(void *),
-                                       void (*dtor)(void *)) {
+                                       void (*dtor)(void *))
+{
   if (object_size == 0)
     return NULL;
 
@@ -77,7 +83,8 @@ struct slab_cache_t *slab_cache_create(const char *name, size_t object_size,
   size_t usable = PAGE_SIZE_SLAB - first_object_offset;
   cache->objects_per_slab = usable / cache->object_size;
 
-  if (cache->objects_per_slab == 0) {
+  if (cache->objects_per_slab == 0)
+  {
     kfree(cache);
     return NULL;
   }
@@ -85,7 +92,8 @@ struct slab_cache_t *slab_cache_create(const char *name, size_t object_size,
   return cache;
 }
 
-static void *slab_pop_object(slab_t *slab) {
+static void *slab_pop_object(slab_t *slab)
+{
   if (!slab || !slab->free_list)
     return NULL;
   void *object = slab->free_list;
@@ -94,24 +102,29 @@ static void *slab_pop_object(slab_t *slab) {
   return object;
 }
 
-static void slab_push_object(slab_t *slab, void *object) {
+static void slab_push_object(slab_t *slab, void *object)
+{
   *(void **)object = slab->free_list;
   slab->free_list = object;
   slab->free_count++;
 }
 
-void *slab_alloc(struct slab_cache_t *cache_in) {
+void *slab_alloc(struct slab_cache_t *cache_in)
+{
   slab_cache_t *cache = (slab_cache_t *)cache_in;
-  if (!cache) {
+  if (!cache)
+  {
     return NULL;
   }
 
   slab_t *slab = cache->partial;
   if (!slab)
     slab = cache->empty;
-  if (!slab) {
+  if (!slab)
+  {
     slab = slab_init(cache);
-    if (!slab) {
+    if (!slab)
+    {
       return kmalloc(cache->object_size);
     }
 
@@ -120,11 +133,13 @@ void *slab_alloc(struct slab_cache_t *cache_in) {
   }
 
   void *object = slab_pop_object(slab);
-  if (!object) {
+  if (!object)
+  {
     return NULL;
   }
 
-  if (slab->free_count == 0) {
+  if (slab->free_count == 0)
+  {
     slab_t **partial_pointer = &cache->partial;
     while (*partial_pointer && *partial_pointer != slab)
       partial_pointer = &(*partial_pointer)->next;
@@ -140,14 +155,17 @@ void *slab_alloc(struct slab_cache_t *cache_in) {
   return object;
 }
 
-void slab_free(struct slab_cache_t *cache_in, void *object) {
-  if (!cache_in || !object) {
+void slab_free(struct slab_cache_t *cache_in, void *object)
+{
+  if (!cache_in || !object)
+  {
     return;
   }
 
   slab_cache_t *cache = (slab_cache_t *)cache_in;
   slab_t *slab = slab_from_object(object);
-  if (slab->magic != SLAB_MAGIC) {
+  if (slab->magic != SLAB_MAGIC)
+  {
     kfree(object);
     return;
   }
@@ -158,11 +176,13 @@ void slab_free(struct slab_cache_t *cache_in, void *object) {
   int was_full = (slab->free_count == 0);
   slab_push_object(slab, object);
 
-  if (was_full) {
+  if (was_full)
+  {
     slab_t **partial_pointer = &cache->full;
     while (*partial_pointer && *partial_pointer != slab)
       partial_pointer = &(*partial_pointer)->next;
-    if (*partial_pointer) {
+    if (*partial_pointer)
+    {
       *partial_pointer = slab->next;
       slab->next = cache->partial;
       cache->partial = slab;
@@ -171,7 +191,8 @@ void slab_free(struct slab_cache_t *cache_in, void *object) {
     return;
   }
 
-  if (slab->free_count == slab->total_objects) {
+  if (slab->free_count == slab->total_objects)
+  {
     slab_t **partial_pointer = &cache->partial;
     while (*partial_pointer && *partial_pointer != slab)
       partial_pointer = &(*partial_pointer)->next;
@@ -186,15 +207,18 @@ void slab_free(struct slab_cache_t *cache_in, void *object) {
   }
 }
 
-void slab_destroy(struct slab_cache_t *cache) {
-  if (!cache) {
+void slab_destroy(struct slab_cache_t *cache)
+{
+  if (!cache)
+  {
     return;
   }
 
   slab_t *slab;
 
   slab = cache->partial;
-  while (slab) {
+  while (slab)
+  {
     slab_t *next = slab->next;
     uintptr_t slab_virtual_address = (uintptr_t)slab;
     uintptr_t slab_physical_address =
@@ -205,7 +229,8 @@ void slab_destroy(struct slab_cache_t *cache) {
   }
 
   slab = cache->empty;
-  while (slab) {
+  while (slab)
+  {
     slab_t *next = slab->next;
     uintptr_t slab_virtual_address = (uintptr_t)slab;
     uintptr_t slab_physical_address =

@@ -4,7 +4,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef struct sym {
+typedef struct sym
+{
   char *name;
   size_t size;
   uintptr_t value;

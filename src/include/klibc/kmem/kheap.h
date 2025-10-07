@@ -11,7 +11,8 @@
 
 #define HEAP_START 0xFFFF800010000000
 
-typedef struct block_header {
+typedef struct block_header
+{
   size_t size;
   int free;
   struct block_header *next;

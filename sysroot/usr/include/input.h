@@ -10,18 +10,22 @@ _BEGIN_C_HEADER
 
 #include <sys/time.h>
 
-struct input_event {
+struct input_event
+{
   struct timeval timestamp;
   unsigned long ie_class;
   unsigned long ie_subclass;
   unsigned long ie_type;
-  union {
-    struct {
+  union
+  {
+    struct
+    {
       unsigned long axis;
       long x;
       long y;
     } ie_move;
-    struct {
+    struct
+    {
       char c;
       char padding[3];
       unsigned long scancode;
@@ -31,7 +35,8 @@ struct input_event {
   };
 };
 
-struct input_request {
+struct input_request
+{
   unsigned long ir_type;
   unsigned long ir_arg;
 };

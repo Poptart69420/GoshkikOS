@@ -8,7 +8,8 @@ _BEGIN_C_HEADER
 #ifndef _SYS_FB_H
 #define _SYS_FB_H
 
-struct fb {
+struct fb
+{
   long width;
   long height;
   long pitch;

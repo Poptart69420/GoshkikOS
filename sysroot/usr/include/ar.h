@@ -12,7 +12,8 @@ _BEGIN_C_HEADER
 #define SARMAG 8
 #define ARFMAG "`\n"
 
-struct ar_hdr {
+struct ar_hdr
+{
   char ar_name[16];
   char ar_date[12];
   char ar_uid[6];

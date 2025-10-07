@@ -20,7 +20,8 @@ _BEGIN_C_HEADER
 #define NULL (void *)0
 #endif
 
-struct lconv {
+struct lconv
+{
   char currency_symbol[8];
   char decimal_point[8];
   char frac_digits;
@@ -41,7 +42,8 @@ struct lconv {
   char thousands_sep[8];
 };
 
-struct locale_time {
+struct locale_time
+{
   char day[7][16];
   char abday[7][4];
   char mon[12][16];
@@ -54,12 +56,14 @@ struct locale_time {
   char t_fmt_ampm[16];
 };
 
-struct locale_messages {
+struct locale_messages
+{
   char yesexpr[8];
   char noexpr[8];
 };
 
-struct __locale {
+struct __locale
+{
   struct lconv lconv;
   int mb_type;
   int ctype[256];

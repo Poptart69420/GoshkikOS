@@ -4,7 +4,8 @@
 #include <stdint.h>
 #include <sys/type.h>
 
-typedef struct PMM_entry_struct {
+typedef struct PMM_entry_struct
+{
   struct PMM_entry_struct *next;
   size_t size; // size of the chunk in page
 } PMM_entry;
