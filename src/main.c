@@ -40,13 +40,14 @@ void kmain(void) {
     struct limine_framebuffer *fb = kernel->framebuffer->framebuffers[0];
     if (fb->width > FB_WIDTH || fb->height > FB_HEIGHT)
         hcf();
+
     vterm_init(fb);
 
     vterm_print("\n");
 
     vterm_print("=|||||||||||||||||||=\n");
     vterm_print("|                   |\n");
-    vterm_print("| GoshkikOS Started |\n");
+    vterm_print("| goshkikos started |\n");
     vterm_print("|                   |\n");
     vterm_print("=|||||||||||||||||||=\n");
     vterm_print("\n");
@@ -57,7 +58,6 @@ void kmain(void) {
     init_pmm();
     init_vmm();
     init_kheap();
-    init_vfs();
 
     init_serial();
     gdt_setup();
@@ -67,9 +67,6 @@ void kmain(void) {
     ps2_entry();
     init_keyboard();
     init_timer();
-
-    vfs_register("tmpfs", vfs_root);
-    vfs_unregister("tmpfs");
 
     pic_unmask_irq(0);
     pic_unmask_irq(1);
