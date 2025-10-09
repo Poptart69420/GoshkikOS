@@ -63,6 +63,7 @@ void kmain(void)
   init_pmm();
   init_vmm();
   init_kheap();
+  init_vfs();
 
   init_serial();
   gdt_setup();
