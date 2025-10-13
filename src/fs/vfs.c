@@ -37,6 +37,22 @@ void vnode_put(vnode_t *vnode)
   }
 }
 
+int vfs_get_root(vfs_t *vfs, vnode_t **root_out)
+{
+  if (!vfs || !root_out)
+    return -EINVAL;
+  if (vfs->ops && vfs->ops->root)
+    return vfs->ops->root(vfs, root_out);
+  if (vfs->root)
+  {
+    vnode_hold(vfs->root);
+    *root_out = vfs->root;
+    return 0;
+  }
+
+  return -ENOENT;
+}
+
 static char *next_component(char **path_p)
 {
   char *p = *path_p;
@@ -154,22 +170,6 @@ int vfs_unmount(vfs_t *vfs)
   return rc;
 }
 
-int vfs_get_root(vfs_t *vfs, vnode_t **root_out)
-{
-  if (!vfs || !root_out)
-    return -EINVAL;
-  if (vfs->ops && vfs->ops->root)
-    return vfs->ops->root(vfs, root_out);
-  if (vfs->root)
-  {
-    vnode_hold(vfs->root);
-    *root_out = vfs->root;
-    return 0;
-  }
-
-  return -ENOENT;
-}
-
 int vfs_resolve_absolute(const char *path, vnode_t **res, cred_t *cred)
 {
   if (!path || !res)
@@ -285,22 +285,22 @@ int vfs_close(vnode_t *node, int flags, cred_t *cred)
   return node->ops->close(node, flags, cred);
 }
 
-int vfs_read(vnode_t *node, size_t size, uintmax_t offset, int flags, size_t *readc, cred_t *cred)
+int vfs_read(vnode_t *node, size_t size, uintmax_t offset, int flags, size_t *readc, cred_t *cred, void *buffer)
 {
   if (!node)
     return -EINVAL;
   if (!node->ops || !node->ops->read)
     return -ENOSYS;
-  return node->ops->read(node, size, offset, flags, readc, cred);
+  return node->ops->read(node, size, offset, flags, readc, cred, buffer);
 }
 
-int vfs_write(vnode_t *node, size_t size, uintmax_t offset, int flags, size_t *writec, cred_t *cred)
+int vfs_write(vnode_t *node, size_t size, uintmax_t offset, int flags, size_t *writec, cred_t *cred, void *buffer)
 {
   if (!node)
     return -EINVAL;
   if (!node->ops || !node->ops->write)
     return -ENOSYS;
-  return node->ops->write(node, size, offset, flags, writec, cred);
+  return node->ops->write(node, size, offset, flags, writec, cred, buffer);
 }
 
 int vfs_create(vnode_t *parent, char *name, vattr_t *attr, int type, vnode_t **result, cred_t *cred)

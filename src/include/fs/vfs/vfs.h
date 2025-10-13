@@ -81,8 +81,8 @@ typedef struct vops_t
 {
   int (*open)(vnode_t **node, int flags, cred_t *cred);
   int (*close)(vnode_t *node, int flags, cred_t *cred);
-  int (*read)(vnode_t *node, size_t size, uintmax_t offset, int flags, size_t *readc, cred_t *cred);
-  int (*write)(vnode_t *node, size_t size, uintmax_t offset, int flags, size_t *writec, cred_t *cred);
+  int (*read)(vnode_t *node, size_t size, uintmax_t offset, int flags, size_t *readc, cred_t *cred, void *buffer);
+  int (*write)(vnode_t *node, size_t size, uintmax_t offset, int flags, size_t *writec, cred_t *cred, void *buffer);
   int (*lookup)(vnode_t *node, char *name, vnode_t **result, cred_t *cred);
   int (*create)(vnode_t *parent, char *name, vattr_t *attr, int type, vnode_t **result, cred_t *cred);
   int (*getattr)(vnode_t *node, vattr_t *attr, cred_t *cred);
@@ -115,7 +115,8 @@ int vfs_resolve_absolute(const char *path, vnode_t **res, cred_t *cred);
 int vnode_lookup(vnode_t *dir, const char *name, vnode_t **result, cred_t *cred);
 int vfs_open(vnode_t **node, int flags, cred_t *cred);
 int vfs_close(vnode_t *node, int flags, cred_t *cred);
-int vfs_write(vnode_t *node, size_t size, uintmax_t offset, int flags, size_t *writec, cred_t *cred);
+int vfs_read(vnode_t *node, size_t size, uintmax_t offset, int flags, size_t *readc, cred_t *cred, void *buffer);
+int vfs_write(vnode_t *node, size_t size, uintmax_t offset, int flags, size_t *writec, cred_t *cred, void *buffer);
 int vfs_create(vnode_t *parent, char *name, vattr_t *attr, int type, vnode_t **result, cred_t *cred);
 int vfs_getattr(vnode_t *node, vattr_t *attr, cred_t *cred);
 int vfs_setattr(vnode_t *node, vattr_t *attr, int attrs, cred_t *cred);
