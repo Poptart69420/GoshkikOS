@@ -1,3 +1,5 @@
+#include <vterm/kerror.h>
+#include <vterm/kok.h>
 #include <vterm/vterm.h>
 
 static volatile uint32_t *framebuffer;
@@ -89,5 +91,20 @@ void vterm_print(const char *str)
   for (size_t i = 0; str[i] != '\0'; ++i)
   {
     vterm_putc(str[i]);
+  }
+}
+
+void vterm_status(const char *str, int ret)
+{
+  vterm_print(str);
+  vterm_print("...");
+  if (ret)
+  {
+    const char *error = __get_err_code(ret);
+    kerror(error);
+  }
+  else
+  {
+    kok();
   }
 }

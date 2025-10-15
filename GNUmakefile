@@ -140,4 +140,4 @@ build/obj/%.asm.o: %.asm GNUmakefile
 # Remove object files and the final executable.
 .PHONY: clean
 clean:
-	rm -rf build/bin build/obj build/boot/initrd.tar goshkikOS.iso iso_root
+	rm -rf build/bin build/obj build/boot/initrd.tar build/boot/goshkikOS goshkikOS.iso iso_root

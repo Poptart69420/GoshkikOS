@@ -1,6 +1,7 @@
 #ifndef VTERM_H_
 #define VTERM_H_
 
+#include <klibc/errno.h>
 #include <limine/limine.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -16,5 +17,6 @@ void vterm_putc(const char c);
 void vterm_print(const char *str);
 void vterm_set_fg_color(uint32_t color);
 void vterm_set_term_color(uint32_t color);
+void vterm_status(const char *str, int errno);
 
 #endif // VTERM_H_

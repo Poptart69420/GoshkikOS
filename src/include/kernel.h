@@ -21,6 +21,9 @@
 #include <stdbool.h>
 #include <vterm/vterm.h>
 
+// To-do: Create a testing interface
+// Tests
+
 typedef struct kernel_table_struct
 {
   struct limine_framebuffer_response *framebuffer;
