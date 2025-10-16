@@ -36,7 +36,8 @@ struct superblock
 {
   const char *sb_name;                        // Filesystem name
   void *sb_data;                              // Filesystem-specific data
-  vfs_node_t *sb_root;                        // Root node of the filesystem
+  unsigned int ref_count;                     // Superblock reference count
+  vfs_dentry_t *sb_root;                      // Root node of the filesystem
   const struct superblock_operations *sb_ops; // Superblock operations
 };
 

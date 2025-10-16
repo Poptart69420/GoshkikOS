@@ -67,12 +67,10 @@ void kmain(void)
 
   init_serial();
   gdt_setup();
-  isr_install();
+  init_idt();
   pic_remap(0x20, 0x28);
   pit_init();
   ps2_entry();
-  init_keyboard();
-  init_timer();
 
   pic_unmask_irq(0);
   pic_unmask_irq(1);

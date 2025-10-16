@@ -44,10 +44,11 @@
 #define PATHNAME_MAX 512
 #define MAXLINKDEPTH 64
 #define INODE_HASH_SIZE 256
+#define SUPERBLOCK_HASH_SIZE 64
 
 // Struct defs
 typedef struct inode inode_t;
-typedef struct vfs_node vfs_node_t;
+typedef struct vfs_dentry vfs_dentry_t;
 typedef struct superblock superblock_t;
 
 // File-level operations (read/write/ioctl, etc.)
@@ -55,17 +56,6 @@ struct file_operations
 {
   ssize_t (*read)(inode_t *inode, char *buf, size_t len, loff_t *offset);
   ssize_t (*write)(inode_t *inode, const char *buf, size_t len, loff_t *offset);
-};
-
-// VFS node
-struct vfs_node
-{
-  inode_t *vn_inode;          // Associated inode
-  vfs_node_t *vn_parent;      // Parent node
-  vfs_node_t **vn_children;   // Array of child nodes
-  size_t vn_child_count;      // Number of children
-  vfs_node_t *vn_next;        // Sibling / hash bucket list
-  char vn_name[PATHNAME_MAX]; // Node name
 };
 
 #endif // VFS_H_

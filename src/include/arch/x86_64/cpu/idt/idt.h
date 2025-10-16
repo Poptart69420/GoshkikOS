@@ -5,32 +5,29 @@
 #include <stdint.h>
 
 #include <arch/x86_64/selectors/selectors.h>
+#include <vterm/kerror.h>
+#include <vterm/kok.h>
+#include <vterm/vterm.h>
 
 #define IDT_ENTRIES 256
 
-#define IDT_TYPE_INTERRUPT 0xE
-#define IDT_TYPE_TRAP 0xF
-
-#define IDT_PRESENT 0x80
-#define IDT_DPL0 0x00
-#define IDT_DPL3 0x60
-
 // Common
-#define IDT_INT_KERNEL (IDT_PRESENT | IDT_DPL0 | IDT_TYPE_INTERRUPT) // 0x8E
-#define IDT_INT_USER (IDT_PRESENT | IDT_DPL3 | IDT_TYPE_INTERRUPT)   // 0xEE
-#define IDT_TRAP_KERNEL (IDT_PRESENT | IDT_DPL0 | IDT_TYPE_TRAP)     // 0x8F
-#define IDT_TRAP_USER (IDT_PRESENT | IDT_DPL3 | IDT_TYPE_TRAP)       // 0xEF
+#define IDT_TYPE_INTERRUPT_GATE 0x8E // 32-bit interrupt gate, ring 0
+#define IDT_TYPE_TRAP_GATE 0x8F      // 32-bit trap gate, ring 0
+#define IDT_TYPE_TASK_GATE 0x85      // Task gate
+#define IDT_TYPE_USER_INT_GATE 0xEE  // 32-bit interrupt gate, ring 3
 
-struct idt_entry
+// IDT Entry Structure (64-bit)
+typedef struct
 {
-  uint16_t offset_low;
-  uint16_t selector;
-  uint8_t ist;
-  uint8_t attributes;
-  uint16_t isr_mid;
-  uint32_t isr_high;
-  uint32_t reserved;
-} __attribute__((packed));
+  uint16_t offset_low;  // Lower 16 bits of handler address
+  uint16_t selector;    // Kernel segment selector
+  uint8_t ist;          // Interrupt Stack Table offset
+  uint8_t type_attr;    // Type and attributes
+  uint16_t offset_mid;  // Middle 16 bits of handler address
+  uint32_t offset_high; // Upper 32 bits of handler address
+  uint32_t reserved;    // Reserved, must be zero
+} __attribute__((packed)) idt_entry_t;
 
 struct idtr
 {
@@ -38,7 +35,6 @@ struct idtr
   uint64_t base;
 } __attribute__((packed));
 
-void idt_set_gate(size_t vector, void *handler, uint8_t ist, uint8_t type_attr);
-void idt_reload(void);
+void init_idt(void);
 
 #endif // IDT_H_

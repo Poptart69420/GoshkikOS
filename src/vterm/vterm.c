@@ -88,10 +88,8 @@ void vterm_putc(const char c)
 
 void vterm_print(const char *str)
 {
-  for (size_t i = 0; str[i] != '\0'; ++i)
-  {
-    vterm_putc(str[i]);
-  }
+  while (*str)
+    vterm_putc(*str++);
 }
 
 void vterm_status(const char *str, int ret)

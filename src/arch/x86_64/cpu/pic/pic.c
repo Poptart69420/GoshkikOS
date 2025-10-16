@@ -10,7 +10,7 @@ void pic_remap(int offset1, int offset2)
   outb(PIC2_DATA, 0x02);
   outb(PIC1_DATA, ICW4_8086);
   outb(PIC2_DATA, ICW4_8086);
-  outb(PIC1_DATA, 0xFF);
+  outb(PIC1_DATA, 0xFE);
   outb(PIC2_DATA, 0xFF);
 }
 

@@ -1,15 +1,17 @@
 #ifndef GDT_H_
 #define GDT_H_
 
-#include <stddef.h>
-#include <stdint.h>
-
 #include <arch/x86_64/selectors/selectors.h>
 #include <klibc/kmem/mem.h>
 #include <scheduling/spinlock.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <vterm/kerror.h>
 #include <vterm/kok.h>
 #include <vterm/vterm.h>
+
+#define KSTACK_SIZE 0x4000
+#define IST_STACK_SIZE 0x2000
 
 struct tss_desc
 {

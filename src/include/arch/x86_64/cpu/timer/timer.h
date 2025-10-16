@@ -9,6 +9,5 @@
 #include <vterm/vterm.h>
 
 void timer_handler(fault_frame_t *frame);
-void init_timer(void);
 
 #endif // TIMER_H_

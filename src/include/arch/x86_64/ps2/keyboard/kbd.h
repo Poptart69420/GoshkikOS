@@ -7,6 +7,6 @@
 #include <arch/x86_64/ps2/ps2.h>
 #include <vterm/vterm.h>
 
-void init_keyboard(void);
+void keyboard_handler(fault_frame_t *frame);
 
 #endif // KBD_H_
