@@ -6,6 +6,7 @@
 #include <arch/x86_64/cpu/isr/isr.h>
 #include <arch/x86_64/cpu/pic/pic.h>
 #include <arch/x86_64/cpu/pit/pit.h>
+#include <arch/x86_64/cpu/timer/timer.h>
 #include <arch/x86_64/mem/mmu/mmu.h>
 #include <arch/x86_64/mem/pmm/pmm.h>
 #include <arch/x86_64/mem/vmm/vmm.h>
@@ -30,6 +31,7 @@ typedef struct kernel_table_struct
   struct limine_hhdm_response *hhdm;
   struct limine_memmap_response *memmap;
   struct limine_module_response *module;
+  struct system_time current_time;
 } kernel_table;
 
 extern kernel_table *kernel;

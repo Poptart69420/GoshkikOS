@@ -13,7 +13,7 @@ void init_pmm(void)
 {
   const struct limine_memmap_entry *biggest = memmap_find_biggest_region();
 
-  vterm_print("PMM...");
+  kprintf("PMM...");
 
   if (!biggest)
   {

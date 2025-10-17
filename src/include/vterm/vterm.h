@@ -2,6 +2,7 @@
 #define VTERM_H_
 
 #include <klibc/errno.h>
+#include <klibc/kmem/string.h>
 #include <limine/limine.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -13,6 +14,7 @@
 
 void vterm_clear(uint32_t color);
 void vterm_init(const struct limine_framebuffer *fb);
+void vterm_scroll(void);
 void vterm_putc(const char c);
 void vterm_print(const char *str);
 void vterm_set_fg_color(uint32_t color);

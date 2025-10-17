@@ -48,12 +48,35 @@ void vterm_init(const struct limine_framebuffer *fb)
   vterm_clear(term_color);
 }
 
+void vterm_scroll(void)
+{
+  uint64_t row_size = pitch * 16;
+  uint64_t screen_size = pitch * height;
+  uint64_t visible_size = screen_size - row_size;
+
+  memmove((void *)framebuffer,
+          (const void *)((uintptr_t)framebuffer + row_size),
+          visible_size);
+
+  uint32_t *last_row = (uint32_t *)((uintptr_t)framebuffer + visible_size);
+  for (uint64_t y = 0; y < 16; ++y)
+  {
+    uint64_t row = y * (pitch / 4);
+    for (uint64_t x = 0; x < width; ++x)
+      last_row[row + x] = term_color;
+  }
+
+  cursor_y -= 16;
+}
+
 void vterm_putc(const char c)
 {
   if (c == '\n')
   {
     cursor_x = 0;
     cursor_y += 16;
+    if (cursor_y + 16 > height)
+      vterm_scroll();
     return;
   }
 
@@ -61,15 +84,11 @@ void vterm_putc(const char c)
   {
     cursor_x = 0;
     cursor_y += 16;
-  }
-
-  if (cursor_y + 8 > height)
-  {
-    vterm_clear(term_color);
+    if (cursor_y + 16 > height)
+      vterm_scroll();
   }
 
   const uint8_t *glyph = &default_font[(uint8_t)c * 16];
-
   for (int y = 0; y < 16; ++y)
   {
     for (int x = 0; x < 8; ++x)
@@ -82,7 +101,6 @@ void vterm_putc(const char c)
       }
     }
   }
-
   cursor_x += 8;
 }
 

@@ -119,6 +119,7 @@ void vmm_load_cr3(uintptr_t physical_address)
 
 void init_vmm(void)
 {
+  kprintf("VMM...");
   const uintptr_t old_cr3_physical = read_cr3() & PAGE_MASK;
   const uint64_t *old_pml4 = (uint64_t *)physical_to_virtual(old_cr3_physical);
 
@@ -160,7 +161,5 @@ void init_vmm(void)
   }
 
   vmm_load_cr3(current_pml4);
-
-  vterm_print("VMM...");
   kok();
 }

@@ -32,6 +32,7 @@ void write_ps2_config(uint8_t value)
 
 uint64_t ps2_entry(void)
 {
+  kprintf("PS/2...");
   ps2_write(PS2_COMMAND, PS2_DISABLE_P1);
   ps2_write(PS2_COMMAND, PS2_DISABLE_P2);
 
@@ -48,7 +49,6 @@ uint64_t ps2_entry(void)
 
   ps2_write(PS2_COMMAND, PS2_ENABLE_P1);
 
-  vterm_print("PS/2...");
   kok();
 
   return 0;

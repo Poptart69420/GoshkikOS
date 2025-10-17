@@ -2,7 +2,7 @@
 
 int init_serial(void)
 {
-  vterm_print("Serial...");
+  kprintf("Serial...");
   outb(SERIAL_PORT + 1, 0x00);
   outb(SERIAL_PORT + 3, 0x80);
   outb(SERIAL_PORT + 0, 0x03);

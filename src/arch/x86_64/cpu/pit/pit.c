@@ -20,6 +20,8 @@ void pit_set_frequency(uint64_t frequency)
 
 void pit_init(void)
 {
+  kprintf("PIT...");
   pit_set_reload(0xffff);
   pit_set_frequency(TIMER_FREQUENCY);
+  kok();
 }

@@ -15,6 +15,7 @@ void gdt_setup(void)
 
 void gdt_init(void)
 {
+  kprintf("GDT...");
   spinlock_acquire(&lock);
 
   // kernel
@@ -44,6 +45,5 @@ void gdt_init(void)
   gdt_reload();
   tss_reload();
   spinlock_release(&lock);
-  vterm_print("GDT...");
   kok();
 }

@@ -9,7 +9,7 @@ size_t init_kheap(void)
 
   uintptr_t physical = pmm_alloc_page();
 
-  vterm_print("Kheap...");
+  kprintf("Kheap...");
 
   if (!physical)
   {

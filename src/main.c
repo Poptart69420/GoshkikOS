@@ -1,3 +1,4 @@
+#include "include/arch/x86_64/cpu/timer/timer.h"
 #include <kernel.h>
 
 kernel_table master_kernel_table;
@@ -70,6 +71,7 @@ void kmain(void)
   init_idt();
   pic_remap(0x20, 0x28);
   pit_init();
+  init_system_clock();
   ps2_entry();
 
   pic_unmask_irq(0);

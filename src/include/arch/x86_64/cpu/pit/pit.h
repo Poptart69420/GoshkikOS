@@ -3,6 +3,7 @@
 
 #include <arch/x86_64/io/io.h>
 #include <stdint.h>
+#include <vterm/kok.h>
 
 #define PIT_DIVISOR 1193182
 

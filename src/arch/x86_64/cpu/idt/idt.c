@@ -59,6 +59,7 @@ void idt_set_entry(int index, uint64_t handler, uint16_t selector, uint8_t flags
 
 void init_idt(void)
 {
+  kprintf("IDT...");
   idt_ptr.limit = sizeof(idt_entries) - 1;
   idt_ptr.base = (uint64_t)&idt_entries;
 
@@ -92,4 +93,5 @@ void init_idt(void)
     idt_set_entry(32 + i, (uint64_t)irq_stubs[i], KERNEL_CODE64, IDT_TYPE_INTERRUPT_GATE);
 
   __asm__ volatile("lidt %0" : : "m"(idt_ptr));
+  kok();
 }

@@ -2,7 +2,7 @@
 
 void init_mmu(struct limine_memmap_response *response)
 {
-  vterm_print("MMU...");
+  kprintf("MMU...");
 
   g_memmap = response;
 
