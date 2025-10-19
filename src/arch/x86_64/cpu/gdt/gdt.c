@@ -9,12 +9,6 @@ extern void tss_reload(void);
 
 void gdt_setup(void)
 {
-  spinlock_init(&lock);
-  gdt_init();
-}
-
-void gdt_init(void)
-{
   kprintf("GDT...");
   spinlock_acquire(&lock);
 
@@ -46,4 +40,10 @@ void gdt_init(void)
   tss_reload();
   spinlock_release(&lock);
   kok();
+}
+
+void init_gdt(void)
+{
+  spinlock_init(&lock);
+  gdt_setup();
 }

@@ -30,7 +30,7 @@ void write_ps2_config(uint8_t value)
   ps2_write(PS2_DATA, value);
 }
 
-uint64_t ps2_entry(void)
+uint64_t init_ps2(void)
 {
   kprintf("PS/2...");
   ps2_write(PS2_COMMAND, PS2_DISABLE_P1);

@@ -2,6 +2,7 @@
 #define GDT_H_
 
 #include <arch/x86_64/selectors/selectors.h>
+#include <global/global.h>
 #include <klibc/kmem/mem.h>
 #include <scheduling/spinlock.h>
 #include <stddef.h>
@@ -9,9 +10,6 @@
 #include <vterm/kerror.h>
 #include <vterm/kok.h>
 #include <vterm/vterm.h>
-
-#define KSTACK_SIZE 0x4000
-#define IST_STACK_SIZE 0x2000
 
 struct tss_desc
 {
@@ -67,7 +65,6 @@ struct gdtr
   struct tss_desc tss;
 } __attribute__((packed));
 
-void gdt_setup(void);
-void gdt_init(void);
+void init_gdt(void);
 
 #endif // GDT_H_

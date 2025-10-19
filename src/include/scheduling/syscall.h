@@ -5,14 +5,17 @@
 #include <arch/x86_64/asm/asm.h>
 #include <stdint.h>
 
-#ifndef SEEK_SET
-#define SEEK_SET 0
-#endif
-#ifndef SEEK_CUR
-#define SEEK_CUR 1
-#endif
-#ifndef SEEK_END
-#define SEEK_END 2
-#endif
+#define MAX_SYS_CALLS 420
+
+typedef int64_t (*syscall_handler_t)(uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6);
+
+typedef struct
+{
+  syscall_handler_t handler;
+  const char *name;
+  int arg_num;
+} syscall_entry_t;
+
+static syscall_entry_t syscall_table[MAX_SYS_CALLS];
 
 #endif // SYSCALL_H_

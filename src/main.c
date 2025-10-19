@@ -49,14 +49,14 @@ void kmain(void)
 
   vterm_init(fb);
 
-  vterm_print("\n");
+  kprintf("\n");
 
-  vterm_print("=|||||||||||||||||||=\n");
-  vterm_print("|                   |\n");
-  vterm_print("| goshkikos started |\n");
-  vterm_print("|                   |\n");
-  vterm_print("=|||||||||||||||||||=\n");
-  vterm_print("\n");
+  kprintf("=|||||||||||||||||||=\n");
+  kprintf("|                   |\n");
+  kprintf("| goshkikos started |\n");
+  kprintf("|                   |\n");
+  kprintf("=|||||||||||||||||||=\n");
+  kprintf("\n");
 
   g_hhdm_offset = hhdm_request.response->offset;
 
@@ -67,12 +67,12 @@ void kmain(void)
   // init_vfs();
 
   init_serial();
-  gdt_setup();
+  init_gdt();
   init_idt();
   pic_remap(0x20, 0x28);
-  pit_init();
+  init_pit();
   init_system_clock();
-  ps2_entry();
+  init_ps2();
 
   pic_unmask_irq(0);
   pic_unmask_irq(1);

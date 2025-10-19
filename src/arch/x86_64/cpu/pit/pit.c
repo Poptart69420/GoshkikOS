@@ -18,7 +18,7 @@ void pit_set_frequency(uint64_t frequency)
   pit_set_reload((uint16_t)divisor);
 }
 
-void pit_init(void)
+void init_pit(void)
 {
   kprintf("PIT...");
   pit_set_reload(0xffff);

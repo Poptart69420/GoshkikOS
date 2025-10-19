@@ -22,6 +22,6 @@ uint8_t ps2_read(void);
 void ps2_write(uint16_t port, uint8_t value);
 uint8_t get_ps2_config(void);
 void write_ps2_config(uint8_t value);
-uint64_t ps2_entry(void);
+uint64_t init_ps2(void);
 
 #endif // PS2_H_

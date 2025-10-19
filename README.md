@@ -1,7 +1,7 @@
 
 # GoshkikOS
 
-The GoshkikOS project (formerly ShitOS) is an operating system targeting x86_64. 
+The GoshkikOS project (formerly ShitOS) is an operating system targeting x86_64.
 GoshkikOS is my first real attempt at doing OSDev, so it's bad.
 This project serves as a learning project for me, I hope to stick with it.
 
@@ -14,9 +14,7 @@ To clone/build this project, follow these instructions:
 ```
   git clone https://github.com/Poptart69420/GoshkikOS.git
   cd GoshkikOS
-  git clone https://github.com/Poptart69420/gcc.git cross_compiler/gcc
-  git clone https://github.com/Poptart69420/binutils-gdb.git cross_compiler/binutils-gdb
-  ./cross_compile.sh
+  ./cross_compile.sh gcc x86_64-goshkikos
   ./build.sh
 ```
 
@@ -72,7 +70,7 @@ To run it with the debugging output.
 - Virtual terminal (minimal)
 
 - PS2 keyboard handling (minimal)
- 
+
 - Finished paging (memmap, pmm, vmm)
 
 ## - To-Do (Actual Project)
