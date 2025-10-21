@@ -14,6 +14,7 @@ void irq_handler(fault_frame_t *frame)
   switch (irq_num)
   {
   case 0:
+    schedule_tick(frame);
     timer_handler(frame);
     break;
   case 1:

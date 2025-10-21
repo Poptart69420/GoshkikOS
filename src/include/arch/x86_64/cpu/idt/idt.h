@@ -36,5 +36,6 @@ struct idtr
 } __attribute__((packed));
 
 void init_idt(void);
+void idt_set_entry(int index, uint64_t handler, uint16_t selector, uint8_t flags);
 
 #endif // IDT_H_

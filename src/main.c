@@ -73,9 +73,8 @@ void kmain(void)
   init_pit();
   init_system_clock();
   init_ps2();
-
-  pic_unmask_irq(0);
-  pic_unmask_irq(1);
+  init_threadding();
+  init_syscalls();
 
   enable_interrupt();
   halt();

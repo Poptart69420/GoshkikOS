@@ -6,6 +6,7 @@
 #include <arch/x86_64/cpu/timer/timer.h>
 #include <arch/x86_64/selectors/selectors.h>
 #include <global/global.h>
+#include <stdbool.h>
 #include <stdint.h>
 
 #define MAX_THREADS 256
@@ -34,7 +35,8 @@ typedef enum
   THREAD_PRIO_NORMAL,
   THREAD_PRIO_HIGH,
   THREAD_PRIO_IMPORTANT,
-  THREAD_PRIO_IMMEDIATE
+  THREAD_PRIO_IMMEDIATE,
+  PRIORITY_LEVELS
 } thread_priority_t;
 
 typedef struct thread
@@ -54,5 +56,8 @@ typedef struct thread
   void *user_data;              // User data
   struct thread *next;          // Next thread in queue
 } thread_t;
+
+void init_threadding(void);
+void clean_up(thread_t *thread);
 
 #endif // THREADDING_H_

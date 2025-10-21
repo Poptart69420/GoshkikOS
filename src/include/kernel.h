@@ -19,6 +19,8 @@
 #include <klibc/kmem/kheap.h>
 #include <klibc/kmem/slab.h>
 #include <limine/limine_requests.h>
+#include <scheduling/syscall.h>
+#include <scheduling/threadding.h>
 #include <stdbool.h>
 #include <vterm/vterm.h>
 
