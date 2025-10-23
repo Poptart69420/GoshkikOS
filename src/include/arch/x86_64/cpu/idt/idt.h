@@ -29,11 +29,11 @@ typedef struct
   uint32_t reserved;    // Reserved, must be zero
 } __attribute__((packed)) idt_entry_t;
 
-struct idtr
+typedef struct idtr
 {
   uint16_t limit;
   uint64_t base;
-} __attribute__((packed));
+} __attribute__((packed)) idtr_t;
 
 void init_idt(void);
 void idt_set_entry(int index, uint64_t handler, uint16_t selector, uint8_t flags);

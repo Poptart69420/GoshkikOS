@@ -66,5 +66,6 @@ struct gdtr
 } __attribute__((packed));
 
 void init_gdt(void);
+void set_kernel_stack(uintptr_t stack);
 
 #endif // GDT_H_

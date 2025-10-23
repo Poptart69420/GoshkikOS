@@ -52,3 +52,8 @@ void init_gdt(void)
   spinlock_init(&lock);
   gdt_setup();
 }
+
+void set_kernel_stack(uintptr_t stack)
+{
+  tss.rsp0 = stack;
+}

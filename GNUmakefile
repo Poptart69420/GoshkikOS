@@ -35,7 +35,7 @@ ifeq ($(TOOLCHAIN),llvm)
 endif
 
 # User controllable C flags.
-CFLAGS := -g -O2 -pipe -fno-builtin -I src/include
+CFLAGS := -g -O2 -masm=intel -pipe -fno-builtin -I src/include
 
 # User controllable C preprocessor flags. We set none by default.
 CPPFLAGS := -I src/include

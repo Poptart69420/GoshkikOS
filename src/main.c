@@ -1,8 +1,13 @@
-#include "include/arch/x86_64/cpu/timer/timer.h"
+#include "include/scheduling/scheduler.h"
 #include <kernel.h>
 
 kernel_table master_kernel_table;
 kernel_table *kernel;
+
+struct timeval time = {
+    .tv_sec = 0,
+    .tv_usec = 0,
+};
 
 static void boot_info(void)
 {
@@ -73,7 +78,6 @@ void kmain(void)
   init_pit();
   init_system_clock();
   init_ps2();
-  init_threadding();
   init_syscalls();
 
   enable_interrupt();

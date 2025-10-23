@@ -5,7 +5,9 @@ static uintptr_t current_pml4 = 0;
 uint64_t get_address_space(void)
 {
   uint64_t cr3;
-  __asm__ volatile("mov %%cr3, %%rax" : "=a"(cr3));
+  __asm__ volatile(
+      "mov rax, cr3\n\t"
+      : "=a"(cr3));
   return (cr3 + g_hhdm_offset);
 }
 
@@ -22,13 +24,19 @@ uintptr_t virtual_to_physical(void *virtual)
 static inline uintptr_t read_cr3(void)
 {
   uintptr_t cr3;
-  __asm__ volatile("mov %%cr3, %0" : "=r"(cr3));
+  __asm__ volatile(
+      "mov rax, cr3\n\t"
+      : "=a"(cr3));
   return cr3;
 }
 
 static inline void invlpg(uintptr_t address)
 {
-  __asm__ volatile("invlpg (%0)" ::"r"(address) : "memory");
+  __asm__ volatile(
+      "invlpg [rax]\n\t"
+      :
+      : "a"(address)
+      : "memory");
 }
 
 static uintptr_t alloc_table(void)
@@ -38,7 +46,6 @@ static uintptr_t alloc_table(void)
   if (!physical)
   {
     vterm_print("VMM:   Out Of Memory\n");
-
     hcf();
   }
 
@@ -114,7 +121,11 @@ uintptr_t vmm_resolve(uintptr_t virtual)
 void vmm_load_cr3(uintptr_t physical_address)
 {
   current_pml4 = physical_address & PAGE_MASK;
-  __asm__ volatile("mov %0, %%cr3" ::"r"(current_pml4) : "memory");
+  __asm__ volatile(
+      "mov cr3, rax\n\t"
+      :
+      : "a"(current_pml4)
+      : "memory");
 }
 
 void init_vmm(void)
@@ -162,4 +173,26 @@ void init_vmm(void)
 
   vmm_load_cr3(current_pml4);
   kok();
+}
+
+uintptr_t create_address_space(void)
+{
+  uintptr_t new_pml4_phys = pmm_alloc_page();
+  if (!new_pml4_phys)
+  {
+    vterm_print("VMM:   Out Of Memory (create_address_space)\n");
+    hcf();
+  }
+
+  memset(physical_to_virtual(new_pml4_phys), 0, PAGE_SIZE_VMM);
+
+  uint64_t *kernel_pml4 = (uint64_t *)physical_to_virtual(current_pml4);
+  uint64_t *new_pml4 = (uint64_t *)physical_to_virtual(new_pml4_phys);
+
+  for (size_t i = 256; i < ENTRIES_PER_TABLE; ++i)
+  {
+    new_pml4[i] = kernel_pml4[i];
+  }
+
+  return new_pml4_phys;
 }

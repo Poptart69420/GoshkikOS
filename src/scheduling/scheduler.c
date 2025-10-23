@@ -1,189 +1,131 @@
-#include <scheduling/schedular.h>
+#include <kernel.h>
+#include <scheduling/scheduler.h>
 
-static int scheduler_counter = 0;
-extern thread_t *current_thread;
-extern thread_t *ready_queue;
-extern thread_t *thread_table[MAX_THREADS];
-extern uint32_t thread_count;
-extern tss_t tss;
+static process_t *running_process_tail;
+static process_t *running_process_head;
 
-static const int stride_table[PRIORITY_LEVELS] = {
-    [THREAD_PRIO_LOW] = 32,
-    [THREAD_PRIO_BG] = 16,
-    [THREAD_PRIO_NORMAL] = 8,
-    [THREAD_PRIO_HIGH] = 4,
-    [THREAD_PRIO_IMPORTANT] = 2,
-    [THREAD_PRIO_IMMEDIATE] = 1};
+list_t *process_list;
 
-static inline int pri_index(int p)
+process_t *sleeping_process;
+process_t *idle;
+process_t *init;
+
+static void idle_task(void)
 {
-  if (p < 0)
-    return 0;
-  if (p >= PRIORITY_LEVELS)
-    return PRIORITY_LEVELS - 1;
-  return p;
-}
-
-void add_to_queue(thread_t *thread)
-{
-  if (!thread)
-    return;
-
-  thread->next = NULL;
-  if (!ready_queue)
-  {
-    ready_queue = thread;
-    return;
-  }
-
-  thread_t *iterate = ready_queue;
-  while (iterate->next)
-    iterate = iterate->next;
-  iterate->next = thread;
-}
-
-void remove_from_queue(thread_t *thread)
-{
-  if (!ready_queue || !thread)
-    return;
-
-  if (ready_queue == thread)
-  {
-    ready_queue = ready_queue->next;
-    return;
-  }
-
-  thread_t *prev = ready_queue;
-  thread_t *curr = ready_queue->next;
-
-  while (curr)
-  {
-    if (curr == thread)
-    {
-      prev->next = curr->next;
-      return;
-    }
-
-    prev = curr;
-    curr = curr->next;
-  }
-}
-
-void schedule_tick(fault_frame_t *frame)
-{
-  if (!frame)
-    return;
-  ++scheduler_counter;
-
-  // Save current thread context
-  if (current_thread)
-  {
-    current_thread->context = *frame;
-
-    switch (current_thread->state)
-    {
-    case THREAD_RUNNING:
-      current_thread->state = THREAD_READY;
-      add_to_queue(current_thread);
-      break;
-    case THREAD_BLOCKED:
-    case THREAD_TERMED:
-      remove_from_queue(current_thread);
-      current_thread = NULL;
-      break;
-    default:
-      current_thread->state = THREAD_READY;
-      add_to_queue(current_thread);
-      break;
-    }
-  }
-
-  // Pick next thread
-  thread_t *next = NULL;
-
   for (;;)
+    if (get_current_process()->next != running_process_head)
+      block_process();
+}
+
+void init_kernel_task(void)
+{
+  kprintf("Starting kernel task...");
+  process_list = create_list();
+  sleeping_process = NULL;
+
+  process_t *kernel_task = kmalloc(sizeof(process_t));
+  memset(kernel_task, 0, sizeof(process_t));
+
+  kernel_task->parent = kernel_task;
+  kernel_task->pid = 0;
+  kernel_task->flags = PROCESS_FLAG_PRESENT | PROCESS_FLAG_RUN;
+  kernel_task->child = create_list();
+  kernel_task->mem_seg = create_list();
+  kernel_task->umask = 022;
+
+  kernel_task->kernel_stack = (uintptr_t)kmalloc(KSTACK_SIZE);
+  set_kernel_stack(KSTACK_TOP(kernel_task->kernel_stack));
+
+  kernel_task->address_space = get_address_space();
+  kernel->current_process = kernel_task;
+
+  list_append(process_list, kernel_task);
+
+  running_process_head = NULL;
+  running_process_tail = NULL;
+
+  init = get_current_process();
+  kernel->created_process_count = 1;
+  kernel->task_switch = true;
+
+  kok();
+}
+
+process_t *schedule(void)
+{
+  process_t *picked = running_process_tail;
+  running_process_tail = running_process_tail->next;
+  if (!running_process_tail)
+    running_process_head = NULL;
+
+  while (sleeping_process)
   {
-    // Ready queue first
-    if (ready_queue)
-    {
-      next = ready_queue;
-      ready_queue = ready_queue->next;
-      next->next = NULL;
-    }
+    if (sleeping_process->wakeup_time.tv_sec > time.tv_sec ||
+        (sleeping_process->wakeup_time.tv_sec == time.tv_sec &&
+         sleeping_process->wakeup_time.tv_usec > time.tv_usec))
+      break;
 
-    // Fallback to table
-    if (!next)
-    {
-      for (int i = 1; i < MAX_THREADS; i++)
-      {
-        if (thread_table[i] && thread_table[i]->state == THREAD_READY)
-        {
-          next = thread_table[i];
-          next->next = NULL;
-          break;
-        }
-      }
-    }
-
-    // Fallback to kernel thread
-    if (!next)
-    {
-      if (thread_table[0] && thread_table[0]->state != THREAD_TERMED)
-        next = thread_table[0];
-    }
-
-    if (!next)
-      return;
-
-    if (next->state == THREAD_BLOCKED || next->state == THREAD_TERMED)
-    {
-      remove_from_queue(next);
-      next = NULL;
-      continue;
-    }
-
-    int idx = pri_index((int)next->priority);
-    int stride = stride_table[idx];
-
-    if (next->cooldown > 0)
-    {
-      next->cooldown--;
-      add_to_queue(next);
-      next = NULL;
-      continue;
-    }
-
-    next->cooldown = stride - 1;
-    current_thread = next;
-    current_thread->state = THREAD_RUNNING;
-    break;
+    unblock_process(sleeping_process);
+    sleeping_process = sleeping_process->snext;
   }
 
-  // Restore context
-  if (current_thread->privilege == THREAD_RING_3)
-  {
-    if (!current_thread->kernel_stack)
-    {
-      current_thread->state = THREAD_TERMED;
-      return;
-    }
+  return picked;
+}
 
-    tss.rsp0 = current_thread->kernel_stack + KSTACK_SIZE - 8;
+process_t *new_process(void)
+{
+  process_t *process = kmalloc(sizeof(process_t));
+  memset(process, 0, sizeof(process_t));
+  process->pid = atomic_fetch_add(&kernel->created_process_count, 1);
 
-    if (!current_thread->context.rsp)
-    {
-      current_thread->state = THREAD_TERMED;
-      schedule_tick(frame);
-      return;
-    }
+  init_mutex(&process->sig_lock);
 
-    *frame = current_thread->context;
-    frame->rflags |= 0x200;
-    frame->cs = USER_CODE64;
-    frame->ss = USER_DATA64;
-  }
-  else
-  {
-    *frame = current_thread->context;
-  }
+  process->address_space = create_address_space();
+  process->parent = get_current_process();
+  process->flags = PROCESS_FLAG_PRESENT | PROCESS_FLAG_BLOCKED;
+  process->child = create_list();
+  process->mem_seg = create_list();
+  process->cred.uid = get_current_process()->cred.uid;
+  process->cred.euid = get_current_process()->cred.euid;
+  process->cred.suid = get_current_process()->cred.suid;
+  process->cred.gid = get_current_process()->cred.gid;
+  process->cred.egid = get_current_process()->cred.egid;
+  process->cred.sgid = get_current_process()->cred.sgid;
+  process->umask = get_current_process()->umask;
+
+  process->kernel_stack = (uintptr_t)kmalloc(KSTACK_SIZE);
+  SP_REG(process->context) = KSTACK_TOP(process->kernel_stack);
+
+  list_append(process->parent->child, process);
+  list_append(process_list, process);
+
+  return process;
+}
+
+process_t *new_kernel_task(void (*function)(uint64_t, char **), uint64_t argc, char *argv[])
+{
+  process_t *process = new_process();
+  __asm__ volatile(
+      "pushfq\n\t"
+      "pop %0"
+      : "=r"(process->context.rflags)
+      :
+      : "memory");
+
+  process->contex.cs = KERNEL_CODE64;
+  process->contex.ss = KERNEL_DATA64;
+  process->context.ds = KERNEL_DATA64;
+  process->context.es = KERNEL_DATA64;
+  process->context.gs = KERNEL_DATA64;
+  process->context.fs = KERNEL_DATA64;
+  process->context.rip = (uint64_t)function;
+
+  process->context.rdi = argc;           // Argc
+  process->context.rsi = (uint64_t)argv; // Argv
+
+  process->context.rsp = KSTACK_TOP(process->kernel_stack);
+
+  unblock_process(process);
+
+  return process;
 }
