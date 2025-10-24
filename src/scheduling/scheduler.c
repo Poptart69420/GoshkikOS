@@ -17,6 +17,28 @@ static void idle_task(void)
       block_process();
 }
 
+static void push_task(process_t *process)
+{
+  if (running_process_head)
+  {
+    running_process_head->next = process;
+  }
+  else
+  {
+    running_process_tail = process;
+  }
+
+  running_process_head = process;
+
+  process->next = NULL;
+}
+
+// TODO: Implement signal handling and sending
+static void alert_parent(process_t *process)
+{
+  (void)process;
+}
+
 void init_kernel_task(void)
 {
   kprintf("Starting kernel task...");
@@ -112,8 +134,8 @@ process_t *new_kernel_task(void (*function)(uint64_t, char **), uint64_t argc, c
       :
       : "memory");
 
-  process->contex.cs = KERNEL_CODE64;
-  process->contex.ss = KERNEL_DATA64;
+  process->context.cs = KERNEL_CODE64;
+  process->context.ss = KERNEL_DATA64;
   process->context.ds = KERNEL_DATA64;
   process->context.es = KERNEL_DATA64;
   process->context.gs = KERNEL_DATA64;
@@ -128,4 +150,64 @@ process_t *new_kernel_task(void (*function)(uint64_t, char **), uint64_t argc, c
   unblock_process(process);
 
   return process;
+}
+
+void yield(int add_back)
+{
+  if (!kernel->task_switch)
+    return;
+
+  int previous_int = have_interrupt();
+  disable_interrupt();
+
+  if (add_back)
+    push_task(get_current_process());
+
+  process_t *old = get_current_process();
+  process_t *new = schedule();
+
+  atomic_fetch_and(&old->flags, ~PROCESS_FLAG_RUN); // Old process isn't running
+  atomic_fetch_or(&new->flags, PROCESS_FLAG_RUN);   // New process is running
+  kernel->current_process = new;
+
+  if (!add_back)
+    atomic_fetch_or(&new->flags, PROCESS_FLAG_RUN);
+
+  if (old->address_space != new->address_space)
+    vmm_load_cr3(new->address_space);
+
+  set_kernel_stack(KSTACK_TOP(new->kernel_stack));
+
+  if (new != old)
+    context_switch(&old->context, &get_current_process()->context);
+
+  if (previous_int)
+    enable_interrupt();
+}
+
+int block_process(void)
+{
+  atomic_fetch_and(&get_current_process()->flags, ~PROCESS_FLAG_INTR);
+
+  int inturrupt = have_interrupt();
+  disable_interrupt();
+
+  if (!running_process_tail)
+  {
+    unblock_process(idle);
+  }
+
+  kernel->task_switch = 1;
+
+  yield(0);
+
+  if (inturrupt)
+    enable_interrupt();
+
+  if (atomic_load(&get_current_process()->flags) & PROCESS_FLAG_INTR)
+  {
+    return -EINTR;
+  }
+
+  return 0;
 }

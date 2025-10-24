@@ -54,6 +54,8 @@ typedef struct process_struct_t
   struct process_struct_t *waker;
 } process_t;
 
+extern void context_switch(fault_frame_t *old, fault_frame_t *new);
+
 void init_kernel_task(void);
 process_t *get_current_process(void);
 
