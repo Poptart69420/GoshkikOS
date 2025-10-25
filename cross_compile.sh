@@ -143,4 +143,4 @@ echo "export AR=$TARGET-ar" >> add-to-path.sh
 
 chmod +x add-to-path.sh
 
-echo "please run '''. add-to-path.sh''' before compiling anything"
+echo "please run '''. add-to-path.sh''' before compiling anything (build.sh automatically adds it to path)"

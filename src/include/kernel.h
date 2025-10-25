@@ -21,6 +21,7 @@
 #include <limine/limine_requests.h>
 #include <scheduling/scheduler.h>
 #include <scheduling/syscall.h>
+#include <scheduling/thread.h>
 #include <stdbool.h>
 #include <sys/time.h>
 #include <vterm/vterm.h>
@@ -39,9 +40,10 @@ typedef struct kernel_table_struct
   struct system_time current_time;
 
   // Kernel processes & scheduling
-  process_t *current_process;
+  thread_t *current_thread;
+  thread_t *thread_table[MAX_THREADS];
   bool task_switch;
-  uint64_t created_process_count;
+  uint32_t thread_count;
 } kernel_table;
 
 extern kernel_table *kernel;

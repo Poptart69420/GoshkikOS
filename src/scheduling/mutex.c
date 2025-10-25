@@ -1,68 +1,79 @@
+#include <kernel.h>
 #include <scheduling/mutex.h>
-#include <scheduling/scheduler.h>
 
 void init_mutex(mutex_t *mutex)
 {
-  memset(mutex, 0, sizeof(mutex_t));
+  if (!mutex)
+    return;
+
+  spinlock_init(&mutex->lock);
+  atomic_store(&mutex->locked, 0);
+  mutex->owner = NULL;
+  mutex->waiter_head = NULL;
+  mutex->waiter_tail = NULL;
+  mutex->waiter_count = 0;
 }
 
 int acquire_mutex(mutex_t *mutex)
 {
-  disable_interrupt();
-
-  if (atomic_exchange(&mutex->locked, 1))
+  while (true)
   {
     spinlock_acquire(&mutex->lock);
 
-    struct process_struct_t *current = get_current_process();
-    current->snext = NULL;
-
-    if (mutex->waiter_head)
+    if (atomic_load(&mutex->locked) == 0)
     {
-      mutex->waiter_head->snext = current;
+      atomic_store(&mutex->locked, 1);
+      mutex->owner = kernel->current_thread;
+      spinlock_release(&mutex->lock);
+      return 0;
+    }
+
+    kernel->current_thread->state = THREAD_BLOCKED;
+    kernel->current_thread->next = NULL;
+
+    if (mutex->waiter_tail)
+    {
+      mutex->waiter_tail->next = kernel->current_thread;
+      mutex->waiter_tail = kernel->current_thread;
     }
     else
-    {
-      mutex->waiter_tail = current;
-    }
+      mutex->waiter_head = mutex->waiter_tail = kernel->current_thread;
 
-    mutex->waiter_head = current;
     mutex->waiter_count++;
-
     spinlock_release(&mutex->lock);
-
-    while (atomic_load(&mutex->locked))
-    {
-      block_process();
-    }
+    thread_block();
   }
-
-  enable_interrupt();
-  return 0;
-}
-
-int try_acquire_mutex(mutex_t *mutex)
-{
-  return !atomic_exchange(&mutex->locked, 1);
 }
 
 void release_mutex(mutex_t *mutex)
 {
-  disable_interrupt();
+  if (!mutex)
+    return;
 
   spinlock_acquire(&mutex->lock);
-  if (mutex->waiter_count > 0)
+
+  if (mutex->owner != kernel->current_thread)
   {
-    struct process_struct_t *process = mutex->waiter_tail;
-    mutex->waiter_tail = process->snext;
-    if (!mutex->waiter_tail)
-      mutex->waiter_head = NULL;
-    mutex->waiter_count--;
-    unblock_process(process);
+    spinlock_release(&mutex->lock);
+    return;
   }
 
   atomic_store(&mutex->locked, 0);
-  spinlock_release(&mutex->lock);
+  mutex->owner = NULL;
 
-  enable_interrupt();
+  if (mutex->waiter_head)
+  {
+    thread_t *next = mutex->waiter_head;
+    mutex->waiter_head = next->next;
+
+    if (!mutex->waiter_head)
+      mutex->waiter_tail = NULL;
+
+    mutex->waiter_count--;
+
+    next->state = THREAD_READY;
+    add_to_queue(next);
+  }
+
+  spinlock_release(&mutex->lock);
 }
