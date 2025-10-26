@@ -19,6 +19,7 @@ void irq_handler(fault_frame_t *frame)
     timer_handler(frame);
     break;
   case 1:
+    kprintf("Keyboard");
     keyboard_handler(frame);
     break;
   default:

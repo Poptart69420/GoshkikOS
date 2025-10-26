@@ -80,8 +80,6 @@ void kmain(void)
   init_syscalls();
   init_threading();
 
-  pic_unmask_irq(0);
-
   enable_interrupt();
   halt();
 }
