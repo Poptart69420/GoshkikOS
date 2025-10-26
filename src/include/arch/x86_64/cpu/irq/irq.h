@@ -9,6 +9,7 @@
 #include <arch/x86_64/cpu/timer/timer.h>
 #include <arch/x86_64/ps2/keyboard/kbd.h>
 #include <klibc/printf.h>
+#include <scheduling/scheduler.h>
 #include <stddef.h>
 #include <vterm/kerror.h>
 #include <vterm/kok.h>

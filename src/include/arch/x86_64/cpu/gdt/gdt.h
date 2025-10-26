@@ -65,6 +65,8 @@ struct gdtr
   struct tss_desc tss;
 } __attribute__((packed));
 
+extern tss_t tss;
+
 void init_gdt(void);
 void set_kernel_stack(uintptr_t stack);
 

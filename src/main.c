@@ -1,4 +1,3 @@
-#include "include/scheduling/scheduler.h"
 #include <kernel.h>
 
 kernel_table master_kernel_table;
@@ -79,6 +78,9 @@ void kmain(void)
   init_system_clock();
   init_ps2();
   init_syscalls();
+  init_threading();
+
+  pic_unmask_irq(0);
 
   enable_interrupt();
   halt();

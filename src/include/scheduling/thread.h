@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #define MAX_THREADS 256
+#define TSTACK_SIZE 0x4000
 
 typedef enum
 {
@@ -55,5 +56,9 @@ typedef struct thread
 } thread_t;
 
 typedef void (*thread_function_t)(int argc, char **argv);
+
+void init_threading(void);
+void thread_block(uint32_t tid);
+int thread_unlock(uint32_t tid);
 
 #endif // THREAD_H_

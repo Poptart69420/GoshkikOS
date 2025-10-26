@@ -41,7 +41,7 @@ int acquire_mutex(mutex_t *mutex)
 
     mutex->waiter_count++;
     spinlock_release(&mutex->lock);
-    thread_block();
+    thread_block(kernel->current_thread->tid);
   }
 }
 
@@ -72,7 +72,7 @@ void release_mutex(mutex_t *mutex)
     mutex->waiter_count--;
 
     next->state = THREAD_READY;
-    add_to_queue(next);
+    add_to_ready_queue(next);
   }
 
   spinlock_release(&mutex->lock);

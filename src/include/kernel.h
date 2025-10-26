@@ -44,6 +44,7 @@ typedef struct kernel_table_struct
   thread_t *thread_table[MAX_THREADS];
   bool task_switch;
   uint32_t thread_count;
+  uint32_t next_tid;
 } kernel_table;
 
 extern kernel_table *kernel;

@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/bash
 
 rm -rf cross_compiler/*
 rm add-to-path.sh
