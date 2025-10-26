@@ -3,11 +3,6 @@
 kernel_table master_kernel_table;
 kernel_table *kernel;
 
-struct timeval time = {
-    .tv_sec = 0,
-    .tv_usec = 0,
-};
-
 static void boot_info(void)
 {
   kernel = &master_kernel_table;
@@ -78,7 +73,6 @@ void kmain(void)
   init_system_clock();
   init_ps2();
   init_syscalls();
-  init_threading();
 
   enable_interrupt();
   halt();

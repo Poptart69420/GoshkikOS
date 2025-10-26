@@ -3,6 +3,7 @@
 
 #include <arch/x86_64/arch.h>
 #include <arch/x86_64/asm/hcf.h>
+#include <arch/x86_64/cpu/gdt/gdt.h>
 #include <arch/x86_64/cpu/isr/isr.h>
 #include <arch/x86_64/cpu/pic/pic.h>
 #include <arch/x86_64/cpu/pit/pit.h>
@@ -48,6 +49,5 @@ typedef struct kernel_table_struct
 } kernel_table;
 
 extern kernel_table *kernel;
-extern struct timeval time;
 
 #endif // KERNEL_H_

@@ -29,7 +29,7 @@ void gdt_setup(void)
   gdt.entries[4].granularity = 0b00100000;
 
   // TSS
-  gdt.tss.length = sizeof(tss_t);
+  gdt.tss.length = sizeof(tss_t) - 1;
   gdt.tss.flags = 0b10001001;
 
   uintptr_t tss_base = (uintptr_t)&tss;

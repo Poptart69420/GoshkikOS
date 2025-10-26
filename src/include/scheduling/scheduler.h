@@ -9,7 +9,6 @@
 #include <arch/x86_64/selectors/selectors.h>
 #include <global/global.h>
 #include <klibc/cred/cred.h>
-#include <klibc/kmem/list.h>
 #include <klibc/types.h>
 #include <scheduling/mutex.h>
 #include <scheduling/thread.h>
