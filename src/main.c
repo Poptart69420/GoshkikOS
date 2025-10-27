@@ -92,7 +92,7 @@ void kmain(void)
 
   kprintf("=|||||||||||||||||||=\n");
   kprintf("|                   |\n");
-  kprintf("| goshkikos started |\n");
+  kprintf("| GoshkikOS Started |\n");
   kprintf("|                   |\n");
   kprintf("=|||||||||||||||||||=\n");
   kprintf("\n");
@@ -117,6 +117,5 @@ void kmain(void)
   init_kprintf_spinlock();
 
   enable_interrupt();
-  test_scheduler();
   halt();
 }

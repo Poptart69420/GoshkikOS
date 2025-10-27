@@ -77,7 +77,7 @@ else
 fi
 
 BINUTILS_VERSION=2.44
-GCC_VERSION=12.2.0
+GCC_VERSION=14.2.0
 if [ ! -e binutils.tar.xz ] ; then
   $WGET -Obinutils.tar.xz "https://ftp.gnu.org/gnu/binutils/binutils-$BINUTILS_VERSION.tar.xz"
 fi

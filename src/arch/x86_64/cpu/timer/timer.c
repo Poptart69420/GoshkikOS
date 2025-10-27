@@ -1,7 +1,7 @@
 #include <arch/x86_64/cpu/timer/timer.h>
 #include <kernel.h>
 
-atomic_uint_fast64_t monotonic_ms = ATOMIC_VAR_INIT(0);
+atomic_uint_fast64_t monotonic_ms = 0;
 
 void init_system_clock(void)
 {

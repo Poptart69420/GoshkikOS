@@ -59,7 +59,7 @@ endif
 override CFLAGS += \
     -Wall \
     -Wextra \
-    -std=gnu11 \
+    -std=gnu23 \
     -ffreestanding \
     -fno-stack-protector \
     -fno-stack-check \

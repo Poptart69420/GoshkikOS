@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <arch/x86_64/selectors/selectors.h>
+#include <arch/x86_64/arch.h>
 #include <vterm/kerror.h>
 #include <vterm/kok.h>
 #include <vterm/vterm.h>

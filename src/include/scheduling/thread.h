@@ -4,7 +4,6 @@
 #include <arch/x86_64/arch.h>
 #include <arch/x86_64/cpu/idt/idt.h>
 #include <arch/x86_64/cpu/timer/timer.h>
-#include <arch/x86_64/selectors/selectors.h>
 #include <global/global.h>
 #include <stdbool.h>
 #include <stdint.h>

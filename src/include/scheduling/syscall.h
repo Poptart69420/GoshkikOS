@@ -4,7 +4,6 @@
 #include <arch/x86_64/arch.h>
 #include <arch/x86_64/asm/asm.h>
 #include <arch/x86_64/cpu/idt/idt.h>
-#include <arch/x86_64/selectors/selectors.h>
 #include <stdint.h>
 
 #define MAX_SYS_CALLS 420

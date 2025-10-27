@@ -5,6 +5,12 @@
 #include <arch/x86_64/cpu/idt/idt.h>
 #include <stdint.h>
 
+#define KERNEL_CODE64 0x08
+#define KERNEL_DATA64 0x10
+#define USER_CODE64 0x1B
+#define USER_DATA64 0x23
+#define TSS 0x28
+
 typedef struct
 {
   uint64_t r15, r14, r13, r12, r11, r10, r9, r8;

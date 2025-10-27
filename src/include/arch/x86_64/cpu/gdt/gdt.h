@@ -1,7 +1,6 @@
 #ifndef GDT_H_
 #define GDT_H_
 
-#include <arch/x86_64/selectors/selectors.h>
 #include <global/global.h>
 #include <klibc/kmem/mem.h>
 #include <scheduling/spinlock.h>

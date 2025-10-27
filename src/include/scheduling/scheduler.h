@@ -6,7 +6,6 @@
 #include <arch/x86_64/cpu/idt/idt.h>
 #include <arch/x86_64/cpu/timer/timer.h>
 #include <arch/x86_64/mem/vmm/vmm.h>
-#include <arch/x86_64/selectors/selectors.h>
 #include <global/global.h>
 #include <klibc/cred/cred.h>
 #include <klibc/types.h>
