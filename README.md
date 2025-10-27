@@ -137,6 +137,8 @@ To run it with the debugging output.
 
 - Eventually be able to work on this project within the OS itself
 
+- Setup a custom website and host my own online git thing. Maybe Forgejo?
+
 ## - WTFPL License
 
 ```
