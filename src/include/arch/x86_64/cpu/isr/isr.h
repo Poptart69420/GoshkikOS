@@ -12,6 +12,6 @@
 #include <vterm/kok.h>
 #include <vterm/vterm.h>
 
-void isr_handler(fault_frame_t *frame);
+void isr_handler(context_t *context);
 
 #endif // ISR_H_

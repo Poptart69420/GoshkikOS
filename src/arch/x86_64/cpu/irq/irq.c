@@ -1,11 +1,11 @@
 #include <arch/x86_64/cpu/irq/irq.h>
 
-void irq_handler(fault_frame_t *frame)
+void irq_handler(context_t *context)
 {
-  if (!frame)
+  if (!context)
     return;
 
-  uint32_t irq_num = frame->int_no - 32;
+  uint32_t irq_num = context->int_no - 32;
   if (irq_num > 15)
     return;
 
@@ -14,13 +14,11 @@ void irq_handler(fault_frame_t *frame)
   switch (irq_num)
   {
   case 0:
-    kprintf("Timer\n");
-    scheduler_tick(frame);
-    timer_handler(frame);
+    scheduler_tick(context);
+    timer_handler(context);
     break;
   case 1:
-    kprintf("Keyboard");
-    keyboard_handler(frame);
+    keyboard_handler(context);
     break;
   default:
     break;

@@ -34,8 +34,10 @@ static void idle_task(int argc, char **argv)
 {
   (void)argc;
   (void)argv;
-  kprintf("Idle...\n");
-  halt();
+  for (;;)
+  {
+    halt();
+  }
 }
 
 // Helper functions
@@ -124,7 +126,7 @@ thread_t *thread_create(thread_function_t function, int argc, char **argv, threa
     }
   }
 
-  memset(&t->context, 0, sizeof(fault_frame_t));
+  memset(&t->context, 0, sizeof(context_t));
   t->context.rip = (uint64_t)function;
   t->context.rsp = t->stack_base + t->stack_size - 8;
   t->context.rdi = (uint64_t)argc;
@@ -293,9 +295,6 @@ void init_threading(void)
     kerror("Failed to create idle thread");
     hcf();
   }
-
-  ready_head = idle;
-  ready_tail = idle;
 
   kok();
 }

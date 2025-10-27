@@ -44,7 +44,7 @@ typedef struct thread
   thread_state_t state;         // State
   thread_privilege_t privilege; // Ring level
   thread_priority_t priority;   // Priority
-  fault_frame_t context;        // CPU frame
+  context_t context;            // CPU frame
   uint64_t stack_base;          // Stack base address
   uint64_t stack_size;          // Stack size
   uint64_t kernel_stack;        // Kernel stack
@@ -60,5 +60,6 @@ typedef void (*thread_function_t)(int argc, char **argv);
 void init_threading(void);
 void thread_block(uint32_t tid);
 int thread_unlock(uint32_t tid);
+thread_t *thread_create(thread_function_t function, int argc, char **argv, thread_privilege_t privilege, thread_priority_t priority, uint32_t owner_pid);
 
 #endif // THREAD_H_

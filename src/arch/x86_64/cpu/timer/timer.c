@@ -15,9 +15,9 @@ void init_system_clock(void)
   kok();
 }
 
-void timer_handler(fault_frame_t *frame)
+void timer_handler(context_t *context)
 {
-  (void)frame;
+  (void)context;
 
   atomic_fetch_add_explicit(&monotonic_ms, 1, memory_order_relaxed);
 

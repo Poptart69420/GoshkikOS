@@ -15,9 +15,9 @@
 #include <stdint.h>
 #include <sys/time.h>
 
-extern void context_switch(fault_frame_t *old_ctx, fault_frame_t *new_ctx);
+extern void context_switch(context_t *old_ctx, context_t *new_ctx);
 
-void scheduler_tick(fault_frame_t *frame);
+void scheduler_tick(context_t *context);
 void add_to_ready_queue(thread_t *t);
 
 #endif // SHEDULER_H_

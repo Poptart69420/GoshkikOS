@@ -1,3 +1,4 @@
+#include "include/klibc/printf.h"
 #include <kernel.h>
 
 kernel_table master_kernel_table;
@@ -38,6 +39,45 @@ static void boot_info(void)
   }
 }
 
+static void task_1(int argc, char **argv)
+{
+  (void)argc;
+  (void)argv;
+
+  for (;;)
+  {
+    kprintf("Thread_1: Hello\n");
+  }
+}
+
+static void task_2(int argc, char **argv)
+{
+  (void)argc;
+  (void)argv;
+
+  for (;;)
+  {
+    kprintf("Thread_2: Hiii\n");
+  }
+}
+
+static void test_scheduler(void)
+{
+  thread_t *thread_1 = thread_create(task_1, 0, NULL, THREAD_RING_0, THREAD_PRIO_LOW, 0);
+  if (!thread_1)
+  {
+    kerror("Failed to create thread_1");
+    hcf();
+  }
+
+  thread_t *thread_2 = thread_create(task_2, 0, NULL, THREAD_RING_0, THREAD_PRIO_LOW, 0);
+  if (!thread_2)
+  {
+    kerror("Failed to create thread_2");
+    hcf();
+  }
+}
+
 void kmain(void)
 {
   boot_info();
@@ -73,7 +113,10 @@ void kmain(void)
   init_system_clock();
   init_ps2();
   init_syscalls();
+  init_threading();
+  init_kprintf_spinlock();
 
   enable_interrupt();
+  test_scheduler();
   halt();
 }

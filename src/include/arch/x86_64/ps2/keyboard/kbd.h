@@ -7,6 +7,6 @@
 #include <arch/x86_64/ps2/ps2.h>
 #include <vterm/vterm.h>
 
-void keyboard_handler(fault_frame_t *frame);
+void keyboard_handler(context_t *context);
 
 #endif // KBD_H_

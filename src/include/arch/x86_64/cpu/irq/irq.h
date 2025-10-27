@@ -15,6 +15,6 @@
 #include <vterm/kok.h>
 #include <vterm/vterm.h>
 
-void irq_handler(fault_frame_t *frame);
+void irq_handler(context_t *context);
 
 #endif // IRQ_H_

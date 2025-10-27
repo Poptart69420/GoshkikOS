@@ -36,7 +36,7 @@ static const char *isr_exception_messages[] = {"Divide by zero",
                                                "Triple Fault",
                                                "FPU error"};
 
-void isr_handler(fault_frame_t *frame)
+void isr_handler(context_t *context)
 {
   __asm__ volatile("cli");
 
@@ -44,17 +44,17 @@ void isr_handler(fault_frame_t *frame)
   kprintf("EXCEPTION\n");
   kprintf("---------------\n");
 
-  if (!frame)
+  if (!context)
   {
-    kprintf("Null Fault Frame\n");
+    kprintf("Null Fault Context\n");
     hcf();
   }
 
   kprintf("---Exception Details---\n");
-  kprintf("Exception Number: %u (0x%x)\n", frame->int_no, frame->int_no);
-  kprintf("Error Code: 0x%lx\n", frame->err_code);
+  kprintf("Exception Number: %u (0x%x)\n", context->int_no, context->int_no);
+  kprintf("Error Code: 0x%lx\n", context->err_code);
 
-  switch (frame->int_no)
+  switch (context->int_no)
   {
   case 0:
     kprintf("Type: %s\n", isr_exception_messages[0]);
@@ -119,9 +119,9 @@ void isr_handler(fault_frame_t *frame)
     __asm__ volatile("mov %%cr2, %0" : "=r"(cr2));
     kprintf("Fault Address (CR2): 0x%lx\n", cr2);
     kprintf("Page Fault Flags:\n");
-    kprintf("Present: %s\n", (frame->err_code & 1) ? "Yes" : "No");
-    kprintf("Write: %s\n", (frame->err_code & 2) ? "Yes" : "No");
-    kprintf("User: %s\n", (frame->err_code & 4) ? "Yes" : "No");
+    kprintf("Present: %s\n", (context->err_code & 1) ? "Yes" : "No");
+    kprintf("Write: %s\n", (context->err_code & 2) ? "Yes" : "No");
+    kprintf("User: %s\n", (context->err_code & 4) ? "Yes" : "No");
     break;
   case 15:
     kprintf("Type: %s\n", isr_exception_messages[15]);
@@ -184,11 +184,11 @@ void isr_handler(fault_frame_t *frame)
 
   kprintf("\n");
   kprintf("---Registers---\n");
-  kprintf("RIP: 0x%016lx (Instruction Pointer)\n", frame->rip);
-  kprintf("RSP: 0x%016lx (Stack Pointer)\n", frame->rsp);
-  kprintf("RBP: 0x%016lx (Base Pointer)\n", frame->rbp);
-  kprintf("RFLAGS: 0x%016lx\n", frame->rflags);
-  kprintf("CS: 0x%04lx SS: 0x%04lx\n", frame->cs, frame->ss);
+  kprintf("RIP: 0x%016lx (Instruction Pointer)\n", context->rip);
+  kprintf("RSP: 0x%016lx (Stack Pointer)\n", context->rsp);
+  kprintf("RBP: 0x%016lx (Base Pointer)\n", context->rbp);
+  kprintf("RFLAGS: 0x%016lx\n", context->rflags);
+  kprintf("CS: 0x%04lx SS: 0x%04lx\n", context->cs, context->ss);
 
   uint64_t rax, rbx, rcx, rdx, rsi, rdi;
   __asm__ volatile("mov %%rax, %0" : "=m"(rax));
@@ -215,8 +215,8 @@ void isr_handler(fault_frame_t *frame)
 
   kprintf("\n");
   kprintf("Code dump (RIP):\n");
-  uint8_t *code_ptr = (uint8_t *)frame->rip;
-  kprintf("Address: 0x%lx\n", frame->rip);
+  uint8_t *code_ptr = (uint8_t *)context->rip;
+  kprintf("Address: 0x%lx\n", context->rip);
   kprintf("Bytes: ");
 
   for (int i = -8; i < 8; i++)
@@ -231,8 +231,8 @@ void isr_handler(fault_frame_t *frame)
 
   kprintf("\n");
   kprintf("Stack dump (RSP):\n");
-  uint64_t *stack_ptr = (uint64_t *)frame->rsp;
-  kprintf("Stack pointer: 0x%lx\n", frame->rsp);
+  uint64_t *stack_ptr = (uint64_t *)context->rsp;
+  kprintf("Stack pointer: 0x%lx\n", context->rsp);
 
   for (int i = 0; i < 8; i++)
   {
@@ -244,10 +244,10 @@ void isr_handler(fault_frame_t *frame)
 
   kprintf("\n");
   kprintf("---Stack Trace---\n");
-  uint64_t *rbp_ptr = (uint64_t *)frame->rbp;
+  uint64_t *rbp_ptr = (uint64_t *)context->rbp;
   for (int i = 0; i < 5 && rbp_ptr; i++)
   {
-    kprintf("Frame %d: RBP=0x%lx, Return=0x%lx\n",
+    kprintf("Context %d: RBP=0x%lx, Return=0x%lx\n",
             i, (uint64_t)rbp_ptr, rbp_ptr[1]);
     rbp_ptr = (uint64_t *)rbp_ptr[0];
     if ((uint64_t)rbp_ptr < 0x100000 || (uint64_t)rbp_ptr > 0x1000000)
@@ -256,13 +256,13 @@ void isr_handler(fault_frame_t *frame)
 
   kprintf("\n");
   kprintf("---Memory State---\n");
-  kprintf("Kernel stack range: 0x%lx - 0x%lx\n", frame->rsp & ~0xFFF, (frame->rsp & ~0xFFF) + 0x1000);
-  kprintf("Code segment: 0x%lx\n", frame->rip & ~0xFFF);
+  kprintf("Kernel stack range: 0x%lx - 0x%lx\n", context->rsp & ~0xFFF, (context->rsp & ~0xFFF) + 0x1000);
+  kprintf("Code segment: 0x%lx\n", context->rip & ~0xFFF);
 
   kprintf("\n");
   kprintf("---System State---\n");
-  kprintf("Interrupts: %s\n", (frame->rflags & 0x200) ? "Enabled" : "Disabled");
-  kprintf("Privilege level: ring %lu\n", frame->cs & 3);
+  kprintf("Interrupts: %s\n", (context->rflags & 0x200) ? "Enabled" : "Disabled");
+  kprintf("Privilege level: ring %lu\n", context->cs & 3);
   kprintf("Paging: %s\n", (cr0 & 0x80000000) ? "Enabled" : "Disabled");
 
   hcf();

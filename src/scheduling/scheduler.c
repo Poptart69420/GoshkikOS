@@ -151,9 +151,9 @@ void remove_from_ready_queue(thread_t *t)
 }
 
 // Main scheduler function
-void scheduler_tick(fault_frame_t *frame) // Called by timer IRQ, frame is passed by the IRQ
+void scheduler_tick(context_t *context) // Called by timer IRQ, context is passed by the IRQ
 {
-  if (!frame)
+  if (!context)
     return;
 
   priority_counter++;
@@ -161,7 +161,7 @@ void scheduler_tick(fault_frame_t *frame) // Called by timer IRQ, frame is passe
   thread_t *old = kernel->current_thread;
 
   if (old) // Save old context
-    old->context = *frame;
+    old->context = *context;
 
   if (old) // Handle inturrupted thread
   {
@@ -265,12 +265,38 @@ void scheduler_tick(fault_frame_t *frame) // Called by timer IRQ, frame is passe
     if (next->privilege == THREAD_RING_3)              // If userspace thread
       tss.rsp0 = next->kernel_stack + KSTACK_SIZE - 8; // Update TSS
 
-    static fault_frame_t dummy_context; // In case no previous thread so NULL isn't passed
-    fault_frame_t *old_context = old ? &old->context : &dummy_context;
-    fault_frame_t *new_context = &next->context;
-
     lock_schedule_spin();
-    context_switch(old_context, new_context);
+
+    if (next->privilege == THREAD_RING_3) // Manually do it here for now. I need to extend the context struct
+    {                                     // and fix the assembly implementation of the context switch
+      context->rax = next->context.rax;
+      context->rbx = next->context.rbx;
+      context->rcx = next->context.rcx;
+      context->rdx = next->context.rdx;
+      context->rsi = next->context.rsi;
+      context->rdi = next->context.rdi;
+      context->rbp = next->context.rbp;
+      context->r8 = next->context.r8;
+      context->r9 = next->context.r9;
+      context->r10 = next->context.r10;
+      context->r11 = next->context.r11;
+      context->r12 = next->context.r12;
+      context->r13 = next->context.r13;
+      context->r14 = next->context.r14;
+      context->r15 = next->context.r15;
+
+      context->rip = next->context.rip;
+      context->cs = USER_CODE64;
+      context->rflags = next->context.rflags | 0x200; // enable interrupts
+      context->rsp = next->context.rsp;
+      context->ss = USER_DATA64;
+    }
+    else
+    {
+      // Ring 0: just copy full context
+      *context = next->context;
+    }
+
     unlock_schedule_spin();
     return;
   }

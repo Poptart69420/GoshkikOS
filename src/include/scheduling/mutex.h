@@ -7,6 +7,7 @@
 #include <scheduling/spinlock.h>
 #include <scheduling/thread.h>
 #include <stdatomic.h>
+#include <stdbool.h>
 #include <stddef.h>
 
 typedef struct mutex_struct

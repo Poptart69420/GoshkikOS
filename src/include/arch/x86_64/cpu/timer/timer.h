@@ -23,7 +23,7 @@ struct system_time
   uint32_t days;
 } __attribute__((packed, aligned(4)));
 
-void timer_handler(fault_frame_t *frame);
+void timer_handler(context_t *context);
 void init_system_clock(void);
 void get_system_time(struct system_time *time);
 uint64_t uptime_ms(void);
