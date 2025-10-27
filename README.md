@@ -1,7 +1,7 @@
 
 # GoshkikOS
 
-The GoshkikOS project (formerly ShitOS) is an operating system targeting x86_64.
+The GoshkikOS project is an operating system targeting x86_64.
 GoshkikOS is my first real attempt at doing OSDev, so it's bad.
 This project serves as a learning project for me, I hope to stick with it.
 
@@ -73,6 +73,8 @@ To run it with the debugging output.
 
 - Finished paging (memmap, pmm, vmm)
 
+- Scheduling
+
 ## - To-Do (Actual Project)
 
 - VFS
@@ -89,13 +91,51 @@ To run it with the debugging output.
 
 - Expanded memory management
 
-- Scheduling
+- Userspace setup
+
+- Actually setting up syscalls
+
+- Reorganizing the codebase
+
+- VGA driver
+
+- MSR table
+
+- Re-writing some of the Assembly
 
 - PS2 mouse handling
 
 - Expanded PS2 keyboard handling
 
+- Distro-agnostic depencency installation
+
+- USB driver
+
+- Audio drivers
+
+- Network drivers
+
 - And a fucking wholeeee lot more
+
+## - Long Term Goals
+
+- Learn more low level programming
+
+- Get to program more in Assembly (eventually wanting to rewrite some of the C code as Assembly)
+
+- Port and/or create a userspace libc. I would like to have it be somewhat easy to use different standard libaries
+
+- Port (and/or maybe create, but unlikely) a display server
+
+- Port and/or create a window manager
+
+- Port some programs (Fastfetch, Emacs, Vim, Firefox, etc)
+
+- Port GCC
+
+- Port BinUtils
+
+- Eventually be able to work on this project within the OS itself
 
 ## - WTFPL License
 
