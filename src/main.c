@@ -9,13 +9,13 @@ static void boot_info(void)
   kernel = &master_kernel_table;
 
   if (!framebuffer_request.response) // No framebuffer response
-    hcf(); // Sad
-  if (!hhdm_request.response) // No HHDM response
-    hcf(); // Sad
-  if (!memmap_request.response) // No memmap response
-    hcf(); // Sad
-  if (!module_request.response) // No module response (initrd.tar)
-    hcf(); // Sas
+    hcf();                           // Sad
+  if (!hhdm_request.response)        // No HHDM response
+    hcf();                           // Sad
+  if (!memmap_request.response)      // No memmap response
+    hcf();                           // Sad
+  if (!module_request.response)      // No module response (initrd.tar)
+    hcf();                           // Sas
 
   // Set kernel table responses
   kernel->framebuffer = framebuffer_request.response;
@@ -88,7 +88,6 @@ static void test_scheduler(void)
 // Main function, called by bootloader (Limine)
 //
 
-
 void kmain(void)
 {
   boot_info();
@@ -129,5 +128,5 @@ void kmain(void)
 
   enable_interrupt();
   test_scheduler(); // Test thing
-  halt(); // Halt with inturrupts enabled
+  halt();           // Halt with inturrupts enabled
 }
