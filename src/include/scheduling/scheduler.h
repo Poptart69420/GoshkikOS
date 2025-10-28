@@ -17,5 +17,6 @@ extern void context_switch(context_t *old_ctx, context_t *new_ctx, int is_ring_3
 
 void scheduler_tick(context_t *context);
 void add_to_ready_queue(thread_t *t);
+void remove_from_ready_queue(thread_t *t);
 
 #endif // SHEDULER_H_

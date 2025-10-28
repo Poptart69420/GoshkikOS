@@ -126,6 +126,6 @@ void kmain(void)
   init_kprintf_spinlock();
 
   enable_interrupt();
-  test_scheduler(); // Test thing
+  //test_scheduler(); // Test thing
   halt();           // Halt with inturrupts enabled
 }

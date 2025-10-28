@@ -57,6 +57,9 @@ typedef void (*thread_function_t)(int argc, char **argv);
 void init_threading(void);
 void thread_block(uint32_t tid);
 int thread_unlock(uint32_t tid);
+void clean_up(void);
+__attribute__((noreturn)) void thread_exit(void);
+int thread_terminate(uint32_t tid);
 thread_t *thread_create(thread_function_t function, int argc, char **argv, thread_privilege_t privilege, thread_priority_t priority, uint32_t owner_pid);
 
 #endif // THREAD_H_

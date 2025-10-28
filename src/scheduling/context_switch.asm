@@ -54,7 +54,7 @@ context_switch:
   mov [rdi + 136], rax
 
     ;; cs = USER_CODE64
-  mov rax, [rel USER_CODE64]
+  mov rax, USER_CODE64
   mov [rdi + 144], rax
 
     ;; rflags | 0x200
@@ -67,7 +67,7 @@ context_switch:
   mov [rdi + 160], rax
 
   ;; ss = USER_DATA64
-  mov rax, [rel USER_DATA64]
+  mov rax, USER_DATA64
   mov [rdi + 168], rax
 
 .context_done:

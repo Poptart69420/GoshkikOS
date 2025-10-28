@@ -29,6 +29,11 @@ static inline void unlock_table_mutex(void)
 }
 
 // Helpers
+
+//
+// Change return numbers based on how you want scheduling to prioritize things.
+// Smaller numbers means higher priority, longer numbers are a lower priority (and get less attention)
+//
 static inline int priority_to_stride(thread_priority_t priority) // Maps priority enum to stride for fair CPU distribution
 {
   switch (priority)
@@ -46,7 +51,7 @@ static inline int priority_to_stride(thread_priority_t priority) // Maps priorit
   case THREAD_PRIO_LOW:
     return 32;
   default:
-    return 8;
+    return 8; // Default is normal (if no priority, or an invalid priority is passed)
   }
 }
 
@@ -114,41 +119,35 @@ void remove_from_ready_queue(thread_t *t)
 
   lock_schedule_spin();
 
-  if (!ready_head)
-  {
-    unlock_schedule_spin();
-    return;
-  }
+  thread_t *prev = NULL;
+  thread_t *cur = ready_head;
 
-  if (ready_head == t)
+  while (cur)
   {
-    ready_head = ready_head->next;
-    if (!ready_head)
-      ready_tail = NULL;
-
-    t->next = NULL;
-    unlock_schedule_spin();
-    return;
-  }
-
-  thread_t *current = ready_head;
-  while (current && current->next)
-  {
-    if (current->next == t)
+    if (cur == t)
     {
-      current->next = t->next;
-      if (ready_tail == t)
-        ready_tail = current;
+      if (prev)
+        prev->next = cur->next;
+      else
+        ready_head = cur->next;
+
+      if (cur == ready_tail)
+        ready_tail = prev;
 
       t->next = NULL;
       break;
     }
 
-    current = current->next;
+    prev = cur;
+    cur = cur->next;
   }
 
   unlock_schedule_spin();
 }
+
+//
+// TODO: Make this less fugly
+//
 
 // Main scheduler function
 void scheduler_tick(context_t *context) // Called by timer IRQ, context is passed by the IRQ
@@ -265,10 +264,11 @@ void scheduler_tick(context_t *context) // Called by timer IRQ, context is passe
     if (next->privilege == THREAD_RING_3)              // If userspace thread
       tss.rsp0 = next->kernel_stack + KSTACK_SIZE - 8; // Update TSS
 
-    lock_schedule_spin();
+    unlock_schedule_spin();
     int is_ring_3 = (next->privilege == THREAD_RING_3); // Is userspace?
     context_switch(context, &next->context, is_ring_3); // Assembly function
-    unlock_schedule_spin();
+
+    clean_up();
 
     return;
   }
