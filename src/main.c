@@ -87,7 +87,6 @@ static void test_scheduler(void)
 //
 // Main function, called by bootloader (Limine)
 //
-
 void kmain(void)
 {
   boot_info();
