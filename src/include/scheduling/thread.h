@@ -4,12 +4,10 @@
 #include <arch/x86_64/arch.h>
 #include <arch/x86_64/cpu/idt/idt.h>
 #include <arch/x86_64/cpu/timer/timer.h>
-#include <global/global.h>
 #include <stdbool.h>
 #include <stdint.h>
 
 #define MAX_THREADS 256
-#define TSTACK_SIZE 0x4000
 
 typedef enum
 {

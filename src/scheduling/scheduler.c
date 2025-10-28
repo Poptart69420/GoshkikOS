@@ -92,7 +92,7 @@ void add_to_ready_queue(thread_t *t)
   thread_t *check = ready_head; // Check for duplicate threads
   while (check)
   {
-    if (check == t)
+    if (check == t) // Duplicate found
     {
       unlock_schedule_spin();
       return;
@@ -266,38 +266,10 @@ void scheduler_tick(context_t *context) // Called by timer IRQ, context is passe
       tss.rsp0 = next->kernel_stack + KSTACK_SIZE - 8; // Update TSS
 
     lock_schedule_spin();
-
-    if (next->privilege == THREAD_RING_3) // Manually do it here for now. I need to extend the context struct
-    {                                     // and fix the assembly implementation of the context switch
-      context->rax = next->context.rax;
-      context->rbx = next->context.rbx;
-      context->rcx = next->context.rcx;
-      context->rdx = next->context.rdx;
-      context->rsi = next->context.rsi;
-      context->rdi = next->context.rdi;
-      context->rbp = next->context.rbp;
-      context->r8 = next->context.r8;
-      context->r9 = next->context.r9;
-      context->r10 = next->context.r10;
-      context->r11 = next->context.r11;
-      context->r12 = next->context.r12;
-      context->r13 = next->context.r13;
-      context->r14 = next->context.r14;
-      context->r15 = next->context.r15;
-
-      context->rip = next->context.rip;
-      context->cs = USER_CODE64;
-      context->rflags = next->context.rflags | 0x200; // enable interrupts
-      context->rsp = next->context.rsp;
-      context->ss = USER_DATA64;
-    }
-    else
-    {
-      // Ring 0: just copy full context
-      *context = next->context;
-    }
-
+    int is_ring_3 = (next->privilege == THREAD_RING_3); // Is userspace?
+    context_switch(context, &next->context, is_ring_3); // Assembly function
     unlock_schedule_spin();
+
     return;
   }
 }

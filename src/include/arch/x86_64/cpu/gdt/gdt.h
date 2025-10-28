@@ -1,7 +1,6 @@
 #ifndef GDT_H_
 #define GDT_H_
 
-#include <global/global.h>
 #include <klibc/kmem/mem.h>
 #include <scheduling/spinlock.h>
 #include <stddef.h>
@@ -9,6 +8,10 @@
 #include <vterm/kerror.h>
 #include <vterm/kok.h>
 #include <vterm/vterm.h>
+
+//
+// TODO: Make this shit better, and add comments
+//
 
 struct tss_desc
 {

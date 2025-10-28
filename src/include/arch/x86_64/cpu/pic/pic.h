@@ -4,6 +4,7 @@
 #include <arch/x86_64/io/io.h>
 #include <stdint.h>
 
+// Different ports that this uses (maybe better to have a big port list in it's own header?)
 #define COM1_PORT 0x3F8
 
 #define PIC1_COMMAND 0x20

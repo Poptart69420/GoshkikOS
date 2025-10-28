@@ -11,7 +11,7 @@
 #include <vterm/kok.h>
 #include <vterm/vterm.h>
 
-extern atomic_uint_fast64_t monotonic_ms;
+extern atomic_uint_fast64_t monotonic_ms; // Atomic for safety
 
 struct system_time
 {
@@ -19,7 +19,7 @@ struct system_time
   uint8_t seconds;       // 0–59
   uint8_t minutes;       // 0–59
   uint8_t hours;         // 0–23
-  uint8_t _pad0;
+  uint8_t _pad0;         // I forget why pad
   uint32_t days;
 } __attribute__((packed, aligned(4)));
 

@@ -5,12 +5,12 @@
 #include <stdint.h>
 #include <vterm/kok.h>
 
-#define PIT_DIVISOR 1193182
+#define PIT_DIVISOR 1193182 // Fancy number thing, I forget why it is this specific number
 
-#define PIT_COMMAND 0x43
-#define PIT_DATA 0x40
+#define PIT_COMMAND 0x43 // Command port
+#define PIT_DATA 0x40    // Data port
 
-#define TIMER_FREQUENCY 1000
+#define TIMER_FREQUENCY 1000 // Should probably be moved
 
 uint16_t pit_counter_value(void);
 void pit_set_reload_value(uint16_t new_count);

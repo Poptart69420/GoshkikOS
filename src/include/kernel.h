@@ -16,7 +16,6 @@
 #include <arch/x86_64/serial/serial.h>
 #include <fs/tmpfs/tmpfs.h>
 #include <fs/vfs/vfs.h>
-#include <global/global.h>
 #include <klibc/kmem/kheap.h>
 #include <klibc/kmem/slab.h>
 #include <limine/limine_requests.h>
@@ -27,9 +26,10 @@
 #include <sys/time.h>
 #include <vterm/vterm.h>
 
-// To-do: Create a testing interface
+//
+// TODO: Create a testing interface
 // Tests
-
+//
 typedef struct kernel_table_struct
 {
   // Kernel Limine reponses
@@ -38,14 +38,13 @@ typedef struct kernel_table_struct
   struct limine_memmap_response *memmap;
   struct limine_module_response *module;
 
-  struct system_time current_time;
+  struct system_time current_time; // Starts at 0 (not current date & time)
 
   // Kernel processes & scheduling
-  thread_t *current_thread;
-  thread_t *thread_table[MAX_THREADS];
-  bool task_switch;
-  uint32_t thread_count;
-  uint32_t next_tid;
+  thread_t *current_thread;            // Current running thread
+  thread_t *thread_table[MAX_THREADS]; // Global thread table
+  uint32_t thread_count;               // Number of threads (should decrease when threads are terminated/exited)
+  uint32_t next_tid;                   // Next thread ID (doesn't ever decrease?)
 } kernel_table;
 
 extern kernel_table *kernel;

@@ -63,36 +63,40 @@ thread_t *thread_from_tid(uint32_t tid)
   return result;
 }
 
+//
+// TODO: Find a way to make this function look less like a pile of flaming shit
+//
+
 thread_t *thread_create(thread_function_t function, int argc, char **argv, thread_privilege_t privilege,
                         thread_priority_t priority, uint32_t owner_pid)
 {
-  if (!function)
+  if (!function) // No function for thread
     return NULL;
 
-  lock_thread_mutex();
+  lock_thread_mutex(); // Lock mutex for thread list/table things
 
-  if (kernel->thread_count >= MAX_THREADS)
+  if (kernel->thread_count >= MAX_THREADS) // Too many threads (what should the limit be? Need to read Linux documentation)
   {
     unlock_thread_mutex();
     return NULL;
   }
 
-  thread_t *t = (thread_t *)kmalloc(sizeof(thread_t));
+  thread_t *t = (thread_t *)kmalloc(sizeof(thread_t)); // Malloc needed space
 
-  if (!t)
+  if (!t) // No thread (probably out of memory?)
   {
     unlock_thread_mutex();
     return NULL;
   }
 
-  memset(t, 0, sizeof(thread_t));
+  memset(t, 0, sizeof(thread_t)); // Zero out the thread
 
-  t->tid = kernel->next_tid++;
-  t->o_pid = owner_pid;
-  t->state = THREAD_READY;
-  t->privilege = privilege;
-  t->priority = priority;
-  t->stack_size = TSTACK_SIZE;
+  t->tid = kernel->next_tid++; // Thread ID is the next thread ID, then increase next_tid by 1
+  t->o_pid = owner_pid;        // Owner process ID
+  t->state = THREAD_READY;     // Mark as ready
+  t->privilege = privilege;    // Set privilege (ring 0 or ring 3)
+  t->priority = priority;      // Set priority (for priority based scheduling)
+  t->stack_size = TSTACK_SIZE; // Set to thread stack size (what should the stack size be? Need to read Linux documentation)
   t->next = NULL;
 
   if (privilege == THREAD_RING_3) // Userspace
@@ -126,7 +130,7 @@ thread_t *thread_create(thread_function_t function, int argc, char **argv, threa
     }
   }
 
-  memset(&t->context, 0, sizeof(context_t));
+  memset(&t->context, 0, sizeof(context_t)); // Set needed context
   t->context.rip = (uint64_t)function;
   t->context.rsp = t->stack_base + t->stack_size - 8;
   t->context.rdi = (uint64_t)argc;
@@ -147,7 +151,7 @@ thread_t *thread_create(thread_function_t function, int argc, char **argv, threa
   int slot = -1;
   for (int i = 1; i < MAX_THREADS; ++i)
   {
-    if (kernel->thread_table[i] == NULL)
+    if (kernel->thread_table[i] == NULL) // Add to thead table (next available slot)
     {
       kernel->thread_table[i] = t;
       slot = i;
@@ -156,7 +160,7 @@ thread_t *thread_create(thread_function_t function, int argc, char **argv, threa
     }
   }
 
-  if (slot < 0)
+  if (slot < 0) // No slots
   {
     if (privilege == THREAD_RING_3)
     {
@@ -188,19 +192,19 @@ thread_t *thread_create(thread_function_t function, int argc, char **argv, threa
 
   unlock_schedule_spin();
 
-  return t;
+  return t; // Good
 }
 
 __attribute__((noreturn)) void thread_block(uint32_t tid)
 {
-  thread_t *t = thread_from_tid(tid);
+  thread_t *t = thread_from_tid(tid); // Get thread from thread ID
 
-  if (!t || t->tid == 0)
-    hcf();
+  if (!t || t->tid == 0) // No thread or it's the kernel thread
+    hcf();               // Do not try and block a nonexisting thread or the kernel thread (maybe update so this is safer?)
 
-  t->state = THREAD_BLOCKED;
+  t->state = THREAD_BLOCKED; // Mark thread as blocked
 
-  lock_schedule_spin();
+  lock_schedule_spin(); // Lock for scheduling head/tail list things
   thread_t *previous = NULL;
   thread_t *current = ready_head;
 
@@ -230,25 +234,25 @@ __attribute__((noreturn)) void thread_block(uint32_t tid)
 
   unlock_schedule_spin();
 
-  __asm__ volatile("int 0x20");
+  __asm__ volatile("int 0x20"); // Call firmware interrupt imediately
 
-  __builtin_unreachable();
+  __builtin_unreachable(); // Shouldn't reach
 }
 
 int thread_unblock(uint32_t tid)
 {
-  thread_t *t = thread_from_tid(tid);
+  thread_t *t = thread_from_tid(tid); // Get thread ID
 
-  if (!t)
-    return -ESRCH;
+  if (!t)          // If no thread
+    return -ESRCH; // No thread found
 
-  if (t->state != THREAD_BLOCKED)
-    return -EINVAL;
+  if (t->state != THREAD_BLOCKED) // Thread is not blocked
+    return -EINVAL;               // Not allowed
 
-  t->state = THREAD_READY;
+  t->state = THREAD_READY; // Mark thread as ready
   t->next = NULL;
 
-  lock_schedule_spin();
+  lock_schedule_spin(); // Lock for scheduling head/tail list things
   if (!ready_head)
   {
     ready_head = ready_tail = t;
@@ -261,7 +265,7 @@ int thread_unblock(uint32_t tid)
 
   unlock_schedule_spin();
 
-  return 0;
+  return 0; // Good job
 }
 
 void init_threading(void)
@@ -276,25 +280,25 @@ void init_threading(void)
   init_mutex(&thread_mutex);
   spinlock_init(&schedule_lock);
 
-  thread_t *kernel_thread = (thread_t *)kmalloc(sizeof(thread_t));
-  memset(kernel_thread, 0, sizeof(thread_t));
+  thread_t *kernel_thread = (thread_t *)kmalloc(sizeof(thread_t)); // Malloc needed space
+  memset(kernel_thread, 0, sizeof(thread_t));                      // Set everything to 0 or NULL
   kernel_thread->tid = 0;
   kernel_thread->state = THREAD_RUNNING;
-  kernel_thread->privilege = THREAD_RING_0;
+  kernel_thread->privilege = THREAD_RING_0; // Kernel
   kernel_thread->priority = THREAD_PRIO_IMMEDIATE;
   kernel_thread->next = NULL;
 
   kernel->current_thread = kernel_thread;
   kernel->thread_table[0] = kernel_thread;
-  kernel->thread_count = 1;
-  kernel->next_tid = 1;
+  kernel->thread_count = 1; // Thread count = 1
+  kernel->next_tid = 1;     // Next thread ID is 1
 
-  thread_t *idle = thread_create(idle_task, 0, NULL, THREAD_RING_0, THREAD_PRIO_LOW, 0);
-  if (!idle)
+  thread_t *idle = thread_create(idle_task, 0, NULL, THREAD_RING_0, THREAD_PRIO_LOW, 0); // Create idle thread so scheduler works
+  if (!idle)                                                                             // If no idle thread
   {
     kerror("Failed to create idle thread");
-    hcf();
+    hcf(); // Fuck
   }
 
-  kok();
+  kok(); // OK!!!
 }

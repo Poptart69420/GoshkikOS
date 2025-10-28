@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+//
+// Does this need it's own header?
+//
+
 static inline uint8_t inb(uint16_t port)
 {
   uint8_t data;

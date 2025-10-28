@@ -6,8 +6,6 @@
 #include <arch/x86_64/cpu/idt/idt.h>
 #include <stdint.h>
 
-#define MAX_SYS_CALLS 420
-
 typedef int64_t (*syscall_handler_t)(uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6);
 
 typedef struct

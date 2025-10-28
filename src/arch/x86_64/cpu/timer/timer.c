@@ -3,6 +3,7 @@
 
 atomic_uint_fast64_t monotonic_ms = 0;
 
+// Set everything as 0 when first initilized
 void init_system_clock(void)
 {
   kprintf("System Clock...");
@@ -11,34 +12,33 @@ void init_system_clock(void)
   kernel->current_time.minutes = 0;
   kernel->current_time.hours = 0;
   kernel->current_time.days = 0;
-  atomic_store_explicit(&monotonic_ms, 0, memory_order_relaxed);
+  atomic_store_explicit(&monotonic_ms, 0, memory_order_relaxed); // Use atomic
   kok();
 }
 
 void timer_handler(context_t *context)
 {
-  (void)context;
+  (void)context; // Passed by IRQ, we don't use it here
 
-  atomic_fetch_add_explicit(&monotonic_ms, 1, memory_order_relaxed);
+  atomic_fetch_add_explicit(&monotonic_ms, 1, memory_order_relaxed); // Use atomic (add 1 millisecond)
 
-  /* use dot access */
-  if (++kernel->current_time.milliseconds < 1000)
-    return;
-  kernel->current_time.milliseconds = 0;
+  if (++kernel->current_time.milliseconds < 1000) // If less than 1000
+    return;                                       // Return
+  kernel->current_time.milliseconds = 0;          // Set 0
 
-  if (++kernel->current_time.seconds < 60)
-    return;
-  kernel->current_time.seconds = 0;
+  if (++kernel->current_time.seconds < 60) // If less than 60
+    return;                                // Return
+  kernel->current_time.seconds = 0;        // Set 0
 
-  if (++kernel->current_time.minutes < 60)
-    return;
-  kernel->current_time.minutes = 0;
+  if (++kernel->current_time.minutes < 60) // If less than 60
+    return;                                // Return
+  kernel->current_time.minutes = 0;        // Set 0
 
-  if (++kernel->current_time.hours < 24)
-    return;
-  kernel->current_time.hours = 0;
+  if (++kernel->current_time.hours < 24) // If less than 24
+    return;                              // Return
+  kernel->current_time.hours = 0;        // Set 0
 
-  kernel->current_time.days++;
+  kernel->current_time.days++; // Increase day (add months & years?)
 }
 
 void get_system_time(struct system_time *time)

@@ -7,6 +7,10 @@
 #define enable_interrupt() __asm__ volatile("sti")
 #define halt() while (1)
 
+//
+// More things should be in here. HCF doesn't need it's own header file
+//
+
 static inline int have_interrupt()
 {
   uintptr_t flags;

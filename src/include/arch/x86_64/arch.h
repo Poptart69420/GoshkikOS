@@ -11,6 +11,21 @@
 #define USER_DATA64 0x23
 #define TSS 0x28
 
+// Stack sizes/limits. What should these be?
+#define KSTACK_SIZE 0x8000
+#define IST_STACK_SIZE 0x4000
+#define TSTACK_SIZE 0x4000
+
+// Max system call number. What should this be?
+#define MAX_SYS_CALLS 420
+
+extern uint64_t g_hhdm_offset;
+extern struct limine_memmap_response *g_memmap;
+
+//
+// TODO: Increase context_t to include more registers (WILL NEED TO UPDATE "context_switch.asm" AS WELL!!!)
+//
+
 typedef struct
 {
   uint64_t r15, r14, r13, r12, r11, r10, r9, r8;

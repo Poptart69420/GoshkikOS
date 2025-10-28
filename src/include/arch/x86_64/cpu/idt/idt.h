@@ -9,7 +9,7 @@
 #include <vterm/kok.h>
 #include <vterm/vterm.h>
 
-#define IDT_ENTRIES 256
+#define IDT_ENTRIES 256 // Max number of entries (Should this be moved?)
 
 // Common
 #define IDT_TYPE_INTERRUPT_GATE 0x8E // 32-bit interrupt gate, ring 0

@@ -4,7 +4,6 @@
 #include <arch/x86_64/asm/hcf.h>
 #include <arch/x86_64/mem/mmu/mmu.h>
 #include <arch/x86_64/mem/pmm/pmm.h>
-#include <global/global.h>
 #include <klibc/kmem/mem.h>
 #include <limine/limine.h>
 #include <vterm/kerror.h>

@@ -8,37 +8,43 @@ static void boot_info(void)
 {
   kernel = &master_kernel_table;
 
-  if (!framebuffer_request.response)
-    hcf();
-  if (!hhdm_request.response)
-    hcf();
-  if (!memmap_request.response)
-    hcf();
-  if (!module_request.response)
-    hcf();
+  if (!framebuffer_request.response) // No framebuffer response
+    hcf(); // Sad
+  if (!hhdm_request.response) // No HHDM response
+    hcf(); // Sad
+  if (!memmap_request.response) // No memmap response
+    hcf(); // Sad
+  if (!module_request.response) // No module response (initrd.tar)
+    hcf(); // Sas
 
+  // Set kernel table responses
   kernel->framebuffer = framebuffer_request.response;
   kernel->hhdm = hhdm_request.response;
   kernel->memmap = memmap_request.response;
   kernel->module = module_request.response;
 
-  if (LIMINE_BASE_REVISION_SUPPORTED == false)
+  if (LIMINE_BASE_REVISION_SUPPORTED == false) // Revision is not supported
   {
-    hcf();
+    hcf(); // Sad
   }
 
-  if (kernel->framebuffer == NULL ||
-      kernel->framebuffer->framebuffer_count < 1)
+  if (kernel->framebuffer == NULL || kernel->framebuffer->framebuffer_count < 1) // If framebuffer is shit
   {
-    hcf();
+    hcf(); // Sad
   }
 
-  if (!kernel->module || kernel->module->module_count == 0)
+  if (!kernel->module || kernel->module->module_count == 0) // If no module in table, or no module provided (no initrd.tar)
   {
-    hcf();
+    hcf(); // Sad
   }
 }
 
+//
+// TODO: Move this stuff to a test directory. I think having a single header that contains every other test header
+// so that it is easy to include in this file, and remove as needed. (only include in testing builds).
+// if having a single "#ifdef DEBUG #include "../tests/all_tests.h" #endif" doesn't add tests to the binary
+// that would also work
+//
 static void task_1(int argc, char **argv)
 {
   (void)argc;
@@ -78,6 +84,11 @@ static void test_scheduler(void)
   }
 }
 
+//
+// Main function, called by bootloader (Limine)
+//
+
+
 void kmain(void)
 {
   boot_info();
@@ -97,13 +108,13 @@ void kmain(void)
   kprintf("=|||||||||||||||||||=\n");
   kprintf("\n");
 
-  g_hhdm_offset = hhdm_request.response->offset;
+  g_hhdm_offset = hhdm_request.response->offset; // Why is this here?
 
   init_mmu(memmap_request.response);
   init_pmm();
   init_vmm();
   init_kheap();
-  // init_vfs();
+  // init_vfs(); //TODO: Implement a VFS
 
   init_serial();
   init_gdt();
@@ -117,5 +128,6 @@ void kmain(void)
   init_kprintf_spinlock();
 
   enable_interrupt();
-  halt();
+  test_scheduler(); // Test thing
+  halt(); // Halt with inturrupts enabled
 }
