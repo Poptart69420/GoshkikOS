@@ -124,8 +124,9 @@ void kmain(void)
   init_syscalls();
   init_threading();
   init_kprintf_spinlock();
+  init_vfs();
 
   enable_interrupt();
-  //test_scheduler(); // Test thing
+  test_scheduler(); // Test thing
   halt();           // Halt with inturrupts enabled
 }

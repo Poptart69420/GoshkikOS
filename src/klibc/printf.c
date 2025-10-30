@@ -2,7 +2,6 @@
 #include <scheduling/spinlock.h>
 
 static spinlock_t kprintf_spinlock;
-static bool spinlock = false;
 
 void kputc(char c)
 {
@@ -58,8 +57,7 @@ void kprintns(int64_t num, int base)
 
 int kprintf(const char *format, ...)
 {
-  if (spinlock)
-    spinlock_acquire(&kprintf_spinlock);
+  spinlock_acquire(&kprintf_spinlock);
 
   __builtin_va_list args;
   __builtin_va_start(args, format);
@@ -184,8 +182,7 @@ int kprintf(const char *format, ...)
 
   __builtin_va_end(args);
 
-  if (spinlock)
-    spinlock_release(&kprintf_spinlock);
+  spinlock_release(&kprintf_spinlock);
 
   return count;
 }
@@ -193,7 +190,6 @@ int kprintf(const char *format, ...)
 void init_kprintf_spinlock(void)
 {
   spinlock_init(&kprintf_spinlock);
-  spinlock = true;
   kprintf("Kprintf spinlock...");
   kok();
 }
