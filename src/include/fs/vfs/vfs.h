@@ -99,11 +99,11 @@ struct vnode_t
 
 typedef struct vfs_manager_t
 {
-  hashtable_t mount_table; // Key: mount path | Value: struct vfs_t *
-  hashtable_t vnode_table; // Key: inode/FID  | Value: struct vnode_t*
-  spinlock_t lock;         // Spinlock lock
-  struct slab_cache_t *vfs_cache;
-  struct slab_cache_t *vnode_cache;
+  hashtable_t mount_table;          // Key: mount path | Value: struct vfs_t *
+  hashtable_t vnode_table;          // Key: inode/FID  | Value: struct vnode_t*
+  spinlock_t lock;                  // Spinlock lock
+  struct slab_cache_t *vfs_cache;   // VFS cache
+  struct slab_cache_t *vnode_cache; // Vnode cache
 } vfs_manager_t;
 
 struct vfsops_t
