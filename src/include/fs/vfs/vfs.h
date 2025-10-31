@@ -145,7 +145,9 @@ struct vnodeops_t
   int (*vn_brelse)(void *);                                                         // Releases a previously read block buffer
 };
 
+//
 // VFS functions
+//
 void init_vfs(void);
 int vfs_mount_fs(struct vfs_t *vfsp, struct vnode_t *covered, const char *path, int flags);
 int vfs_unmount_fs(struct vfs_t *vfsp, int flags);
@@ -157,7 +159,6 @@ void vfs_for_each(void (*call_back)(struct vfs_t *));
 //
 // Vnode functions
 //
-
 struct vnode_t *vnode_alloc(struct vfs_t *vfsp, enum vtype_t type);
 void vnode_free(struct vnode_t *vp);
 int vnode_cache_insert(struct vfs_t *vfsp, uint64_t nodeid, struct vnode_t *vp);
