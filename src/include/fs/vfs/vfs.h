@@ -35,6 +35,7 @@ struct vnode_t;
 struct vnodeops_t;
 struct vfs_t;
 struct vfsops_t;
+extern struct vfs_manager_t vfs_manager;
 
 enum vtype_t
 {
@@ -96,6 +97,15 @@ struct vnode_t
   void *v_data;         // Private file data
 };
 
+typedef struct vfs_manager_t
+{
+  hashtable_t mount_table; // Key: mount path | Value: struct vfs_t *
+  hashtable_t vnode_table; // Key: inode/FID  | Value: struct vnode_t*
+  spinlock_t lock;         // Spinlock lock
+  struct slab_cache_t *vfs_cache;
+  struct slab_cache_t *vnode_cache;
+} vfs_manager_t;
+
 struct vfsops_t
 {
   int (*vfs_mount)(struct vfs_t *, struct vnode_t *, const char *, int); // Mount filesystem to global namespace
@@ -135,7 +145,26 @@ struct vnodeops_t
   int (*vn_brelse)(void *);                                                         // Releases a previously read block buffer
 };
 
-// Functions
+// VFS functions
 void init_vfs(void);
+int vfs_mount_fs(struct vfs_t *vfsp, struct vnode_t *covered, const char *path, int flags);
+int vfs_unmount_fs(struct vfs_t *vfsp, int flags);
+int vfs_root_vnode(struct vfs_t *vfsp, struct vnode_t **root);
+struct vfs_t *vfs_from_vnode(struct vnode_t *vp);
+struct vfs_t *vfs_from_path(const char *path);
+void vfs_for_each(void (*call_back)(struct vfs_t *));
+
+//
+// Vnode functions
+//
+
+struct vnode_t *vnode_alloc(struct vfs_t *vfsp, enum vtype_t type);
+void vnode_free(struct vnode_t *vp);
+int vnode_cache_insert(struct vfs_t *vfsp, uint64_t nodeid, struct vnode_t *vp);
+int vnode_cache_lookup(struct vfs_t *vfsp, uint64_t nodeid, struct vnode_t **out_vp);
+int vnode_cache_remove(struct vfs_t *vfsp, uint64_t nodeid);
+int vnode_get(struct vfs_t *vfsp, struct vnode_t **out, uint64_t nodeid);
+void vnode_put(struct vnode_t *vp);
+void vfs_purge_vnodes(struct vfs_t *vfsp);
 
 #endif // VFS_H_
