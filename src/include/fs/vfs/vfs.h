@@ -19,6 +19,9 @@
 #include <vterm/kok.h>
 #include <vterm/vterm.h>
 
+// Limits
+#define VFS_MOUNT_PATH_MAX 256
+
 // VFS flags
 #define VFS_RONLY 0x01   // Read-only
 #define VFS_REMOUNT 0x02 // Remount existing filesystem
@@ -26,9 +29,11 @@
 #define VFS_NOSUID 0x08  // Ignore set user ID and set group ID
 #define VFS_SYNC 0x10    // All writes are synchronous
 
-#define VROOT 0x01   // Vnode is the root of its filesystem
-#define VTEXT 0x02   // Vnode is a pure text file
-#define VSYSTEM 0x04 // Vnode represents a system internal object
+// Vnode flags
+#define VROOT 0x01    // Vnode is the root of its filesystem
+#define VTEXT 0x02    // Vnode is a pure text file
+#define VSYSTEM 0x04  // Vnode represents a system internal object
+#define VFREEING 0x08 // Vnode is being freed
 
 // Forward declerations
 struct vnode_t;
@@ -69,22 +74,22 @@ typedef struct v_attr_t
 
 struct vfs_t
 {
-  struct vfs_t *vfs_next;            // Next in the linked list
-  struct vfsops_t *vfs_op;           // VFS operations
-  struct vnode_t *vfs_vnode_covered; // Vnode being covered
-  uint32_t vfs_flag;                 // Mount flags
-  uint64_t vfs_bsize;                // Native block size
-  void *vfs_data;                    // Private filesystem data
+  struct vfs_t *vfs_next;                  // Next in the linked list
+  struct vfsops_t *vfs_op;                 // VFS operations
+  struct vnode_t *vfs_vnode_covered;       // Vnode being covered
+  uint32_t vfs_flag;                       // Mount flags
+  uint64_t vfs_bsize;                      // Native block size
+  void *vfs_data;                          // Private filesystem data
+  char vfs_mount_path[VFS_MOUNT_PATH_MAX]; // Canonical mount path
 };
 
 struct vnode_t
 {
-  uint32_t v_flag;             // Vnode flags
-  uint32_t v_count;            // Reference count
-  uint32_t v_shlockc;          // Shared lock count
-  uint32_t v_exlockc;          // Exclusive lock count
-  struct vfs_t *v_vfs_mounted; // Covering VFS
-  struct vnodeops_t *v_op;     // Vnode operations
+  uint32_t v_flag;         // Vnode flags
+  uint32_t v_count;        // Reference count
+  uint32_t v_shlockc;      // Shared lock count
+  uint32_t v_exlockc;      // Exclusive lock count
+  struct vnodeops_t *v_op; // Vnode operations
 
   union
   {
@@ -101,7 +106,8 @@ typedef struct vfs_manager_t
 {
   hashtable_t mount_table;          // Key: mount path | Value: struct vfs_t *
   hashtable_t vnode_table;          // Key: inode/FID  | Value: struct vnode_t*
-  spinlock_t lock;                  // Spinlock lock
+  spinlock_t vnode_table_lock;      // Vnode table lock
+  spinlock_t mount_table_lock;      // Mount table lock
   struct slab_cache_t *vfs_cache;   // VFS cache
   struct slab_cache_t *vnode_cache; // Vnode cache
 } vfs_manager_t;

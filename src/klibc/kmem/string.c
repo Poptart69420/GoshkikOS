@@ -16,7 +16,7 @@ size_t strnlen(const char *s, size_t max)
   return len;
 }
 
-char *stpcpy(char *dest, const char *src)
+char *stpcpy(char *restrict dest, const char *restrict src)
 {
   char *p;
   p = mempcpy(dest, src, strlen(src));
@@ -37,13 +37,13 @@ char *strcpy(char *dest, const char *src)
   return dest;
 }
 
-char *strncpy(char *dest, const char *src, size_t n)
+char *strncpy(char *restrict dest, const char *restrict src, size_t n)
 {
   stpncpy(dest, src, n);
   return dest;
 }
 
-char *strcat(char *dest, const char *src)
+char *strcat(char *restrict dest, const char *restrict src)
 {
   stpcpy(dest + strlen(dest), src);
   return dest;
@@ -59,7 +59,7 @@ int strcmp(const char *a, const char *b)
   return (unsigned char)*a - (unsigned char)*b;
 }
 
-int strncmp(const char *a, const char *b, size_t n)
+int strncmp(const char *restrict a, const char *restrict b, size_t n)
 {
   while (n && *a && (*a == *b))
   {
@@ -146,4 +146,29 @@ char *strtok(char *str, const char *delim)
 {
   static char *ptr;
   return strtok_r(str, delim, &ptr);
+}
+
+size_t strlcpy(char *restrict dst, const char *restrict src, size_t size)
+{
+  const char *s = src;
+  size_t n = size;
+
+  if (n != 0)
+  {
+    while (--n != 0)
+    {
+      if ((*dst++ = *s++) == '\0')
+        break;
+    }
+  }
+
+  if (n == 0)
+  {
+    if (size != 0)
+      *dst = '\0';
+    while (*s++)
+      ;
+  }
+
+  return (size_t)(s - src - 1);
 }
