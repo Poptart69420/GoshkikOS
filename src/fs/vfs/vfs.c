@@ -63,6 +63,138 @@ static inline void vnode_unref(struct vnode_t *vp)
   }
 }
 
+//
+// Vnode management
+//
+struct vnode_t *vnode_alloc(struct vfs_t *vfsp, enum vtype_t type)
+{
+  assert(vfs_manager.vnode_cache);                          // If vnode cache doesn't exist panic
+  struct vnode_t *vp = slab_alloc(vfs_manager.vnode_cache); // Allocate a slab in the cache
+
+  if (!vp)       // If not allocated (out of mem?)
+    return NULL; // Return NULL
+
+  memset(vp, 0, sizeof(*vp));                          // Zero the memory
+  vp->v_vfsp = vfsp;                                   // Set the vfs pointer
+  vp->v_type = type;                                   // Set the vnode type
+  __atomic_store_n(&vp->v_count, 1, __ATOMIC_RELAXED); // Initalize the vnode reference count at 1
+  return vp;                                           // Return the pointer of the newly allocated vnode
+}
+
+void vnode_free(struct vnode_t *vp)
+{
+  if (!vp)  // If no vnode pointer
+    return; // Return
+
+  if (vp->v_data) // If vnode has data
+  {
+    kfree(vp->v_data); // Free data
+    vp->v_data = NULL; // Set it to NULL
+  }
+
+  slab_free(vfs_manager.vnode_cache, vp); // Free the vnode from the cache using the slab free function
+}
+
+int vnode_cache_insert(struct vfs_t *vfsp, uint64_t nodeid, struct vnode_t *vp)
+{
+  if (!vfsp || !vp) // If invalid arguments
+    return -EINVAL; // Return invalid arguments error code
+
+  vfs_lock_spin();                                              // Lock the spinlock
+  struct vnode_t *existing = NULL;                              // Create temp vnode
+  int ret = vnode_cache_lookup_locked(vfsp, nodeid, &existing); // Call lookup, hold return code
+
+  if (ret == 0 && existing) // If return code was sucessful and it exists
+  {
+    vfs_unlock_spin(); // Unlock the spinlock
+    return -EEXIST;    // Return exists error
+  }
+
+  ret = vnode_cache_insert_locked(vfsp, nodeid, vp); // Insert the vode into the cache, hold return code
+  vfs_unlock_spin();                                 // Unlock spinlock
+  return ret;                                        // Return the return code
+}
+
+int vnode_cache_lookup(struct vfs_t *vfsp, uint64_t nodeid, struct vnode_t **out_vp)
+{
+  if (!vfsp || !out_vp) // If invalid arguments
+    return -EINVAL;     // Return invalid arguments error code
+
+  vfs_lock_spin();                                        // Lock spinlock
+  struct vnode_t *vp = NULL;                              // Create empty vnode
+  int ret = vnode_cache_lookup_locked(vfsp, nodeid, &vp); // Call lookup, hold the teturn code
+  if (ret != 0 || !vp)                                    // If return code error or the vnode is NULL
+  {
+    vfs_unlock_spin(); // Unlock the spinlock
+    return -ENOENT;    // Return no entry error code
+  }
+
+  vnode_ref(vp);     // Reference the vnode (caller holds it)
+  vfs_unlock_spin(); // Unlock the spinlock
+  return 0;          // Yay
+}
+
+int vnode_cache_remove(struct vfs_t *vfsp, uint64_t nodeid)
+{
+  if (!vfsp)        // If invalid argument
+    return -EINVAL; // Return invalid argument error code
+
+  vfs_lock_spin();                                   // Lock the spinlock
+  int ret = vnode_cache_remove_locked(vfsp, nodeid); // Call vnode cache remove, hold return code
+  vfs_unlock_spin();                                 // Unlock the spinlock
+  return ret;                                        // Return the return code
+}
+
+int vnode_get(struct vfs_t *vfsp, struct vnode_t **out, uint64_t nodeid)
+{
+  if (!vfsp || !out) // If invalid arguments
+    return -EINVAL;  // Return invalid argument error code
+
+  struct vnode_t *vp = NULL;                       // initalize vp
+  int ret = vnode_cache_lookup(vfsp, nodeid, &vp); // Call lookup (search in cache) and store return code
+
+  if (ret == 0) // If it returns found
+  {
+    *out = vp; // Set the output pointer to the vp
+    return 0;  // Yay
+  }
+
+  if (!vfsp->vfs_op || !vfsp->vfs_op->vfs_vget) // Functions exist?
+    return -ENOSYS;                             // Functions do not exist (filesystem specific)
+
+  uint64_t nodeid_copy = nodeid; // Local nodeid copy
+
+  ret = vfsp->vfs_op->vfs_vget(vfsp, &vp, &nodeid_copy); // Call filesystem specific function
+
+  if (ret)      // If error code returned
+    return ret; // Return the passed error code
+
+  if (!vp)       // If no vnode pointer
+    return -EIO; // Return I/O error
+
+  vp->v_vfsp = vfsp; // Ensure vnode points to owner vfs_t
+
+  vfs_lock_spin();                                                         // Lock spinlock
+  struct vnode_t *existing = NULL;                                         // Temp to check against a race
+  if (vnode_cache_lookup_locked(vfsp, nodeid, &existing) == 0 && existing) // If vnode found
+  {
+    vnode_ref(existing); // Reference it (caller function holds it)
+    vfs_unlock_spin();   // Unlock spinlock
+    vnode_unref(vp);     // Unreference vp
+    *out = existing;     // Set output pointer to the vp
+    return 0;            // Yay 2
+  }
+
+  vnode_cache_insert_locked(vfsp, nodeid, vp); // Insert newly created vnode into the global vnode cache
+  vfs_unlock_spin();                           // Unlock spinlock
+
+  *out = vp; // Set output pointer to the vp
+  return 0;  // Yay 3
+}
+
+//
+// VFS management
+//
 int vfs_mount_fs(struct vfs_t *vfsp, struct vnode_t *covered, const char *path, int flags)
 {
   if (!vfsp || !vfsp->vfs_op || !vfsp->vfs_op->vfs_mount || !path) // If invalid arguments
