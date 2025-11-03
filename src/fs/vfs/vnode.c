@@ -35,7 +35,7 @@ static int vnode_cache_lookup_locked(struct vfs_t *vfsp, uint64_t nodeid, struct
   return ret;                                                                           // Did hashtable_get return a value?
 }
 
-static int vnode_cache_remove_locked(struct vfs_t *vfsp, uint64_t nodeid)
+static int vnode_cache_remove_locked(struct vfs_t *vfsp, uint64_t nodeid) // Caller must handle locking
 {
   uint64_t key[2];                                                     // 16 byte key (uint64_t / 2)
   create_vnode_key(key, vfsp, nodeid);                                 // Call create vnode key function
