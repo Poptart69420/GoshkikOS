@@ -1,4 +1,5 @@
 #include "include/klibc/printf.h"
+#include "include/scheduling/process.h"
 #include <kernel.h>
 
 kernel_table master_kernel_table;
@@ -122,6 +123,7 @@ void kmain(void)
   init_system_clock();
   init_ps2();
   init_syscalls();
+  init_processes();
   init_threading();
   init_kprintf_spinlock();
   init_vfs();

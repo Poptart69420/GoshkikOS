@@ -4,6 +4,7 @@
 #include <arch/x86_64/arch.h>
 #include <arch/x86_64/cpu/idt/idt.h>
 #include <arch/x86_64/cpu/timer/timer.h>
+#include <scheduling/process.h>
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -38,6 +39,7 @@ typedef struct thread
 {
   uint32_t tid;                 // Thread ID
   uint32_t o_pid;               // Owner PID
+  struct process_t *proc;       // Owner process
   thread_state_t state;         // State
   thread_privilege_t privilege; // Ring level
   thread_priority_t priority;   // Priority
@@ -56,7 +58,7 @@ typedef void (*thread_function_t)(int argc, char **argv);
 
 void init_threading(void);
 void thread_block(uint32_t tid);
-int thread_unlock(uint32_t tid);
+int thread_unblock(uint32_t tid);
 void clean_up(void);
 __attribute__((noreturn)) void thread_exit(void);
 int thread_terminate(uint32_t tid);

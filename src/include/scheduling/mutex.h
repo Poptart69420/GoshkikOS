@@ -5,10 +5,11 @@
 #include <klibc/errno.h>
 #include <klibc/kmem/string.h>
 #include <scheduling/spinlock.h>
-#include <scheduling/thread.h>
 #include <stdatomic.h>
 #include <stdbool.h>
 #include <stddef.h>
+
+typedef struct thread thread_t;
 
 typedef struct mutex_struct
 {
