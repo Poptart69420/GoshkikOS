@@ -114,7 +114,6 @@ void kmain(void)
   init_pmm();
   init_vmm();
   init_kheap();
-  // init_vfs(); //TODO: Implement a VFS
 
   init_serial();
   init_gdt();
