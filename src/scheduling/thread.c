@@ -67,7 +67,7 @@ thread_t *thread_create(thread_function_t function, int argc, char **argv, threa
   if (!function) // No function for thread
     return NULL;
 
-  lock_thread_mutex(); // Lock mutex for thread list/table things
+  lock_thread_mutex();
 
   if (kernel->thread_count >= MAX_THREADS) // Too many threads (what should the limit be? Need to read Linux documentation)
   {
@@ -211,9 +211,9 @@ thread_t *thread_create(thread_function_t function, int argc, char **argv, threa
 
 __attribute__((noreturn)) void thread_block(uint32_t tid)
 {
-  lock_thread_mutex();                // Lock mutex to avoid race condition
+  lock_thread_mutex();
   thread_t *t = thread_from_tid(tid); // Get thread from thread ID
-  unlock_thread_mutex();              // Unlock mutex
+  unlock_thread_mutex();
 
   if (!t || t->tid == 0) // No thread or it's the kernel thread
     hcf();               // Do not try and block a nonexisting thread or the kernel thread (maybe update so this is safer?)
@@ -279,9 +279,9 @@ __attribute__((noreturn)) void thread_exit(void)
       release_mutex(&current->proc->lock);
   }
 
-  lock_thread_mutex();            // Lock mutex
+  lock_thread_mutex();
   current->state = THREAD_TERMED; // Mark as terminated
-  unlock_thread_mutex();          // Unlock mutex
+  unlock_thread_mutex();
 
   kernel->current_thread = NULL; // Scheduler needs to pick a different thread
   __asm__ volatile("int 0x20");  // Trigger scheduler right away
@@ -323,7 +323,7 @@ int thread_terminate(uint32_t tid)
 
 void clean_up(void)
 {
-  lock_thread_mutex(); // Lock thread mutex
+  lock_thread_mutex();
 
   for (int i = 0; i < MAX_THREADS; ++i) // Loop through all threads
   {
@@ -359,7 +359,7 @@ void clean_up(void)
     }
   }
 
-  unlock_thread_mutex(); // Unlock thread mutex
+  unlock_thread_mutex();
 }
 
 void init_threading(void)
