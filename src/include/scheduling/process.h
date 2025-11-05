@@ -22,6 +22,7 @@
 #define FD_NONBLOCK 0x08
 
 typedef struct file_table file_table_t;
+typedef void (*thread_function_t)(int argc, char **argv);
 
 typedef enum
 {
@@ -65,5 +66,10 @@ typedef struct process_t
 } process_t;
 
 void init_processes(void);
+int process_remove_thread(process_t *p, thread_t *t);
+process_t *process_from_pid(pid_t pid);
+int process_add_thread(process_t *p, thread_t *t);
+void wake_waiters(process_t *p);
+process_t *process_create(thread_function_t entry, int argc, char **argv, pid_t ppid, int is_userspace);
 
 #endif // _PROCESS_H_

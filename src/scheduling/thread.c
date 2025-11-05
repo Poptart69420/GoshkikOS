@@ -142,6 +142,26 @@ thread_t *thread_create(thread_function_t function, int argc, char **argv, threa
     t->context.ss = KERNEL_DATA64;
   }
 
+  t->proc = NULL;
+  if (owner_pid != 0)
+  {
+    process_t *owner = process_from_pid(owner_pid);
+    if (owner)
+    {
+      process_add_thread(owner, t);
+      t->proc = owner;
+    }
+  }
+  else
+  {
+    process_t *kp = process_from_pid(0);
+    if (kp)
+    {
+      process_add_thread(kp, t);
+      t->proc = kp;
+    }
+  }
+
   int slot = -1;
   for (int i = 1; i < MAX_THREADS; ++i)
   {
@@ -245,6 +265,20 @@ __attribute__((noreturn)) void thread_exit(void)
   if (!current || current->tid == 0) // If no current thread or current thread is the kernel thread
     hcf();                           // Bad
 
+  if (current->proc)
+  {
+    acquire_mutex(&current->proc->lock);
+    if (current->proc->main_thread == current)
+    {
+      current->proc->exit_code = 0;
+      current->proc->state = PROC_ZOMBIE;
+      release_mutex(&current->proc->lock);
+      wake_waiters(current->proc);
+    }
+    else
+      release_mutex(&current->proc->lock);
+  }
+
   lock_thread_mutex();            // Lock mutex
   current->state = THREAD_TERMED; // Mark as terminated
   unlock_thread_mutex();          // Unlock mutex
@@ -276,6 +310,10 @@ int thread_terminate(uint32_t tid)
   }
 
   t->state = THREAD_TERMED; // Mark as terminated
+
+  if (t->proc)
+    process_remove_thread(t->proc, t);
+
   t->next = NULL;
   unlock_thread_mutex(); // Unlock mutex
 
@@ -312,6 +350,9 @@ void clean_up(void)
           kfree((void *)t->stack_base);
       }
 
+      if (t->proc)
+        process_remove_thread(t->proc, t);
+
       kfree(t);                       // Free thread
       kernel->thread_table[i] = NULL; // Set table number as NULL
       kernel->thread_count--;         // Decrase thread count by 1
@@ -340,6 +381,19 @@ void init_threading(void)
   kernel_thread->privilege = THREAD_RING_0; // Kernel
   kernel_thread->priority = THREAD_PRIO_IMMEDIATE;
   kernel_thread->next = NULL;
+
+  process_t *kp = process_from_pid(0);
+  if (kp)
+  {
+    kernel_thread->o_pid = 0;
+    kernel_thread->proc = kp;
+    process_add_thread(kp, kernel_thread);
+  }
+  else
+  {
+    kernel_thread->o_pid = 0;
+    kernel_thread->proc = NULL;
+  }
 
   kernel->current_thread = kernel_thread;
   kernel->thread_table[0] = kernel_thread;

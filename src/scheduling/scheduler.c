@@ -198,7 +198,11 @@ void scheduler_tick(context_t *context) // Called by timer IRQ, context is passe
     thread_t *next = NULL;
 
     lock_schedule_spin();
-    next = dequeue_ready_head(); // Take from ready queue
+    while ((next = dequeue_ready_head()) != NULL)
+    {
+      if (!next->proc || next->proc->state != PROC_ZOMBIE)
+        break;
+    }
     unlock_schedule_spin();
 
     if (!next) // If no thread is in the ready queue

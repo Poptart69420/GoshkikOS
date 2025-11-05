@@ -19,7 +19,6 @@
 #include <klibc/kmem/kheap.h>
 #include <klibc/kmem/slab.h>
 #include <limine/limine_requests.h>
-#include <scheduling/process.h>
 #include <scheduling/scheduler.h>
 #include <scheduling/syscall.h>
 #include <scheduling/thread.h>

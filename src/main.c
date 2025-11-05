@@ -53,7 +53,7 @@ static void task_1(int argc, char **argv)
 
   for (;;)
   {
-    kprintf("Thread_1: Hello\n");
+    kprintf("Process_1: Hello\n");
   }
 }
 
@@ -64,26 +64,27 @@ static void task_2(int argc, char **argv)
 
   for (;;)
   {
-    kprintf("Thread_2: Hiii\n");
+    kprintf("Process_2: Hi\n");
   }
 }
 
 static void test_scheduler(void)
 {
-  thread_t *thread_1 = thread_create(task_1, 0, NULL, THREAD_RING_0, THREAD_PRIO_LOW, 0);
-  if (!thread_1)
-  {
-    kerror("Failed to create thread_1");
-    hcf();
-  }
+  process_t *proc1 = process_create(task_1, 0, NULL, 0, 0); // parent PID = 0 (kernel)
+  if (!proc1)
+    {
+        kerror("Failed to create process 1");
+        hcf();
+    }
 
-  thread_t *thread_2 = thread_create(task_2, 0, NULL, THREAD_RING_0, THREAD_PRIO_LOW, 0);
-  if (!thread_2)
-  {
-    kerror("Failed to create thread_2");
-    hcf();
-  }
+    process_t *proc2 = process_create(task_2, 0, NULL, 0, 0); // parent PID = 0 (kernel)
+    if (!proc2)
+    {
+        kerror("Failed to create process 2");
+        hcf();
+    }
 }
+
 
 //
 // Main function, called by bootloader (Limine)
