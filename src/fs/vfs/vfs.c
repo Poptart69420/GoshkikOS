@@ -19,10 +19,10 @@ static inline void vfs_unlock_mount_table(void)
 //
 void vfs_for_each(void (*call_back)(struct vfs_t *))
 {
-  if (!call_back) // If no call back function
-    return;       // Return, because we just won't do shit otherwise
+  if (!call_back)
+    return; // Return, because we just won't do shit otherwise
 
-  vfs_lock_mount_table(); // Lock mount table spinlock
+  vfs_lock_mount_table();
 
   for (size_t i = 0; i < vfs_manager.mount_table.capacity; ++i) // Loop through table
   {
@@ -34,13 +34,13 @@ void vfs_for_each(void (*call_back)(struct vfs_t *))
     }
   }
 
-  vfs_unlock_mount_table(); // Unlock mount table spinlock
+  vfs_unlock_mount_table();
 }
 
 int vfs_root_vnode(struct vfs_t *vfsp, struct vnode_t **root)
 {
-  if (!vfsp || !vfsp->vfs_op || !vfsp->vfs_op->vfs_root || !root) // If invalid arguments
-    return -EINVAL;                                               // Return invalid arguments errno
+  if (!vfsp || !vfsp->vfs_op || !vfsp->vfs_op->vfs_root || !root)
+    return -EINVAL; // Return invalid arguments errno
 
   int ret = vfsp->vfs_op->vfs_root(vfsp, root); // Call the filesystem specific vfs_root function and store the return code
 
@@ -63,17 +63,17 @@ struct vfs_t *vfs_from_path(const char *path)
   if (!path)     // If no path given
     return NULL; // Return NULL
 
-  vfs_lock_mount_table();                                                                 // Lock mount table spinlock
+  vfs_lock_mount_table();
   struct vfs_t *vfsp = NULL;                                                              // Declare vfsp
   hashtable_get(&vfs_manager.mount_table, (void *)&vfsp, (void *)path, strlen(path) + 1); // Retrieve from hastable (path is the key)
-  vfs_unlock_mount_table();                                                               // Unlock mount table spinlock
-  return vfsp;                                                                            // Return vfsp (if not in hashtable this should return NULL)
+  vfs_unlock_mount_table();
+  return vfsp; // Return vfsp (if not in hashtable this should return NULL)
 }
 
 int vfs_mount_fs(struct vfs_t *vfsp, struct vnode_t *covered, const char *path, int flags)
 {
-  if (!vfsp || !vfsp->vfs_op || !vfsp->vfs_op->vfs_mount || !path) // If invalid arguments
-    return -EINVAL;                                                // Return invalid arguments errno
+  if (!vfsp || !vfsp->vfs_op || !vfsp->vfs_op->vfs_mount || !path)
+    return -EINVAL; // Return invalid arguments errno
 
   vfsp->vfs_vnode_covered = covered; // Set the covering node
   vfsp->vfs_flag = flags;            // Set the flags
@@ -83,33 +83,33 @@ int vfs_mount_fs(struct vfs_t *vfsp, struct vnode_t *covered, const char *path, 
     vnode_ref(covered);
 
   int ret = vfsp->vfs_op->vfs_mount(vfsp, covered, path, flags); // Call filesystem specific mount function
-  if (ret)                                                       // If error is returned
+  if (ret)
   {
-    if (covered)            // If covered
+    if (covered)
       vnode_unref(covered); // Decrease covered vnode reference count
 
     return ret; // Pass error code to caller function
   }
-  strlcpy(vfsp->vfs_mount_path, path, sizeof(vfsp->vfs_mount_path));                                     // Copy the mount path
-  vfs_lock_mount_table();                                                                                // Lock mount table spinlock
+  strlcpy(vfsp->vfs_mount_path, path, sizeof(vfsp->vfs_mount_path)); // Copy the mount path
+  vfs_lock_mount_table();
   hashtable_set(&vfs_manager.mount_table, vfsp, vfsp->vfs_mount_path, strlen(vfsp->vfs_mount_path) + 1); // Add to mount hashtable. Key: path | Value: vfsp
-  vfs_unlock_mount_table();                                                                              // Unlock mount table spinlock
+  vfs_unlock_mount_table();
 
   return 0; // Yay
 }
 
 int vfs_unmount_fs(struct vfs_t *vfsp, int flags)
 {
-  if (!vfsp || !vfsp->vfs_op || !vfsp->vfs_op->vfs_unmount) // If invalid arguments
-    return -EINVAL;                                         // Return invalid arguments errno
+  if (!vfsp || !vfsp->vfs_op || !vfsp->vfs_op->vfs_unmount)
+    return -EINVAL; // Return invalid arguments errno
 
-  vfs_lock_mount_table(); // Lock mount table spinlock
+  vfs_lock_mount_table();
 
   int ret = vfsp->vfs_op->vfs_unmount(vfsp, flags); // Call filesystem specific unmount function
   if (ret)                                          // If error is returned
   {
-    vfs_unlock_mount_table(); // Unlock mount table spinlock
-    return ret;               // Pass error code to caller function
+    vfs_unlock_mount_table();
+    return ret; // Pass error code to caller function
   }
 
   hashtable_remove(&vfs_manager.mount_table, vfsp->vfs_mount_path, strlen(vfsp->vfs_mount_path) + 1); // Remove from mount hashtable
@@ -117,8 +117,8 @@ int vfs_unmount_fs(struct vfs_t *vfsp, int flags)
   if (vfsp->vfs_vnode_covered)            // If covered node exists
     vnode_unref(vfsp->vfs_vnode_covered); // decrease the reference count by 1
 
-  vfs_unlock_mount_table(); // Unlock mount table spinlock
-  vfs_purge_vnodes(vfsp);   // Remove nodes from this filesystem
+  vfs_unlock_mount_table();
+  vfs_purge_vnodes(vfsp); // Remove nodes from this filesystem
 
   slab_free(vfs_manager.vfs_cache, vfsp);
 
