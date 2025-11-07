@@ -2,15 +2,14 @@
 #define VFS_H_
 
 #include <arch/x86_64/asm/hcf.h>
+#include <errno.h>
 #include <fs/vfs/vnode.h>
 #include <klibc/assert.h>
 #include <klibc/cred/cred.h>
-#include <klibc/errno.h>
 #include <klibc/kmem/hashtable.h>
 #include <klibc/kmem/kheap.h>
 #include <klibc/kmem/slab.h>
 #include <klibc/kmem/string.h>
-#include <klibc/types.h>
 #include <scheduling/spinlock.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -22,6 +21,7 @@
 
 // Limits
 #define VFS_MOUNT_PATH_MAX 256
+#define NAME_MAX 255
 
 // VFS flags
 #define VFS_RONLY 0x01   // Read-only

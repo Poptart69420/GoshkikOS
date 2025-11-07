@@ -37,6 +37,60 @@ void vfs_for_each(void (*call_back)(struct vfs_t *))
   vfs_unlock_mount_table();
 }
 
+int vfs_find_mount_for_path(const char *path, struct vfs_t **out_vfsp, const char **out_mount_prefix)
+{
+  if (!path || !out_vfsp || !out_mount_prefix)
+    return -EINVAL;
+
+  size_t pathlen = strnlen(path, PATH_MAX + 1);
+
+  if (pathlen == 0)
+    return -EINVAL;
+
+  if (pathlen > PATH_MAX)
+    return -ENAMETOOLONG;
+
+  struct vfs_t *best = NULL;
+  const char *best_key = NULL;
+  size_t bestlen = 0;
+
+  vfs_lock_mount_table();
+
+  size_t capacity = vfs_manager.mount_table.capacity;
+
+  for (size_t i = 0; i < capacity; ++i)
+  {
+    for (hash_entry_t *entry = vfs_manager.mount_table.entries[i]; entry; entry = entry->next)
+    {
+      const char *mp = (const char *)entry->key;
+      size_t mplen = strlen(mp);
+
+      if (mplen > pathlen)
+        continue;
+
+      if (strncmp(path, mp, mplen) != 0)
+        continue;
+
+      if (mplen > bestlen)
+      {
+        bestlen = mplen;
+        best = (struct vfs_t *)entry->value;
+        best_key = mp;
+      }
+    }
+  }
+
+  vfs_unlock_mount_table();
+
+  if (!best)
+    return -ENOENT;
+
+  *out_vfsp = best;
+  *out_mount_prefix = best_key;
+
+  return 0;
+}
+
 int vfs_root_vnode(struct vfs_t *vfsp, struct vnode_t **root)
 {
   if (!vfsp || !vfsp->vfs_op || !vfsp->vfs_op->vfs_root || !root)

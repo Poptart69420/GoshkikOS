@@ -2,7 +2,7 @@
 #define MUTEX_H_
 
 #include <arch/x86_64/asm/asm.h>
-#include <klibc/errno.h>
+#include <errno.h>
 #include <klibc/kmem/string.h>
 #include <scheduling/spinlock.h>
 #include <stdatomic.h>

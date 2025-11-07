@@ -2,14 +2,13 @@
 #define _VNODE_H_
 
 #include <arch/x86_64/asm/hcf.h>
+#include <errno.h>
 #include <klibc/assert.h>
 #include <klibc/cred/cred.h>
-#include <klibc/errno.h>
 #include <klibc/kmem/hashtable.h>
 #include <klibc/kmem/kheap.h>
 #include <klibc/kmem/slab.h>
 #include <klibc/kmem/string.h>
-#include <klibc/types.h>
 #include <scheduling/spinlock.h>
 #include <stddef.h>
 #include <stdint.h>

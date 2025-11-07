@@ -142,5 +142,256 @@ static inline int __set_errno(int ret)
   return ret;
 }
 
+static inline char *__get_err_code(int err)
+{
+  switch (err)
+  {
+  case EPERM:
+    return "Operation not permitted";
+  case ENOENT:
+    return "No such file or directory";
+  case ESRCH:
+    return "No such process";
+  case EINTR:
+    return "Interrupted system call";
+  case EIO:
+    return "I/O error";
+  case ENXIO:
+    return "No such device or address";
+  case E2BIG:
+    return "Argument list too long";
+  case ENOEXEC:
+    return "Exec format error";
+  case EBADF:
+    return "Bad file descriptor";
+  case ECHILD:
+    return "No child processes";
+  case EAGAIN:
+    return "Resource temporarily unavailable";
+  case ENOMEM:
+    return "Not enough memory";
+  case EACCES:
+    return "Permission denied";
+  case EFAULT:
+    return "Bad address";
+  case ENOTBLK:
+    return "Block device required";
+  case EBUSY:
+    return "Resource busy";
+  case EEXIST:
+    return "File exists";
+  case EXDEV:
+    return "Cross-device link";
+  case ENODEV:
+    return "No such device";
+  case ENOTDIR:
+    return "Not a directory";
+  case EISDIR:
+    return "Is a directory";
+  case EINVAL:
+    return "Invalid argument";
+  case ENFILE:
+    return "Too many open files in system";
+  case EMFILE:
+    return "Too many open files";
+  case ENOTTY:
+    return "Not a typewriter";
+  case ETXTBSY:
+    return "Text file busy";
+  case EFBIG:
+    return "File too large";
+  case ENOSPC:
+    return "No space left on device";
+  case ESPIPE:
+    return "Illegal seek";
+  case EROFS:
+    return "Read-only file system";
+  case EMLINK:
+    return "Too many links";
+  case EPIPE:
+    return "Broken pipe";
+  case EDOM:
+    return "Math argument out of domain of func";
+  case ERANGE:
+    return "Math result not representable";
+  case ENOMSG:
+    return "No message of desired type";
+  case EIDRM:
+    return "Identifier removed";
+  case ECHRNG:
+    return "Channel number out of range";
+  case EL2NSYNC:
+    return "Level 2 not synchronized";
+  case EL3HLT:
+    return "Level 3 halted";
+  case EL3RST:
+    return "Level 3 reset";
+  case ELNRNG:
+    return "Link number out of range";
+  case EUNATCH:
+    return "Protocol driver not attached";
+  case ENOCSI:
+    return "No CSI structure available";
+  case EL2HLT:
+    return "Level 2 halted";
+  case EDEADLK:
+    return "Deadlock condition";
+  case ENOLCK:
+    return "No record locks available";
+  case EBADE:
+    return "Invalid exchange";
+  case EBADR:
+    return "Invalid request descriptor";
+  case EXFULL:
+    return "Exchange full";
+  case ENOANO:
+    return "No anode";
+  case EBADRQC:
+    return "Invalid request code";
+  case EBADSLT:
+    return "Invalid slot";
+  case EDEADLOCK:
+    return "File locking deadlock error";
+  case EBFONT:
+    return "Bad font file format";
+  case ENOSTR:
+    return "Device not a stream";
+  case ENODATA:
+    return "No data (for no delay IO)";
+  case ETIME:
+    return "Timer expired";
+  case ENOSR:
+    return "Out of streams resources";
+  case ENONET:
+    return "Machine is not on the network";
+  case ENOPKG:
+    return "Package not installed";
+  case EREMOTE:
+    return "Object is remote";
+  case ENOLINK:
+    return "Link has been severed";
+  case EADV:
+    return "Advertise error";
+  case ESRMNT:
+    return "Srmount error";
+  case ECOMM:
+    return "Communication error on send";
+  case EPROTO:
+    return "Protocol error";
+  case EMULTIHOP:
+    return "Multihop attempted";
+  case ELBIN:
+    return "Inode is remote";
+  case EDOTDOT:
+    return "Cross mount point";
+  case EBADMSG:
+    return "Unreadable message";
+  case EFTYPE:
+    return "Inappropriate file type or format";
+  case ENOTUNIQ:
+    return "Given log. name not unique";
+  case EBADFD:
+    return "Invalid file descriptor";
+  case EREMCHG:
+    return "Remote address changed";
+  case ELIBACC:
+    return "Can't access needed shared lib";
+  case ELIBBAD:
+    return "Corrupted shared lib";
+  case ELIBSCN:
+    return ".lib section in a.out corrupted";
+  case ELIBMAX:
+    return "Too many libs linked";
+  case ELIBEXEC:
+    return "Exec shared library failed";
+  case ENOSYS:
+    return "Function not implemented";
+  case ENOTEMPTY:
+    return "Directory not empty";
+  case ENAMETOOLONG:
+    return "File or path name too long";
+  case ELOOP:
+    return "Too many symbolic links";
+  case EOPNOTSUPP:
+    return "Operation not supported";
+  case EPFNOSUPPORT:
+    return "Protocol family not supported";
+  case ECONNRESET:
+    return "Connection reset by peer";
+  case ENOBUFS:
+    return "No buffer space available";
+  case EAFNOSUPPORT:
+    return "Address family not supported";
+  case EPROTOTYPE:
+    return "Protocol wrong type for socket";
+  case ENOTSOCK:
+    return "Socket operation on non-socket";
+  case ENOPROTOOPT:
+    return "Protocol not available";
+  case ESHUTDOWN:
+    return "Can't send after socket shutdown";
+  case ECONNREFUSED:
+    return "Connection refused";
+  case EADDRINUSE:
+    return "Address already in use";
+  case ECONNABORTED:
+    return "Connection aborted";
+  case ENETUNREACH:
+    return "Network is unreachable";
+  case ENETDOWN:
+    return "Network interface not configured";
+  case ETIMEDOUT:
+    return "Connection timed out";
+  case EHOSTDOWN:
+    return "Host is down";
+  case EHOSTUNREACH:
+    return "Host unreachable";
+  case EINPROGRESS:
+    return "Connection already in progress";
+  case EALREADY:
+    return "Socket already connected";
+  case EDESTADDRREQ:
+    return "Destination address required";
+  case EMSGSIZE:
+    return "Message too long";
+  case EPROTONOSUPPORT:
+    return "Unknown protocol";
+  case ESOCKTNOSUPPORT:
+    return "Socket type not supported";
+  case EADDRNOTAVAIL:
+    return "Address not available";
+  case ENETRESET:
+    return "Network reset";
+  case EISCONN:
+    return "Socket is already connected";
+  case ENOTCONN:
+    return "Socket not connected";
+  case ETOOMANYREFS:
+    return "Too many references";
+  case EPROCLIM:
+    return "Process limit reached";
+  case EUSERS:
+    return "Too many users";
+  case EDQUOT:
+    return "Quota exceeded";
+  case ESTALE:
+    return "Stale file handle";
+  case EILSEQ:
+    return "Illegal byte sequence";
+  case EOVERFLOW:
+    return "Value too large for type";
+  case ECANCELED:
+    return "Operation canceled";
+  case ENOTRECOVERABLE:
+    return "State not recoverable";
+  case EOWNERDEAD:
+    return "Previous owner died";
+  case ESTRPIPE:
+    return "Streams pipe error";
+  default:
+    return "Unknown error";
+  }
+}
+
 #endif
 _END_C_HEADER

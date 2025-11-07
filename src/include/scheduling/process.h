@@ -8,10 +8,10 @@
 #include <arch/x86_64/mem/vmm/vmm.h>
 #include <fs/vfs/vnode.h>
 #include <klibc/cred/cred.h>
-#include <klibc/types.h>
 #include <scheduling/mutex.h>
 #include <stdint.h>
 #include <sys/time.h>
+#include <sys/types.h>
 
 #define MAX_PROCS 1024
 #define MAX_FD 32
@@ -55,8 +55,8 @@ typedef struct process_t
   thread_t *wait_head;   // Waiting thread list head
   thread_t *wait_tail;   // Waiting thread list tail
 
-  struct vnode_t *cwd;        // Current working directory
-  struct vnode_t *root_vnode; // Process root
+  struct vnode_t *cwd;     // Current working directory
+  char cwd_path[PATH_MAX]; // Canonical cwd (NULL terminated)
 
   uintptr_t address_space;       // Physical CR3/PML4
   file_descriptor_t fds[MAX_FD]; // File descriptors

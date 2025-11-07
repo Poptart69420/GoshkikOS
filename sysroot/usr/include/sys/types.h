@@ -25,6 +25,9 @@ typedef long ino_t;
 typedef long blksize_t;
 typedef long blkcnt_t;
 
+typedef unsigned short umode_t;
+typedef long long off64_t;
+
 #ifndef __SIZE_TYPE__
 #define __SIZE_TYPE__ unsigned long
 #endif

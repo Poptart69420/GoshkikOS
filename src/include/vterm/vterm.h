@@ -1,7 +1,7 @@
 #ifndef VTERM_H_
 #define VTERM_H_
 
-#include <klibc/errno.h>
+#include <errno.h>
 #include <klibc/kmem/string.h>
 #include <limine/limine.h>
 #include <stddef.h>
