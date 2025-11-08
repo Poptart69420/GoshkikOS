@@ -71,6 +71,7 @@ _BEGIN_C_HEADER
 
 #define SSIZE_MIN (-SSIZE_MAX - 1)
 
+#define NAME_MAX 255
 #define PATH_MAX 256
 #define ATEXIT_MAX 63
 #define PAGESIZE 4096
@@ -78,6 +79,7 @@ _BEGIN_C_HEADER
 
 #define MB_CUR_MAX 4
 #define SYMLOOP_MAX 8 // os specific
+#define SYMLINK_MAX 40
 
 #endif
 

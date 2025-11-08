@@ -21,5 +21,6 @@ char *strstr(const char *haystack, const char *needle);
 char *strdup(const char *str);
 char *strtok(char *str, const char *delim);
 char *strtok_r(char *str, const char *delim, char **save_ptr);
+size_t strlcat(char *restrict dst, const char *restrict src, size_t size);
 
 #endif // _STRING_H_

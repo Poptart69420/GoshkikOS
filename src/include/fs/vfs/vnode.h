@@ -75,9 +75,11 @@ struct vnode_t
     void *v_stream; // Stream
   } v_un;
 
-  struct vfs_t *v_vfsp; // Parent VFS
-  enum vtype_t v_type;  // Vnode type
-  void *v_data;         // Private file data
+  struct vnode_t *v_parent;  // Parent vnode (may be NULL for FS root)
+  char v_name[NAME_MAX + 1]; // Name in parent directory (utf-8 or ascii)
+  struct vfs_t *v_vfsp;      // Parent VFS
+  enum vtype_t v_type;       // Vnode type
+  void *v_data;              // Private file data
 };
 
 struct vnodeops_t

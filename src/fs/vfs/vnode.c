@@ -78,6 +78,39 @@ void vnode_unref(struct vnode_t *vp) // Caller must handle locking
 //
 // Vnode management
 //
+
+void vnode_clear_parent(struct vnode_t *child)
+{
+  if (!child)
+    return;
+
+  if (child->v_parent)
+  {
+    vnode_unref(child->v_parent);
+    child->v_parent = NULL;
+  }
+
+  child->v_name[0] = '\0';
+}
+
+void vnode_set_parent(struct vnode_t *child, struct vnode_t *parent, const char *name)
+{
+  if (!child)
+    return;
+
+  vnode_clear_parent(child);
+
+  if (parent)
+    vnode_ref(parent);
+
+  child->v_parent = parent;
+
+  if (name)
+    strlcpy(child->v_name, name, sizeof(child->v_name));
+  else
+    child->v_name[0] = '\0';
+}
+
 struct vnode_t *vnode_alloc(struct vfs_t *vfsp, enum vtype_t type)
 {
   assert(vfs_manager.vnode_cache);                          // If vnode cache doesn't exist panic
@@ -102,6 +135,12 @@ void vnode_free(struct vnode_t *vp)
   {
     kfree(vp->v_data); // Free data
     vp->v_data = NULL; // Set it to NULL
+  }
+
+  if (vp->v_parent)
+  {
+    vnode_unref(vp->v_parent);
+    vp->v_parent = NULL;
   }
 
   slab_free(vfs_manager.vnode_cache, vp); // Free the vnode from the cache using the slab free function

@@ -172,3 +172,21 @@ size_t strlcpy(char *restrict dst, const char *restrict src, size_t size)
 
   return (size_t)(s - src - 1);
 }
+
+size_t strlcat(char *restrict dst, const char *restrict src, size_t size)
+{
+  size_t dlen = strnlen(dst, size);
+  size_t slen = strlen(src);
+
+  if (dlen == size)
+    return size + slen;
+
+  size_t copy = size - dlen - 1;
+  if (copy > slen)
+    copy = slen;
+
+  memcpy(dst + dlen, src, copy);
+  dst[dlen + copy] = '\0';
+
+  return dlen + slen;
+}
