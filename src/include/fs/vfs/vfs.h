@@ -79,6 +79,6 @@ int vfs_root_vnode(struct vfs_t *vfsp, struct vnode_t **root);
 struct vfs_t *vfs_from_vnode(struct vnode_t *vp);
 struct vfs_t *vfs_from_path(const char *path);
 void vfs_for_each(void (*call_back)(struct vfs_t *));
-int vfs_find_mount_for_path(const char *path, struct vfs_t **out_vfsp, const char **out_mount_prefix);
+struct vfs_t *vfs_find_mounted_on_vnode(struct vnode_t *vp);
 
 #endif // VFS_H_
