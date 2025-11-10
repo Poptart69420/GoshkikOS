@@ -97,6 +97,55 @@ void namecache_remove(struct vnode_t *dvp, const char *name)
   spinlock_release(&namecache.lock);
 }
 
+// Removve a single name cache entry. Caller must hold namecache.lock
+static void namecache_remove_locked(void *key, size_t keylen)
+{
+  struct vnode_t *vp = NULL;
+  int status = hashtable_get(&namecache.table, (void **)&vp, key, keylen);
+
+  if (status == 0 && vp)
+    vnode_unref(vp); // Unreference the vnode pointer if status is a success
+
+  hashtable_remove(&namecache.table, key, keylen); // Remove from hashtable even if status is a failure (defensive)
+}
+
+// Purge all cache entries whose value == vp. Caller must hold namecache.lock
+static void namecahe_purge_vnode_locked(struct vnode_t *vp)
+{
+  if (!vp)
+    return; // Invalid argument
+
+  for (size_t i = 0; i < namecache.table.capacity; ++i) // Loop through the table
+  {
+    hash_entry_t *entry = namecache.table.entries[i];
+    while (entry) // While the entry != NULL
+    {
+      if ((struct vnode_t *)entry->value == vp)
+      {
+        void *key = entry->key;
+        size_t key_size = entry->key_size;
+
+        namecache_remove_locked(key, key_size); // Get the key, remove it. Our caller holds the lock for this function as well
+
+        entry = namecache.table.entries[i];
+        continue;
+      }
+      entry = entry->next;
+    }
+  }
+}
+
+// Purge all cache entries whose value == vp
+void namecache_purge_vnode(struct vnode_t *vp)
+{
+  if (!vp)
+    return; // Invalid argument
+
+  spinlock_acquire(&namecache.lock);
+  namecache_purge_vnode_locked(vp);
+  spinlock_release(&namecache.lock);
+}
+
 void namei_init(void)
 {
   spinlock_init(&namecache.lock);
